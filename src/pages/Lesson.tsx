@@ -41,9 +41,9 @@ const Lesson = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <section className="bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 py-8 border-b sticky top-0 z-10 backdrop-blur-sm">
+      <section className="bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 py-3 border-b sticky top-0 z-10 backdrop-blur-sm bg-background/80">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-2">
             <Link to="/lessons">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -60,24 +60,22 @@ const Lesson = () => {
             </div>
           </div>
           
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <Badge variant="secondary">{metadata.level}</Badge>
-                <span className="text-sm text-muted-foreground">
-                  Lesson {metadata.order}
-                </span>
-                <span className="text-sm text-muted-foreground">•</span>
-                <span className="text-sm text-muted-foreground">
-                  {metadata.duration} minutes
-                </span>
-              </div>
-              <h1 className="text-3xl font-bold mb-2">{metadata.title}</h1>
-              <p className="text-muted-foreground">{metadata.description}</p>
-            </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="shrink-0">{metadata.level}</Badge>
+            <span className="text-xs text-muted-foreground">Lesson {metadata.order}</span>
+            <span className="text-xs text-muted-foreground">•</span>
+            <span className="text-xs text-muted-foreground">{metadata.duration} minutes</span>
           </div>
+        </div>
+      </section>
 
-          <div className="mt-4 p-4 bg-card rounded-lg border">
+      {/* Title and Objectives - Now below sticky header */}
+      <section className="bg-gradient-to-r from-primary/5 via-accent/3 to-secondary/5 py-6 border-b">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-2">{metadata.title}</h1>
+          <p className="text-muted-foreground mb-4">{metadata.description}</p>
+          
+          <div className="p-4 bg-card rounded-lg border">
             <p className="font-medium text-sm mb-2">Learning Objectives:</p>
             <ul className="grid md:grid-cols-2 gap-2">
               {metadata.objectives.map((obj, i) => (
