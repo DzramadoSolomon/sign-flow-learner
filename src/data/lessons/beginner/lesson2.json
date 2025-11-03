@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "id": "beginner-2",
+    "title": "GSL Alphabet: F-J",
+    "description": "Continue your GSL alphabet journey by learning letters F through J with confidence.",
+    "level": "beginner",
+    "duration": 15,
+    "objectives": [
+      "Learn hand shapes for letters F through J",
+      "Connect new letters with previously learned alphabet",
+      "Practice spelling longer words"
+    ],
+    "tags": ["alphabet", "fingerspelling", "progression"],
+    "order": 2
+  },
+  "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  "notes": "# GSL Alphabet: Letters F-J\n\n## Building on Your Foundation\nGreat work learning A-E! Now let's expand your fingerspelling skills with five more letters.\n\n## Letter F\n- **Hand Shape**: Index and thumb form circle, other fingers extended\n- **Position**: Palm facing forward\n- **Tip**: Make a clear circle with thumb and index\n\n## Letter G\n- **Hand Shape**: Index finger and thumb extended horizontally, pointing to the side\n- **Position**: Palm facing to your side\n- **Tip**: Keep both digits parallel to the ground\n\n## Letter H\n- **Hand Shape**: Index and middle fingers extended horizontally together\n- **Position**: Palm facing to your side\n- **Tip**: Keep fingers close together\n\n## Letter I\n- **Hand Shape**: Pinky finger extended, all others closed\n- **Position**: Palm facing forward\n- **Tip**: Keep pinky straight up\n\n## Letter J\n- **Hand Shape**: Same as 'I' but with a 'J' motion\n- **Position**: Start with pinky up, draw a 'J' in the air\n- **Tip**: Make the motion smooth and clear\n\n## Review Section\nRemember your A-E letters! Practice transitioning between old and new letters:\n- A → F\n- B → G  \n- C → H\n- D → I\n- E → J\n\n## Practice Words\nNow you can spell: FACE, BADGE, CAGE, DEAF, BEAD, FADED, JADED\n\n## Important Notes\n- Letter 'J' is the only letter in A-J that involves movement\n- Pay attention to palm orientation - it changes!\n- Practice slowly, then gradually increase speed",
+  "quiz": [
+    {
+      "id": "q1",
+      "question": "Which letter in GSL is formed with the index finger and thumb making a circle?",
+      "options": [
+        "Letter E",
+        "Letter F",
+        "Letter G",
+        "Letter I"
+      ],
+      "correctAnswer": "Letter F",
+      "explanation": "Letter F is formed by touching the index finger and thumb to create a circle, with the other three fingers extended."
+    },
+    {
+      "id": "q2",
+      "question": "What makes the letter 'J' unique among the letters A-J?",
+      "options": [
+        "It uses both hands",
+        "It involves a motion",
+        "It's the only one with palm down",
+        "It uses the thumb only"
+      ],
+      "correctAnswer": "It involves a motion",
+      "explanation": "Letter J is unique because it's the only letter in this set that requires movement - you draw a 'J' shape in the air with your pinky extended."
+    },
+    {
+      "id": "q3",
+      "question": "In GSL, which letter has only the pinky finger extended?",
+      "options": [
+        "Letter F",
+        "Letter H",
+        "Letter I",
+        "Letter J (before motion)"
+      ],
+      "correctAnswer": "Letter I",
+      "explanation": "Letter I is formed by extending only your pinky finger while keeping all other fingers closed in a fist."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex1",
+      "instruction": "Spell these words combining letters A-J: FACE, BADGE, DEAF, FADE",
+      "type": "practice",
+      "content": {
+        "words": ["FACE", "BADGE", "DEAF", "FADE"]
+      }
+    },
+    {
+      "id": "ex2",
+      "instruction": "Practice transitioning smoothly between letters F-J five times each, maintaining proper hand shapes.",
+      "type": "practice",
+      "content": {
+        "repetitions": 5,
+        "letters": ["F", "G", "H", "I", "J"]
+      }
+    }
+  ]
+}
