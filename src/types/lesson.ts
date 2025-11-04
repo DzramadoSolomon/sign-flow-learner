@@ -11,8 +11,9 @@ export interface LessonMetadata {
 
 export interface QuizQuestion {
   id: string;
-  question: string;
-  options: string[];
+  videoUrl: string; // YouTube embed URL showing the sign
+  question: string; // e.g., "What sign is being shown in this video?"
+  options: string[]; // Different sign options
   correctAnswer: string;
   explanation?: string;
 }

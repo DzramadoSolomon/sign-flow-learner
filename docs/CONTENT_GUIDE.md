@@ -8,7 +8,7 @@ Before creating a new lesson, ensure you have:
 - [ ] Defined learning objectives
 - [ ] Prepared or identified video content
 - [ ] Written detailed lesson notes
-- [ ] Created at least 3 quiz questions
+- [ ] Created exactly 5 video-based quiz questions
 - [ ] Designed 2-3 practice exercises
 - [ ] Reviewed content for accuracy
 
@@ -141,74 +141,130 @@ Brief overview of what students will learn (2-3 sentences)
 
 ## Creating Effective Quizzes
 
-### Question Types & When to Use Them
+### Video-Based Quiz Format
 
-**Knowledge Recall** (Early lessons):
-- Tests basic facts and definitions
-- "What is the hand shape for letter X?"
-- Good for: alphabet, basic vocabulary
+All quiz questions MUST be video-based to help learners practice sign recognition:
 
-**Application** (Mid lessons):
-- Tests understanding in context
-- "When would you use this sign?"
-- Good for: greetings, conversations, phrases
+1. **Video Requirements**
+   - Each question includes a video URL (YouTube embed format)
+   - Video should clearly demonstrate ONE specific sign
+   - Duration: 5-15 seconds per video
+   - Clear framing showing hand movements and positions
+   - Good lighting and contrast
 
-**Analysis** (Advanced lessons):
-- Tests deeper understanding
-- "What makes this sign different from...?"
-- Good for: similar signs, nuanced meanings
+2. **Question Structure**
+   - Question text: "What sign is being shown in this video?" or similar
+   - 4 answer options with similar/related signs
+   - Correct answer matches the sign shown in video
+   - Explanation reinforces the key features of the correct sign
 
-### Writing Quiz Questions
+3. **Quiz Requirements**
+   - Each lesson MUST have exactly 5 quiz questions
+   - Each question MUST include a unique video
+   - Mix difficulty within questions (obvious vs subtle differences)
+   - Options should include plausible alternatives
 
-**Structure:**
+### Quiz JSON Structure
+
 ```json
 {
-  "id": "unique-id",
-  "question": "Clear, specific question?",
-  "options": [
-    "Correct answer",
-    "Plausible wrong answer",
-    "Another wrong answer",
-    "Third wrong answer"
-  ],
-  "correctAnswer": "Correct answer",
-  "explanation": "Why this is correct and what students should remember"
+  "quiz": [
+    {
+      "id": "q1",
+      "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+      "question": "What sign is being shown in this video?",
+      "options": [
+        "Letter A",
+        "Letter B",
+        "Letter C",
+        "Letter D"
+      ],
+      "correctAnswer": "Letter A",
+      "explanation": "The video shows letter A - a closed fist with the thumb resting on the side."
+    },
+    {
+      "id": "q2",
+      "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+      "question": "Which letter is being demonstrated?",
+      "options": [
+        "Letter C",
+        "Letter D",
+        "Letter E",
+        "Letter F"
+      ],
+      "correctAnswer": "Letter D",
+      "explanation": "This demonstrates letter D - index finger pointing up while other fingers touch the thumb."
+    }
+  ]
 }
 ```
+
+**Note**: You must have exactly 5 questions per lesson with unique video URLs.
 
 **Question Quality Checklist:**
-- [ ] Question is clear and unambiguous
-- [ ] Only one answer is definitively correct
-- [ ] Wrong answers are plausible but clearly incorrect
-- [ ] Explanation teaches, not just confirms
-- [ ] Relates directly to lesson content
+- [ ] Exactly 5 questions per lesson
+- [ ] Each question has a unique video URL (YouTube embed format)
+- [ ] Videos clearly show the sign being tested (5-15 seconds)
+- [ ] Questions follow format: "What sign is being shown?" or similar
+- [ ] All answer options are plausible and related
+- [ ] Correct answers match the video demonstration
+- [ ] Explanations describe key features of the correct sign
+- [ ] Mix of difficulty (easy recognition vs subtle differences)
 
-**Example Questions:**
+**Example Questions by Level:**
 
-**Beginner:**
+**Beginner (Alphabet):**
 ```json
 {
-  "question": "Which letter is formed with only the pinky finger extended?",
-  "options": ["H", "I", "J", "K"],
-  "correctAnswer": "I",
-  "explanation": "Letter I is signed with only the pinky extended upward, while other fingers remain closed in a fist."
-}
-```
-
-**Intermediate:**
-```json
-{
-  "question": "When signing 'THANK YOU', which direction should your hand move?",
+  "id": "q1",
+  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+  "question": "What letter is being shown in this video?",
   "options": [
-    "From chin forward and down",
-    "From forehead to chin",
-    "Circular motion on chest",
-    "Side to side at shoulder"
+    "Letter A",
+    "Letter E",
+    "Letter S",
+    "Letter T"
   ],
-  "correctAnswer": "From chin forward and down",
-  "explanation": "THANK YOU starts at the chin and moves forward and downward toward the person you're thanking, accompanied by a smile."
+  "correctAnswer": "Letter A",
+  "explanation": "Letter A in GSL is a closed fist with the thumb resting on the side of your hand."
 }
 ```
+
+**Intermediate (Common Signs):**
+```json
+{
+  "id": "q3",
+  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+  "question": "Identify the greeting shown in this video",
+  "options": [
+    "Hello",
+    "Thank you",
+    "Goodbye",
+    "Please"
+  ],
+  "correctAnswer": "Thank you",
+  "explanation": "The 'Thank you' sign in GSL involves touching your chin and moving your hand forward with palm up."
+}
+```
+
+**Advanced (Contextual):**
+```json
+{
+  "id": "q5",
+  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+  "question": "What complex phrase is being signed?",
+  "options": [
+    "How are you today?",
+    "What is your name?",
+    "Nice to meet you",
+    "Where are you from?"
+  ],
+  "correctAnswer": "How are you today?",
+  "explanation": "This sequence combines the signs for 'how', 'you', and 'today' with appropriate facial expressions."
+}
+```
+
+For detailed video quiz creation guidance, see **docs/VIDEO_QUIZ_GUIDE.md**
 
 ## Designing Practice Exercises
 
