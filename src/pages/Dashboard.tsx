@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { 
   BookOpen, 
   Award, 
@@ -12,7 +14,8 @@ import {
   Target,
   ArrowRight,
   Trophy,
-  Flame
+  Flame,
+  Menu
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -42,36 +45,35 @@ const Dashboard = () => {
   const progressPercentage = Math.round((stats.lessonsCompleted / stats.totalLessons) * 100);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/" className="flex items-center gap-2">
-                <BookOpen className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg">GSL Learning</span>
-              </Link>
-              <nav className="hidden md:flex gap-4 ml-8">
-                <Link to="/dashboard">
-                  <Button variant="ghost" className="font-medium">Dashboard</Button>
-                </Link>
-                <Link to="/lessons">
-                  <Button variant="ghost">Lessons</Button>
-                </Link>
-              </nav>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        
+        <div className="flex-1">
+          {/* Header */}
+          <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+            <div className="container mx-auto px-4 py-3">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger>
+                  <Button variant="ghost" size="sm">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SidebarTrigger>
+                <div className="flex items-center justify-between flex-1">
+                  <Link to="/" className="flex items-center gap-2">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                    <span className="font-bold text-lg hidden md:inline">GSL Learning</span>
+                  </Link>
+                  <Badge variant="outline" className="gap-1">
+                    <Flame className="h-3 w-3 text-orange-500" />
+                    {stats.currentStreak} day streak
+                  </Badge>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="gap-1">
-                <Flame className="h-3 w-3 text-orange-500" />
-                {stats.currentStreak} day streak
-              </Badge>
-            </div>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back!</h1>
@@ -242,8 +244,10 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

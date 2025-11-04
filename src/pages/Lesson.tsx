@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +16,16 @@ import lesson3 from "@/data/lessons/beginner/lesson3.json";
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState<'content' | 'quiz' | 'exercises'>('content');
   
-  // Map lessons
+  // Map lessons with order
+  const lessonsList = [
+    { id: 'beginner-1', data: lesson1 as LessonContent },
+    { id: 'beginner-2', data: lesson2 as LessonContent },
+    { id: 'beginner-3', data: lesson3 as LessonContent },
+  ];
+  
   const lessonsMap: { [key: string]: LessonContent } = {
     'beginner-1': lesson1 as LessonContent,
     'beginner-2': lesson2 as LessonContent,
@@ -24,6 +33,39 @@ const Lesson = () => {
   };
 
   const lesson = id ? lessonsMap[id] : null;
+  const currentIndex = lessonsList.findIndex(l => l.id === id);
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < lessonsList.length - 1;
+  
+  const goToPreviousLesson = () => {
+    if (hasPrevious) {
+      navigate(`/lesson/${lessonsList[currentIndex - 1].id}`);
+      setCurrentStep('content');
+    }
+  };
+  
+  const goToNextLesson = () => {
+    if (hasNext) {
+      navigate(`/lesson/${lessonsList[currentIndex + 1].id}`);
+      setCurrentStep('content');
+    }
+  };
+  
+  const goToNextStep = () => {
+    if (currentStep === 'content') {
+      setCurrentStep('quiz');
+    } else if (currentStep === 'quiz') {
+      setCurrentStep('exercises');
+    }
+  };
+  
+  const goToPreviousStep = () => {
+    if (currentStep === 'exercises') {
+      setCurrentStep('quiz');
+    } else if (currentStep === 'quiz') {
+      setCurrentStep('content');
+    }
+  };
 
   if (!lesson) {
     return (
@@ -69,10 +111,10 @@ const Lesson = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" disabled>
+                    <Button variant="outline" size="sm" disabled={!hasPrevious} onClick={goToPreviousLesson}>
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" disabled={!hasNext} onClick={goToNextLesson}>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -104,26 +146,51 @@ const Lesson = () => {
           {/* Content */}
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-5xl space-y-8">
-              {/* Video */}
-              <VideoSection videoUrl={videoUrl} title={metadata.title} />
+              {/* Step Indicator */}
+              <div className="flex items-center justify-center gap-2 mb-8">
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${currentStep === 'content' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                  <span className="text-sm font-medium">1. Content</span>
+                </div>
+                <div className="w-8 h-0.5 bg-muted"></div>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${currentStep === 'quiz' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                  <span className="text-sm font-medium">2. Quiz</span>
+                </div>
+                <div className="w-8 h-0.5 bg-muted"></div>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${currentStep === 'exercises' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                  <span className="text-sm font-medium">3. Exercises</span>
+                </div>
+              </div>
 
-              {/* Notes */}
-              <NotesSection notes={notes} />
+              {/* Video & Notes */}
+              {currentStep === 'content' && (
+                <>
+                  <VideoSection videoUrl={videoUrl} title={metadata.title} />
+                  <NotesSection notes={notes} />
+                </>
+              )}
 
               {/* Quiz */}
-              {quiz.length > 0 && <QuizSection questions={quiz} />}
+              {currentStep === 'quiz' && quiz.length > 0 && <QuizSection questions={quiz} />}
 
               {/* Exercises */}
-              {exercises.length > 0 && <ExerciseSection exercises={exercises} />}
+              {currentStep === 'exercises' && exercises.length > 0 && <ExerciseSection exercises={exercises} />}
 
               {/* Navigation */}
               <div className="flex justify-between pt-8 border-t">
-                <Button variant="outline" disabled>
+                <Button 
+                  variant="outline" 
+                  disabled={currentStep === 'content' && !hasPrevious}
+                  onClick={currentStep === 'content' ? goToPreviousLesson : goToPreviousStep}
+                >
                   <ChevronLeft className="h-4 w-4 mr-2" />
-                  Previous Lesson
+                  {currentStep === 'content' ? 'Previous Lesson' : 'Previous'}
                 </Button>
-                <Button className="bg-primary hover:bg-primary/90">
-                  Next Lesson
+                <Button 
+                  className="bg-primary hover:bg-primary/90"
+                  disabled={currentStep === 'exercises' && !hasNext}
+                  onClick={currentStep === 'exercises' ? goToNextLesson : goToNextStep}
+                >
+                  {currentStep === 'exercises' ? 'Next Lesson' : 'Next'}
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>

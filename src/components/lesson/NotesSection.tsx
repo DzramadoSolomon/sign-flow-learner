@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface NotesSectionProps {
@@ -7,6 +9,11 @@ interface NotesSectionProps {
 }
 
 export const NotesSection = ({ notes }: NotesSectionProps) => {
+  const [showFull, setShowFull] = useState(false);
+  const previewLength = 500; // characters to show in preview
+  const shouldTruncate = notes.length > previewLength;
+  const displayText = showFull || !shouldTruncate ? notes : notes.substring(0, previewLength) + "...";
+
   return (
     <Card className="shadow-md">
       <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10">
@@ -28,8 +35,28 @@ export const NotesSection = ({ notes }: NotesSectionProps) => {
             strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
           }}
         >
-          {notes}
+          {displayText}
         </ReactMarkdown>
+        
+        {shouldTruncate && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              variant="outline"
+              onClick={() => setShowFull(!showFull)}
+              className="gap-2"
+            >
+              {showFull ? (
+                <>
+                  Show Less <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show Full Script <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
