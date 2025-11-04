@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, XCircle, Brain, Trophy } from "lucide-react";
+import { CheckCircle2, XCircle, Brain, Trophy, Video } from "lucide-react";
 import { QuizQuestion } from "@/types/lesson";
 import { toast } from "sonner";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface QuizSectionProps {
   questions: QuizQuestion[];
@@ -93,8 +94,21 @@ export const QuizSection = ({ questions }: QuizSectionProps) => {
         <CardDescription>Test your knowledge from this lesson</CardDescription>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
-        <div>
-          <h3 className="text-lg font-medium mb-4">{question.question}</h3>
+        <div className="space-y-4">
+          {/* Video Player */}
+          <div className="bg-muted/30 rounded-lg p-2">
+            <AspectRatio ratio={16 / 9}>
+              <iframe
+                src={question.videoUrl}
+                title={`Quiz Question ${currentQuestion + 1}`}
+                className="w-full h-full rounded-lg"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </AspectRatio>
+          </div>
+
+          <h3 className="text-lg font-medium">{question.question}</h3>
           
           <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer}>
             <div className="space-y-3">
