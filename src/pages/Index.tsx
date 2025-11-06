@@ -62,7 +62,7 @@ const Index = () => {
               color="primary"
             />
             <FeatureCard
-              icon={<BookOpen className="h-8 w-8" />}
+              icon={<img src="/favicon.ico" alt="GSL" className="h-8 w-8" />}
               title="Detailed Lesson Notes"
               description="Comprehensive written guides with tips, common mistakes, and cultural context"
               color="accent"
