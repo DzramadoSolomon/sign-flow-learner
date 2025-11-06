@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { 
-  BookOpen, 
   Home, 
   LayoutDashboard, 
   GraduationCap,
@@ -62,7 +61,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b px-4 py-4">
         <Link to="/" className="flex items-center gap-2">
-          <BookOpen className="h-6 w-6 text-primary shrink-0" />
+          <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6 shrink-0" />
           {!isCollapsed && <span className="font-bold text-lg">GSL Learning</span>}
         </Link>
       </SidebarHeader>
