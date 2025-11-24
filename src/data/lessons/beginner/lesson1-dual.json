@@ -1,0 +1,149 @@
+{
+  "metadata": {
+    "id": "beginner-1",
+    "title": "GSL Alphabet: A-E",
+    "description": "Learn the first five letters of the Ghanaian Sign Language alphabet",
+    "level": "beginner",
+    "duration": 15,
+    "objectives": [
+      "Master hand shapes for letters A through E",
+      "Understand proper hand positioning and orientation",
+      "Practice smooth transitions between letters",
+      "Build muscle memory through repetition"
+    ],
+    "tags": ["alphabet", "basics", "fingerspelling"],
+    "order": 1
+  },
+  "deaf": {
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "notes": "# GSL Alphabet: Letters A-E (Visual Mode)\n\n## Visual Learning Focus\n\nThis lesson is designed with **visual-first learning** in mind. All instructions are provided through clear video demonstrations and detailed written descriptions with visual cues.\n\n## Letter A\n\n### Visual Description\n- **Hand Shape**: Closed fist\n- **Thumb Position**: Thumb rests along the side of the fist\n- **Palm Orientation**: Palm faces away from your body\n- **Visual Cue**: Think of making a strong fist, but keep your thumb visible on the side\n\n### Practice Tips\n- Watch the video multiple times at different speeds\n- Use a mirror to check your hand position\n- Take photos to compare with the demonstration\n\n## Letter B\n\n### Visual Description\n- **Hand Shape**: All four fingers extended straight up and held together\n- **Thumb Position**: Thumb folded across the palm\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: Like a flat board with your thumb tucked in\n\n## Letter C\n\n### Visual Description\n- **Hand Shape**: Curved fingers forming a C-shape\n- **Thumb Position**: Thumb curves to face fingers\n- **Palm Orientation**: Palm faces left (for right hand)\n- **Visual Cue**: Create a curved opening like the letter C itself\n\n## Letter D\n\n### Visual Description\n- **Hand Shape**: Index finger points up, other fingers touch thumb\n- **Thumb Position**: Touches middle, ring, and pinky fingertips\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: Make a circle with thumb and three fingers, index points up\n\n## Letter E\n\n### Visual Description\n- **Hand Shape**: All fingertips bent down to touch palm\n- **Thumb Position**: Bent and rests against bent fingers\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: All fingers curve inward like claws\n\n## Visual Practice Sequence\n\n1. **Slow Motion Review**: Watch each letter demonstration in slow motion\n2. **Mirror Practice**: Use a mirror to check your hand positions\n3. **Photo Comparison**: Take photos of your signs and compare\n4. **Smooth Transitions**: Practice moving between letters\n\n## Important Visual Reminders\n\n✓ **Position**: Keep your hand at chest level, centered in front of you\n\n✓ **Visibility**: Ensure all finger positions are clearly visible\n\n✓ **Consistency**: Maintain the same hand orientation throughout\n\n✓ **Clarity**: Make distinct, clear shapes - avoid rushing",
+    "quiz": [
+      {
+        "id": "q1",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "What letter is being signed in this video?",
+        "options": ["A", "B", "C", "E"],
+        "correctAnswer": "A",
+        "explanation": "The closed fist with thumb on the side represents the letter A in GSL."
+      },
+      {
+        "id": "q2",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Which letter is shown in this demonstration?",
+        "options": ["A", "B", "D", "E"],
+        "correctAnswer": "B",
+        "explanation": "Four fingers extended straight up with thumb folded across the palm represents letter B."
+      },
+      {
+        "id": "q3",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Identify the letter being signed:",
+        "options": ["B", "C", "D", "E"],
+        "correctAnswer": "C",
+        "explanation": "The curved hand forming a C-shape represents the letter C."
+      },
+      {
+        "id": "q4",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "What letter is demonstrated here?",
+        "options": ["A", "C", "D", "E"],
+        "correctAnswer": "D",
+        "explanation": "Index finger pointing up with other fingers touching thumb represents letter D."
+      },
+      {
+        "id": "q5",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Which letter is being shown?",
+        "options": ["A", "B", "C", "E"],
+        "correctAnswer": "E",
+        "explanation": "All fingertips bent down touching the palm represents letter E."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "instruction": "Watch the video demonstration and practice each letter A-E slowly in front of a mirror. Repeat 5 times for each letter.",
+        "type": "practice",
+        "content": {
+          "focusLetters": ["A", "B", "C", "D", "E"],
+          "visualCues": "Use a mirror to verify your hand positions match the video"
+        }
+      },
+      {
+        "id": "ex2",
+        "instruction": "Practice spelling these words using A-E. Take your time to form each letter clearly: CAB, BED, ACE, BEAD",
+        "type": "practice",
+        "content": {
+          "words": ["CAB", "BED", "ACE", "BEAD"],
+          "visualTip": "Pause between each letter to ensure clarity"
+        }
+      }
+    ]
+  },
+  "hearing": {
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "notes": "# GSL Alphabet: Letters A-E (Audio + Visual Mode)\n\n## Welcome to Audio-Enhanced Learning\n\nThis lesson includes **voice narration** to guide you through each letter. You can listen along while watching the demonstrations and reading the instructions.\n\n## Letter A\n\n### Audio Description\n*Listen to the pronunciation guide as you watch*\n\n- **Hand Shape**: Make a closed fist\n- **Thumb Position**: Your thumb should rest along the side of your fist\n- **Palm Orientation**: Keep your palm facing away from your body\n- **Verbal Cue**: Say \"A\" out loud as you form the sign to build association\n\n### Voice-Guided Practice\n- Listen to the pacing in the audio guide\n- Follow along with spoken instructions\n- Use verbal repetition to reinforce learning\n\n## Letter B\n\n### Audio Description\n*The narration will guide you through the formation*\n\n- **Hand Shape**: Extend all four fingers straight up, held together\n- **Thumb Position**: Fold your thumb across your palm\n- **Palm Orientation**: Face your palm forward\n- **Verbal Cue**: Think \"Board\" - flat like a board\n\n## Letter C\n\n### Audio Description\n- **Hand Shape**: Curve your fingers to form a C-shape\n- **Thumb Position**: Curve your thumb to face your fingers\n- **Palm Orientation**: Palm faces left (for right hand)\n- **Verbal Cue**: Say \"Curve\" as you form the C\n\n## Letter D\n\n### Audio Description\n- **Hand Shape**: Point your index finger up, touch other fingers to thumb\n- **Thumb Position**: Touches middle, ring, and pinky fingertips\n- **Palm Orientation**: Palm faces forward\n- **Verbal Cue**: \"D for Dot\" - make a circle with your thumb and fingers\n\n## Letter E\n\n### Audio Description\n- **Hand Shape**: Bend all fingertips down to touch your palm\n- **Thumb Position**: Bend your thumb and rest it against your bent fingers\n- **Palm Orientation**: Palm faces forward\n- **Verbal Cue**: \"E like Eagle claws\" - fingers curve inward\n\n## Audio-Enhanced Practice Sequence\n\n1. **Listen & Watch**: Play video with audio narration\n2. **Repeat Aloud**: Say each letter as you sign it\n3. **Rhythm Practice**: Follow the spoken pace in the audio guide\n4. **Voice Check**: Record yourself and review\n\n## Spoken Practice Tips\n\n🔊 **Speak as you sign**: Saying the letter out loud helps build muscle memory\n\n🔊 **Follow audio cues**: The narration provides pacing guidance\n\n🔊 **Listen carefully**: Audio descriptions provide additional context\n\n🔊 **Verbal association**: Create spoken mnemonics for each letter",
+    "quiz": [
+      {
+        "id": "q1",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Listen to the audio cue and identify: What letter is being signed?",
+        "options": ["A", "B", "C", "E"],
+        "correctAnswer": "A",
+        "explanation": "Audio guide: This is the letter A - a closed fist with thumb on the side."
+      },
+      {
+        "id": "q2",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Which letter is shown? (Listen to the narration)",
+        "options": ["A", "B", "D", "E"],
+        "correctAnswer": "B",
+        "explanation": "Audio guide: Letter B - four fingers up like a flat board, thumb tucked in."
+      },
+      {
+        "id": "q3",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Identify the letter (with audio guidance):",
+        "options": ["B", "C", "D", "E"],
+        "correctAnswer": "C",
+        "explanation": "Audio guide: This is C - curve your hand like the letter itself."
+      },
+      {
+        "id": "q4",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "What letter is demonstrated? (Follow the audio)",
+        "options": ["A", "C", "D", "E"],
+        "correctAnswer": "D",
+        "explanation": "Audio guide: Letter D - make a circle with your fingers, point your index up."
+      },
+      {
+        "id": "q5",
+        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "question": "Which letter is being shown? (Listen carefully)",
+        "options": ["A", "B", "C", "E"],
+        "correctAnswer": "E",
+        "explanation": "Audio guide: Letter E - bend all fingers down like eagle claws."
+      }
+    ],
+    "exercises": [
+      {
+        "id": "ex1",
+        "instruction": "Listen to the audio guide and follow along. Practice each letter A-E while saying the letter out loud. Repeat 5 times per letter.",
+        "type": "practice",
+        "content": {
+          "focusLetters": ["A", "B", "C", "D", "E"],
+          "audioCue": "Follow the spoken rhythm and pace in the audio guide"
+        }
+      },
+      {
+        "id": "ex2",
+        "instruction": "Spell these words while saying each letter aloud: CAB, BED, ACE, BEAD. Use the audio guide for pacing.",
+        "type": "practice",
+        "content": {
+          "words": ["CAB", "BED", "ACE", "BEAD"],
+          "audioTip": "Listen to the rhythm guide and match your signing pace to it"
+        }
+      }
+    ]
+  }
+}

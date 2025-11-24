@@ -7,6 +7,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ModeSwitcher } from "@/components/ModeSwitcher";
 import { 
   Award, 
   Clock, 
@@ -53,6 +54,11 @@ const Dashboard = () => {
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back!</h1>
         <p className="text-muted-foreground">Continue your GSL learning journey</p>
+      </div>
+
+      {/* Mode Switcher Section */}
+      <div className="mb-8">
+        <ModeSwitcher />
       </div>
 
       {/* Stats Grid */}
