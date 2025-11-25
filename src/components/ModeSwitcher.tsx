@@ -2,9 +2,21 @@ import { useLearningMode } from '@/contexts/LearningModeContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, Volume2 } from 'lucide-react';
+import type { LearningMode } from '@/contexts/LearningModeContext';
 
-export const ModeSwitcher = () => {
+interface ModeSwitcherProps {
+  onModeSelect?: (mode: LearningMode) => void;
+}
+
+export const ModeSwitcher = ({ onModeSelect }: ModeSwitcherProps) => {
   const { mode, setMode } = useLearningMode();
+
+  const handleModeSelect = (selectedMode: LearningMode) => {
+    setMode(selectedMode);
+    if (onModeSelect) {
+      onModeSelect(selectedMode);
+    }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -18,7 +30,7 @@ export const ModeSwitcher = () => {
         <Button
           variant={mode === 'deaf' ? 'default' : 'outline'}
           className="h-auto flex-col gap-3 py-6"
-          onClick={() => setMode('deaf')}
+          onClick={() => handleModeSelect('deaf')}
         >
           <Eye className="h-8 w-8" />
           <div className="text-center">
@@ -32,7 +44,7 @@ export const ModeSwitcher = () => {
         <Button
           variant={mode === 'hearing' ? 'default' : 'outline'}
           className="h-auto flex-col gap-3 py-6"
-          onClick={() => setMode('hearing')}
+          onClick={() => handleModeSelect('hearing')}
         >
           <Volume2 className="h-8 w-8" />
           <div className="text-center">
