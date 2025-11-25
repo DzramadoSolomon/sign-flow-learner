@@ -29,28 +29,28 @@ export const ModeSwitcher = ({ onModeSelect }: ModeSwitcherProps) => {
       <CardContent className="grid md:grid-cols-2 gap-4">
         <Button
           variant={mode === 'deaf' ? 'default' : 'outline'}
-          className="h-auto flex-col gap-3 py-6"
+          className="h-auto flex-col gap-3 py-6 px-4"
           onClick={() => handleModeSelect('deaf')}
         >
-          <Eye className="h-8 w-8" />
-          <div className="text-center">
-            <div className="font-bold text-lg mb-1">Visual Mode</div>
-            <div className="text-xs opacity-80">
-              Optimized for deaf/hard-of-hearing learners with visual-first content
+          <Eye className="h-8 w-8 shrink-0" />
+          <div className="text-center w-full">
+            <div className="font-bold text-base md:text-lg mb-1">Visual Mode</div>
+            <div className="text-xs opacity-80 leading-relaxed">
+              For deaf/hard-of-hearing learners with visual-first content
             </div>
           </div>
         </Button>
 
         <Button
           variant={mode === 'hearing' ? 'default' : 'outline'}
-          className="h-auto flex-col gap-3 py-6"
+          className="h-auto flex-col gap-3 py-6 px-4"
           onClick={() => handleModeSelect('hearing')}
         >
-          <Volume2 className="h-8 w-8" />
-          <div className="text-center">
-            <div className="font-bold text-lg mb-1">Audio + Visual Mode</div>
-            <div className="text-xs opacity-80">
-              Includes voice narration and audio guides alongside visual content
+          <Volume2 className="h-8 w-8 shrink-0" />
+          <div className="text-center w-full">
+            <div className="font-bold text-base md:text-lg mb-1">Audio + Visual Mode</div>
+            <div className="text-xs opacity-80 leading-relaxed">
+              Voice narration and audio guides with visual content
             </div>
           </div>
         </Button>
