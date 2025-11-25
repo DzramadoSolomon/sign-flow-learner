@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Video, Brain, Award, Users, Globe } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ModeSwitcher } from "@/components/ModeSwitcher";
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  const handleModeSelection = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -25,18 +32,10 @@ const Index = () => {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Interactive lessons, video demonstrations, and hands-on practice to help you communicate effectively in Ghanaian Sign Language.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link to="/dashboard">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all group">
-                  Start Learning
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link to="/lessons">
-                <Button size="lg" variant="outline" className="border-2">
-                  Browse Lessons
-                </Button>
-              </Link>
+            
+            {/* Mode Switcher */}
+            <div className="pt-8">
+              <ModeSwitcher onModeSelect={handleModeSelection} />
             </div>
           </div>
         </div>
