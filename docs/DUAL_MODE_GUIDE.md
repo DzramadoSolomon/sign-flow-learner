@@ -7,6 +7,8 @@ The GSL Learning Platform supports two distinct learning modes to accommodate di
 1. **Visual Mode (Deaf/Hard-of-Hearing)** - Optimized for learners who rely primarily on visual information
 2. **Audio + Visual Mode (Hearing)** - Includes voice narration and audio guides alongside visual content
 
+---
+
 ## Architecture
 
 ### Mode Context
@@ -40,7 +42,7 @@ Each lesson now supports dual-mode content with the following structure:
   },
   "hearing": {
     "videoUrl": "...",
-    "notes": "Audio-enhanced markdown content...",
+    "notes": "Audio-enhanced markdown content with images...",
     "quiz": [...],
     "exercises": [...]
   }
@@ -61,6 +63,65 @@ src/data/lessons/
     └── ...
 ```
 
+---
+
+## Key Features
+
+### Audio Playback (Hearing Mode Only)
+
+**Location**: `src/components/lesson/NotesSection.tsx`
+
+The lesson notes section includes a "Listen" button for Hearing Learner Mode users that reads the lesson notes aloud using text-to-speech technology.
+
+**Features**:
+- Play/Pause button in the top-right corner of the notes card
+- Browser-based Web Speech API (no backend required)
+- Automatic markdown cleaning for natural speech
+- Auto-stop on completion or text change
+
+**Usage**:
+```typescript
+// Automatically shown when mode === 'hearing'
+{mode === 'hearing' && (
+  <Button onClick={handlePlayPause}>
+    {isPlaying ? <Pause /> : <><Play /><Volume2 /></>}
+  </Button>
+)}
+```
+
+See `docs/AUDIO_FEATURE_GUIDE.md` for detailed documentation.
+
+### Image Support
+
+**Both modes** now support images in lesson notes using standard markdown syntax:
+
+```markdown
+![Alt text](/path/to/image.png)
+```
+
+**Example**:
+```markdown
+# Lesson Title
+
+![GSL Logo](/favicon.ico)
+
+## Introduction
+This lesson covers...
+```
+
+**Supported Locations**:
+- Public folder: `/image.png` (e.g., `/favicon.ico`)
+- External URLs: `https://example.com/image.png`
+
+**Automatic Styling**:
+- Rounded corners
+- Drop shadow
+- Border for clarity
+- Responsive sizing
+- Proper spacing
+
+---
+
 ## Creating Dual-Mode Lessons
 
 ### Step 1: Plan Both Versions
@@ -72,7 +133,8 @@ Before creating content, plan how each mode will differ:
 - Step-by-step visual breakdowns
 - Mirror practice suggestions
 - Photo comparison tips
-- Visual cues and markers
+- Visual cues and markers (✓, →, ★)
+- Images for visual learning
 - No audio dependency whatsoever
 
 **Audio + Visual Mode (Hearing) Should Include:**
@@ -81,7 +143,9 @@ Before creating content, plan how each mode will differ:
 - Audio pacing guides
 - Verbal association techniques
 - "Say it out loud" practice tips
+- **"Click Listen button" prompts**
 - Audio-synchronized content
+- Images for visual reference
 
 ### Step 2: Create the Metadata
 
@@ -113,9 +177,11 @@ Start with shared metadata that applies to both modes:
 - Use close-up shots of hand formations
 - No audio narration needed
 
-#### Writing Notes
+#### Writing Notes (with Images)
 ```markdown
 # Lesson Title (Visual Mode)
+
+![Lesson Diagram](/images/lesson-diagram.png)
 
 ## Visual Learning Focus
 [Explain that this content is optimized for visual learning]
@@ -127,6 +193,8 @@ Start with shared metadata that applies to both modes:
 - **Finger Position**: Specific placement
 - **Palm Orientation**: Direction it faces
 - **Visual Cue**: Memory aid using visual metaphor
+
+![Hand Position Reference](/images/hand-position.png)
 
 ### Practice Tips
 - Use a mirror
@@ -171,12 +239,16 @@ Start with shared metadata that applies to both modes:
 - Can use videos with background music
 - Voice-guided demonstrations work well
 
-#### Writing Notes
+#### Writing Notes (with Audio Prompts & Images)
 ```markdown
 # Lesson Title (Audio + Visual Mode)
 
+![GSL Logo](/favicon.ico)
+
 ## Welcome to Audio-Enhanced Learning
 [Explain that this content includes voice guidance]
+
+**Pro Tip**: Click the "Listen" button in the top right to have this lesson read aloud!
 
 ## Sign Name
 
@@ -187,6 +259,8 @@ Start with shared metadata that applies to both modes:
 - **Finger Position**: Description + what to say
 - **Palm Orientation**: Description + audio marker
 - **Verbal Cue**: "Say [word] to remember this sign"
+
+![Hand Formation Guide](/images/hand-guide.png)
 
 ### Voice-Guided Practice
 - Listen to pacing in audio
@@ -223,6 +297,52 @@ Start with shared metadata that applies to both modes:
 }
 ```
 
+---
+
+## Adding Images to Lesson Notes
+
+### Step-by-Step Guide
+
+1. **Prepare Your Image**:
+   - Optimize size (web-friendly, under 500KB)
+   - Use `.png`, `.jpg`, or `.webp` format
+   - Ensure high quality and clarity
+
+2. **Add Image to Project**:
+   - Place in `public/` folder (e.g., `public/images/lesson1-diagram.png`)
+   - Or use external URL (CDN/hosting)
+
+3. **Reference in Markdown**:
+   ```markdown
+   ![Description of image](/images/lesson1-diagram.png)
+   ```
+
+4. **Example with Logo**:
+   ```markdown
+   # GSL Alphabet: A-E
+
+   ![GSL Logo](/favicon.ico)
+
+   ## Welcome to this lesson...
+   ```
+
+### Image Best Practices
+
+✅ **DO**:
+- Use descriptive alt text for accessibility
+- Place images near relevant content
+- Optimize file sizes for faster loading
+- Use consistent image styles
+- Include captions when helpful
+
+❌ **DON'T**:
+- Use overly large images (slow loading)
+- Skip alt text (bad for accessibility)
+- Use low-quality or blurry images
+- Place images randomly without context
+
+---
+
 ## Content Guidelines
 
 ### Visual Mode Best Practices
@@ -235,6 +355,7 @@ Start with shared metadata that applies to both modes:
 - Use emojis and visual markers (✓, →, ★)
 - Emphasize clear, distinct hand shapes
 - Include visual troubleshooting tips
+- **Add images to enhance visual learning**
 
 ❌ **DON'T:**
 - Reference sound, audio, or "listen"
@@ -242,6 +363,7 @@ Start with shared metadata that applies to both modes:
 - Use audio-dependent videos
 - Include audio-only instructions
 - Reference rhythm through sound
+- Mention the "Listen" button
 
 ### Audio + Visual Mode Best Practices
 
@@ -253,12 +375,16 @@ Start with shared metadata that applies to both modes:
 - Include "say this" prompts
 - Suggest recording and playback
 - Use rhythm and vocal guidance
+- **Prompt users to click "Listen" button**
+- **Add images for visual reference**
 
 ❌ **DON'T:**
 - Make audio mandatory (keep visuals strong)
 - Forget that some may use this with muted audio
 - Lose the visual quality of instructions
 - Over-rely on audio alone
+
+---
 
 ## Technical Implementation
 
@@ -281,7 +407,7 @@ const LessonComponent = () => {
   return (
     <>
       <VideoSection videoUrl={content.videoUrl} />
-      <NotesSection notes={content.notes} />
+      <NotesSection notes={content.notes} /> {/* Auto-shows audio button for hearing mode */}
       <QuizSection questions={content.quiz} />
       <ExerciseSection exercises={content.exercises} />
     </>
@@ -300,6 +426,8 @@ import { ModeSwitcher } from '@/components/ModeSwitcher';
 <ModeSwitcher />
 ```
 
+---
+
 ## Quality Checklist
 
 ### For Visual Mode Content
@@ -310,6 +438,8 @@ import { ModeSwitcher } from '@/components/ModeSwitcher';
 - [ ] Visual cues and metaphors are included
 - [ ] Mirror practice is suggested where appropriate
 - [ ] No audio-dependent elements present
+- [ ] Images enhance visual learning (if used)
+- [ ] No "Listen" button references
 
 ### For Audio + Visual Mode Content
 
@@ -319,6 +449,8 @@ import { ModeSwitcher } from '@/components/ModeSwitcher';
 - [ ] "Speak aloud" practice is suggested
 - [ ] Visual content is still strong (not audio-only)
 - [ ] Rhythm and timing are addressed
+- [ ] "Listen" button is mentioned in content
+- [ ] Images provide visual support (if used)
 
 ### For Both Modes
 
@@ -328,25 +460,41 @@ import { ModeSwitcher } from '@/components/ModeSwitcher';
 - [ ] Quiz questions have 5 items each
 - [ ] Exercises are practical and achievable
 - [ ] Content respects learner preferences
+- [ ] Images (if used) have descriptive alt text
+- [ ] Images load quickly and display properly
+
+---
 
 ## Testing Your Dual-Mode Lessons
 
-1. **Visual Mode Test:**
-   - Turn off all audio on your device
-   - Go through the entire lesson
-   - Can you complete everything without audio?
-   - Are all instructions clear?
+### 1. Visual Mode Test
+- Turn off all audio on your device
+- Go through the entire lesson
+- Can you complete everything without audio?
+- Are all instructions clear?
+- Do images enhance understanding?
 
-2. **Audio + Visual Mode Test:**
-   - Enable audio and narration
-   - Follow along with spoken guides
-   - Does audio enhance the experience?
-   - Are verbal cues helpful?
+### 2. Audio + Visual Mode Test
+- Enable audio and narration
+- Follow along with spoken guides
+- Click the "Listen" button
+- Does audio enhance the experience?
+- Are verbal cues helpful?
+- Do images complement the audio?
 
-3. **Mode Switching Test:**
-   - Switch between modes mid-lesson
-   - Does content load correctly?
-   - Is the experience seamless?
+### 3. Mode Switching Test
+- Switch between modes mid-lesson
+- Does content load correctly?
+- Is the experience seamless?
+- Do features appear/disappear correctly?
+
+### 4. Image Testing
+- Verify all images load
+- Check responsiveness on mobile
+- Confirm alt text is descriptive
+- Test with slow internet connection
+
+---
 
 ## Migration from Single-Mode Lessons
 
@@ -357,7 +505,11 @@ To convert existing single-mode lessons to dual-mode:
 3. Copy and modify for `"hearing"` object
 4. Add audio-specific enhancements to hearing mode
 5. Ensure visual mode has no audio dependencies
-6. Test both modes thoroughly
+6. Add "Listen" button prompts to hearing mode
+7. Add images if they enhance learning
+8. Test both modes thoroughly
+
+---
 
 ## Common Mistakes to Avoid
 
@@ -367,22 +519,37 @@ To convert existing single-mode lessons to dual-mode:
 ❌ "The audio guide explains..." → ✅ "The video demonstrates..."
 ❌ Audio-dependent quiz questions → ✅ Visual-only questions
 ❌ Vague hand descriptions → ✅ Precise, detailed descriptions
+❌ Mentioning "Listen" button → ✅ No audio references
 
 ### Audio + Visual Mode Mistakes
 
 ❌ Audio-only instructions → ✅ Audio + visual instructions
 ❌ Ignoring visual learners → ✅ Strong visuals with audio enhancement
 ❌ No verbal practice → ✅ Include "say it out loud" exercises
+❌ Not mentioning "Listen" button → ✅ Prompt users to use audio feature
+
+### Image Mistakes
+
+❌ Missing alt text → ✅ Descriptive alt text for all images
+❌ Overly large files → ✅ Optimized web-friendly images
+❌ Random placement → ✅ Strategic placement near relevant content
+❌ Low quality images → ✅ Clear, high-quality visuals
+
+---
 
 ## Getting Help
 
+- **Audio Feature**: See `docs/AUDIO_FEATURE_GUIDE.md`
 - **Technical Issues**: Check implementation in `src/contexts/LearningModeContext.tsx`
 - **Content Questions**: Review examples in `lesson1-dual.json`
-- **Accessibility Concerns**: See `ACCESSIBILITY_GUIDE.md`
-- **Best Practices**: Refer to `CONTENT_GUIDE.md`
+- **Accessibility Concerns**: See `docs/ACCESSIBILITY_GUIDE.md`
+- **Best Practices**: Refer to `docs/CONTENT_GUIDE.md`
+
+---
 
 ## Resources
 
+- [Audio Feature Guide](./AUDIO_FEATURE_GUIDE.md) - Complete audio playback documentation
 - [Accessibility Guidelines](./ACCESSIBILITY_GUIDE.md)
 - [Video Production Guide](./VIDEO_QUIZ_GUIDE.md)
 - [Content Creation Guide](./CONTENT_GUIDE.md)
