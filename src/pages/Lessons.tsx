@@ -12,20 +12,27 @@ import { LessonMetadata } from "@/types/lesson";
 import lesson1Data from "@/data/lessons/beginner/lesson1.json";
 import lesson2Data from "@/data/lessons/beginner/lesson2.json";
 import lesson3Data from "@/data/lessons/beginner/lesson3.json";
+import lesson4Data from "@/data/lessons/beginner/lesson4.json";
+import lesson5Data from "@/data/lessons/beginner/lesson5.json";
 
 const Lessons = () => {
   const isMobile = useIsMobile();
+  
   const lessons = [
     lesson1Data.metadata as LessonMetadata,
     lesson2Data.metadata as LessonMetadata,
     lesson3Data.metadata as LessonMetadata,
+    lesson4Data.metadata as LessonMetadata,
+    lesson5Data.metadata as LessonMetadata,
   ];
   
-  // Mock progress data
+  // Mock progress data - Updated to include Lesson 4 and 5
   const progressData: { [key: string]: number } = {
     'beginner-1': 100,
     'beginner-2': 100,
     'beginner-3': 100,
+    'beginner-4': 100,
+    'beginner-5': 100,
   };
 
   const lessonsContent = (
