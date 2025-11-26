@@ -1,76 +1,89 @@
 {
   "metadata": {
     "id": "beginner-3",
-    "title": "Basic Greetings in GSL",
-    "description": "Learn essential greetings and polite phrases to start conversations in Ghanaian Sign Language.",
+    "title": "Counting in GSL: Numbers 1-30",
+    "description": "Learn to count from 1 to 30 in Ghanaian Sign Language and practice combining letters with numbers.",
     "level": "beginner",
     "duration": 20,
     "objectives": [
-      "Master common greeting signs",
-      "Learn polite phrases (please, thank you, sorry)",
-      "Understand greeting contexts and cultural nuances"
+      "Master single digits 1-9",
+      "Learn the unique movements for 'teen' numbers (11-19)",
+      "Understand compound numbers (20-30)",
+      "Practice mixing letters and numbers"
     ],
-    "tags": ["greetings", "conversation", "social"],
+    "tags": ["numbers", "counting", "math", "basics"],
     "order": 3
   },
-  "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  "notes": "# Basic Greetings in GSL\n\n## Introduction\nGreetings are the foundation of any conversation! In GSL, greetings often involve facial expressions and body language as much as hand signs.\n\n## Essential Greetings\n\n### Hello / Hi\n- **Sign**: Open hand, wave side to side near shoulder level\n- **Facial Expression**: Smile warmly\n- **Context**: Universal greeting, use anytime\n\n### Good Morning\n- **Sign**: Combination of 'GOOD' + 'MORNING'\n- **GOOD**: Thumb up, forward movement\n- **MORNING**: Flat hand rises from elbow (like sun rising)\n- **Time**: Use before 12 PM\n\n### Good Afternoon  \n- **Sign**: 'GOOD' + 'AFTERNOON'\n- **AFTERNOON**: Flat hand at angle (sun overhead)\n- **Time**: Use between 12 PM - 5 PM\n\n### Good Evening\n- **Sign**: 'GOOD' + 'EVENING'\n- **EVENING**: Flat hand descends at angle (sun setting)\n- **Time**: Use after 5 PM\n\n### How Are You?\n- **Sign**: Point to person, then make circular motion on chest with flat hand\n- **Facial Expression**: Raised eyebrows (questioning)\n- **Wait for response**: Always pause for reply\n\n## Polite Phrases\n\n### Please\n- **Sign**: Flat hand circles on chest clockwise\n- **Facial Expression**: Polite, gentle\n- **Use**: Before requests\n\n### Thank You\n- **Sign**: Flat hand starts at chin, moves forward and down\n- **Facial Expression**: Smile, genuine gratitude\n- **Variation**: Can touch lips first for emphasis\n\n### You're Welcome\n- **Sign**: Open hand, small forward wave\n- **Facial Expression**: Warm smile\n- **Alternative**: Can also sign 'NO PROBLEM'\n\n### Sorry / Excuse Me\n- **Sign**: Fist circles on chest (like rubbing heart)\n- **Facial Expression**: Apologetic, sincere\n- **Context**: Apologies or getting attention\n\n## Cultural Notes\n\n1. **Eye Contact**: Always maintain eye contact during greetings - it's essential in Deaf culture\n2. **Facial Expressions**: Your face conveys as much meaning as your hands!\n3. **Response Time**: Allow space for the other person to respond\n4. **Intensity**: Match your signing size to the distance from the person\n\n## Practice Scenarios\n\n**Scenario 1**: Meeting someone in the morning\n- Sign: GOOD MORNING → HOW ARE YOU?\n- Wait for response\n- Reply: GOOD or FINE, THANK YOU\n\n**Scenario 2**: Asking for help\n- Get attention: EXCUSE ME\n- Make request: PLEASE + [your request]\n- After help: THANK YOU\n\n**Scenario 3**: Leaving a conversation\n- Sign: THANK YOU\n- Then: GOODBYE (wave)\n\n## Common Mistakes\n- Forgetting facial expressions (makes signs seem cold)\n- Signing too small (hard to read)\n- Not waiting for responses\n- Poor eye contact",
+  "videoUrl": "https://www.youtube.com/embed/placeholder_lesson3",
+  "notes": "# Counting in GSL: 1-30\n\n## Numbers 1-10\n- **1-5**: Palm facing back (towards you). \n  - 1: Index up\n  - 2: Index + Middle\n  - 3: Thumb out (or index+middle+thumb)\n  - 4: Four fingers up\n  - 5: All fingers up\n- **6-9**: Palm facing forward.\n  - 6: Pinky touches thumb\n  - 7: Ring finger touches thumb\n  - 8: Middle finger touches thumb\n  - 9: Index finger touches thumb (looks like 'F' but different context)\n  - 10: Thumb extends, hand shakes slightly side-to-side (thumbs up shake)\n\n## The Teens (11-19)\nNumbers 11-19 often involve a flicking motion or a specific movement.\n- **11-12**: Flick the finger up from the thumb.\n- **13-15**: Wave the fingers toward you.\n- **16-19**: Shake the number (e.g., form '6' and twist/shake wrist).\n\n## The Twenties (20-29)\nFor numbers 20-29, you combine the sign for **2** (L-shape) with the second digit.\n- **20**: Index and thumb tap together (like a bird beak).\n- **21**: 'L' shape wiggles thumb.\n- **22**: '2' sign taps down twice.\n- **23-29**: Sign 'L' (2) then immediately sign the second number (3-9).\n  - *Example*: 25 = Sign 'L' then Sign '5'.\n\n## Number 30\n- **30**: Sign '3' followed by the sign for '0' (O-handshape).",
   "quiz": [
     {
       "id": "q1",
-      "question": "What is an essential non-manual marker (facial expression) when signing greetings in GSL?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_9",
+      "question": "Which number is being signed?",
       "options": [
-        "Neutral expression is best",
-        "Smile and maintain eye contact",
-        "Look down to show respect",
-        "Close your eyes"
+        "Number 6",
+        "Number 9",
+        "Number 19",
+        "Number 20"
       ],
-      "correctAnswer": "Smile and maintain eye contact",
-      "explanation": "In Deaf culture, maintaining eye contact and smiling during greetings shows engagement and respect. Facial expressions are a crucial part of sign language communication."
+      "correctAnswer": "Number 9",
+      "explanation": "The index finger is touching the thumb with palm facing forward. This represents the number 9."
     },
     {
       "id": "q2",
-      "question": "How do you sign 'THANK YOU' in GSL?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_26",
+      "question": "What number is shown in the video?",
       "options": [
-        "Wave hand side to side",
-        "Point at your chest",
-        "Flat hand from chin, moving forward and down",
-        "Fist circling on chest"
+        "26",
+        "29",
+        "16",
+        "62"
       ],
-      "correctAnswer": "Flat hand from chin, moving forward and down",
-      "explanation": "'THANK YOU' is signed by starting with a flat hand at your chin and moving it forward and downward, accompanied by a smile."
+      "correctAnswer": "26",
+      "explanation": "The signer first forms the 'L' shape (2) and immediately transitions to touching the pinky and thumb (6). This is 26."
     },
     {
       "id": "q3",
-      "question": "Which sign involves a fist circling on the chest?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_plate",
+      "question": "Identify the Number Plate: 'GR 45'",
       "options": [
-        "Hello",
-        "Thank You",
-        "Please",
-        "Sorry / Excuse Me"
+        "GR 54",
+        "GR 45",
+        "GT 45",
+        "JR 45"
       ],
-      "correctAnswer": "Sorry / Excuse Me",
-      "explanation": "'SORRY' or 'EXCUSE ME' is signed with a fist making circular motions on your chest, as if rubbing your heart, with an apologetic facial expression."
+      "correctAnswer": "GR 45",
+      "explanation": "The signer fingerspells G-R, then pauses slightly before signing 4 (four fingers up) and 5 (open hand)."
     }
   ],
   "exercises": [
     {
       "id": "ex1",
-      "instruction": "Practice this greeting sequence 5 times: HELLO → HOW ARE YOU? → (wait) → THANK YOU → GOODBYE",
+      "instruction": "Sign the number: **15**",
       "type": "practice",
       "content": {
-        "sequence": ["HELLO", "HOW ARE YOU", "THANK YOU", "GOODBYE"],
-        "repetitions": 5
-      }
+        "number": "15"
+      },
+      "hiddenGuide": "How to sign '15':\n1. Start with a closed fist, palm facing you.\n2. Flick your four fingers (excluding thumb) up and down repeatedly, or wave them toward your body.\n\n*Stuck? Refer back to the 'Teens' section in the video!*"
     },
     {
       "id": "ex2",
-      "instruction": "Stand in front of a mirror and practice all greetings with appropriate facial expressions. Pay special attention to your eye contact and smile.",
+      "instruction": "Sign the number: **28**",
       "type": "practice",
       "content": {
-        "signs": ["HELLO", "GOOD MORNING", "HOW ARE YOU", "PLEASE", "THANK YOU", "SORRY"],
-        "focus": "facial expressions"
-      }
+        "number": "28"
+      },
+      "hiddenGuide": "How to sign '28':\n1. **2**: Form an 'L' shape with your index finger and thumb.\n2. **8**: Immediately switch to touching your middle finger to your thumb (palm forward).\n\n*Stuck? Review the 'Twenties' section in the lesson.*"
+    },
+    {
+      "id": "ex3",
+      "instruction": "Sign the Number Plate: **GT 12**",
+      "type": "practice",
+      "content": {
+        "text": "GT 12"
+      },
+      "hiddenGuide": "How to sign 'GT 12':\n1. **G**: Index and thumb parallel, pointing side.\n2. **T**: Fist with thumb tucked between index and middle finger.\n3. *Short Pause*\n4. **1**: Index finger up.\n5. **2**: Index and middle fingers up.\n\n*Stuck on the letters? You may need to review Lesson 2!*"
     }
   ]
 }
