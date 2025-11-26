@@ -1,75 +1,88 @@
 {
   "metadata": {
     "id": "beginner-2",
-    "title": "GSL Alphabet: F-J",
-    "description": "Continue your GSL alphabet journey by learning letters F through J with confidence.",
+    "title": "GSL Alphabets: A-Z",
+    "description": "Master the complete Ghanaian Sign Language alphabet from A to Z and practice fingerspelling simple words.",
     "level": "beginner",
-    "duration": 15,
+    "duration": 20,
     "objectives": [
-      "Learn hand shapes for letters F through J",
-      "Connect new letters with previously learned alphabet",
-      "Practice spelling longer words"
+      "Memorize hand shapes for all letters A-Z",
+      "Practice fingerspelling short words",
+      "Improve finger dexterity and transition speed"
     ],
-    "tags": ["alphabet", "fingerspelling", "progression"],
+    "tags": ["alphabet", "fingerspelling", "vocabulary"],
     "order": 2
   },
-  "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  "notes": "# GSL Alphabet: Letters F-J\n\n## Building on Your Foundation\nGreat work learning A-E! Now let's expand your fingerspelling skills with five more letters.\n\n## Letter F\n- **Hand Shape**: Index and thumb form circle, other fingers extended\n- **Position**: Palm facing forward\n- **Tip**: Make a clear circle with thumb and index\n\n## Letter G\n- **Hand Shape**: Index finger and thumb extended horizontally, pointing to the side\n- **Position**: Palm facing to your side\n- **Tip**: Keep both digits parallel to the ground\n\n## Letter H\n- **Hand Shape**: Index and middle fingers extended horizontally together\n- **Position**: Palm facing to your side\n- **Tip**: Keep fingers close together\n\n## Letter I\n- **Hand Shape**: Pinky finger extended, all others closed\n- **Position**: Palm facing forward\n- **Tip**: Keep pinky straight up\n\n## Letter J\n- **Hand Shape**: Same as 'I' but with a 'J' motion\n- **Position**: Start with pinky up, draw a 'J' in the air\n- **Tip**: Make the motion smooth and clear\n\n## Review Section\nRemember your A-E letters! Practice transitioning between old and new letters:\n- A → F\n- B → G  \n- C → H\n- D → I\n- E → J\n\n## Practice Words\nNow you can spell: FACE, BADGE, CAGE, DEAF, BEAD, FADED, JADED\n\n## Important Notes\n- Letter 'J' is the only letter in A-J that involves movement\n- Pay attention to palm orientation - it changes!\n- Practice slowly, then gradually increase speed",
+  "videoUrl": "https://www.youtube.com/embed/placeholder_lesson2",
+  "notes": "# GSL Alphabets: A-Z\n\n## Overview\nYou have learned the basics; now let's complete the alphabet! Mastering A-Z allows you to fingerspell any word, name, or place that doesn't have a specific sign.\n\n## Key Handshapes\n\n### A - G\n- **A**: Fist, thumb on side.\n- **B**: Flat hand, fingers together, thumb tucked.\n- **C**: Hand forms a 'C'.\n- **D**: Index up, others touching thumb.\n- **E**: Claw shape, fingertips touching thumb.\n- **F**: Index and thumb form circle, others up.\n- **G**: Index and thumb parallel, pointing side.\n\n### H - N\n- **H**: Index and middle finger together, pointing side.\n- **I**: Pinky finger up.\n- **J**: 'I' shape tracing a 'J' in the air.\n- **K**: Peace sign with thumb in between.\n- **L**: Index and thumb form 'L'.\n- **M**: 3 fingers draped over thumb.\n- **N**: 2 fingers draped over thumb.\n\n### O - T\n- **O**: Fingertips touch thumb making a circle.\n- **P**: Like 'K' but pointing down.\n- **Q**: Like 'G' but pointing down.\n- **R**: Crossed fingers (Index and Middle).\n- **S**: Fist, thumb crossing over fingers.\n- **T**: Fist, thumb tucked between index and middle.\n\n### U - Z\n- **U**: Index and middle together, pointing up.\n- **V**: Peace sign (Index and middle apart).\n- **W**: 3 fingers up (Index, Middle, Ring).\n- **X**: Hooked index finger.\n- **Y**: Thumb and pinky out, others curled.\n- **Z**: Index finger traces a 'Z' in the air.\n\n## Practice Tip\nDon't bounce your hand when spelling double letters (like in 'FOOD'). Just slide or tap slightly.",
   "quiz": [
     {
       "id": "q1",
-      "question": "Which letter in GSL is formed with the index finger and thumb making a circle?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_b",
+      "question": "Which letter is being shown?",
       "options": [
-        "Letter E",
+        "Letter A",
+        "Letter B",
         "Letter F",
-        "Letter G",
-        "Letter I"
+        "Letter M"
       ],
-      "correctAnswer": "Letter F",
-      "explanation": "Letter F is formed by touching the index finger and thumb to create a circle, with the other three fingers extended."
+      "correctAnswer": "Letter B",
+      "explanation": "This is Letter B: Flat hand with fingers extended together and thumb tucked across the palm."
     },
     {
       "id": "q2",
-      "question": "What makes the letter 'J' unique among the letters A-J?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_to",
+      "question": "Identify the word being fingerspelled.",
       "options": [
-        "It uses both hands",
-        "It involves a motion",
-        "It's the only one with palm down",
-        "It uses the thumb only"
+        "DO",
+        "TO",
+        "SO",
+        "GO"
       ],
-      "correctAnswer": "It involves a motion",
-      "explanation": "Letter J is unique because it's the only letter in this set that requires movement - you draw a 'J' shape in the air with your pinky extended."
+      "correctAnswer": "TO",
+      "explanation": "The signer spelled T (thumb between index/middle) followed by O (circle shape)."
     },
     {
       "id": "q3",
-      "question": "In GSL, which letter has only the pinky finger extended?",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_she",
+      "question": "Identify the word being fingerspelled.",
       "options": [
-        "Letter F",
-        "Letter H",
-        "Letter I",
-        "Letter J (before motion)"
+        "THE",
+        "SHE",
+        "SEE",
+        "SEA"
       ],
-      "correctAnswer": "Letter I",
-      "explanation": "Letter I is formed by extending only your pinky finger while keeping all other fingers closed in a fist."
+      "correctAnswer": "SHE",
+      "explanation": "The signer spelled S (fist with thumb over) - H (two fingers sideways) - E (curved fingers)."
     }
   ],
   "exercises": [
     {
       "id": "ex1",
-      "instruction": "Spell these words combining letters A-J: FACE, BADGE, DEAF, FADE",
+      "instruction": "Fingerspell the 2-letter word: **AN**",
       "type": "practice",
       "content": {
-        "words": ["FACE", "BADGE", "DEAF", "FADE"]
-      }
+        "word": "AN"
+      },
+      "hiddenGuide": "How to sign 'AN':\n1. **A**: Make a fist with your thumb resting on the side.\n2. **N**: Drape two fingers (index and middle) over your thumb.\n\n*Stuck on the handshapes? Refer back to the lesson video timestamp for A-N!*"
     },
     {
       "id": "ex2",
-      "instruction": "Practice transitioning smoothly between letters F-J five times each, maintaining proper hand shapes.",
+      "instruction": "Fingerspell the 4-letter word: **FOOD**",
       "type": "practice",
       "content": {
-        "repetitions": 5,
-        "letters": ["F", "G", "H", "I", "J"]
-      }
+        "word": "FOOD"
+      },
+      "hiddenGuide": "How to sign 'FOOD':\n1. **F**: Touch index finger to thumb (circle), other fingers up.\n2. **O**: Make a circle with all fingertips touching thumb.\n3. **O**: Repeat the 'O'.\n4. **D**: Point index finger up, other fingers touching thumb.\n\n*Stuck on the handshapes? Refer back to the lesson video!*"
+    },
+    {
+      "id": "ex3",
+      "instruction": "Fingerspell the 5-letter word: **MONEY**",
+      "type": "practice",
+      "content": {
+        "word": "MONEY"
+      },
+      "hiddenGuide": "How to sign 'MONEY':\n1. **M**: Drape three fingers over your thumb.\n2. **O**: Make a circle shape.\n3. **N**: Drape two fingers over your thumb.\n4. **E**: Curl fingertips down to touch thumb (claw shape).\n5. **Y**: Extend thumb and pinky only.\n\n*Stuck on any sign? Please refer back to the lesson video to refresh your memory!*"
     }
   ]
 }
