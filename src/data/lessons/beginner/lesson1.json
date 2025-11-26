@@ -1,103 +1,67 @@
 {
   "metadata": {
     "id": "beginner-1",
-    "title": "GSL Alphabet: A-E",
-    "description": "Learn the first five letters of the Ghanaian Sign Language alphabet with proper hand shapes and movements.",
+    "title": "Getting Started with GSL",
+    "description": "An introduction to the importance of Ghanaian Sign Language, the difference between fingerspelling and signing, and the vital role of facial expressions.",
     "level": "beginner",
     "duration": 15,
     "objectives": [
-      "Master hand shapes for letters A through E",
-      "Understand proper finger positioning",
-      "Practice smooth transitions between letters"
+      "Understand the importance of GSL for inclusion",
+      "Distinguish between fingerspelling and concept signing",
+      "Recognize the grammatical role of facial expressions and body movement"
     ],
-    "tags": ["alphabet", "fingerspelling", "basics"],
+    "tags": ["introduction", "culture", "basics", "theory"],
     "order": 1
   },
   "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-  "notes": "# GSL Alphabet: Letters A-E\n\n## Introduction\nWelcome to your first lesson in Ghanaian Sign Language! The GSL alphabet is the foundation of sign language communication. Today, we'll focus on the first five letters.\n\n## Letter A\n- **Hand Shape**: Closed fist with thumb resting on the side\n- **Position**: Palm facing forward\n- **Tip**: Keep your thumb visible and relaxed\n\n## Letter B\n- **Hand Shape**: Flat hand with all fingers extended together\n- **Position**: Palm facing forward, thumb tucked across palm\n- **Tip**: Keep fingers straight and together\n\n## Letter C\n- **Hand Shape**: Curved hand forming a 'C' shape\n- **Position**: Palm facing to the side\n- **Tip**: Maintain consistent curve throughout\n\n## Letter D\n- **Hand Shape**: Index finger up, other fingers touching thumb\n- **Position**: Palm facing forward\n- **Tip**: Keep index finger straight and firm\n\n## Letter E\n- **Hand Shape**: All fingertips touching thumb, curved inward\n- **Position**: Palm facing forward\n- **Tip**: Create a clear 'claw' shape\n\n## Practice Tips\n1. Practice each letter slowly at first\n2. Use a mirror to check your hand shapes\n3. Focus on smooth transitions between letters\n4. Practice spelling simple words: CAB, BED, ACE\n\n## Common Mistakes\n- Letting your thumb stick out too much (Letter A)\n- Not keeping fingers together (Letter B)\n- Making the 'C' too flat or too closed\n- Bending the index finger in Letter D\n- Not curving fingers enough in Letter E",
+  "notes": "# Getting Started with GSL\n\n## Why is GSL Important?\nGhanaian Sign Language (GSL) is more than just hand movements; it is the primary language of the Deaf community in Ghana. \n- **Inclusion**: Learning GSL bridges the communication gap between hearing and Deaf individuals.\n- **Access**: It allows Deaf people to access essential services like healthcare, education, and legal justice.\n- **Culture**: It fosters a deeper respect for the Deaf culture and community in Ghana.\n\n## Fingerspelling vs. Signing\nIn GSL, we use two main methods to convey words:\n\n1. **Fingerspelling**: This involves spelling out a word letter-by-letter using the manual alphabet. It is mostly used for:\n   - Names of people or places (proper nouns).\n   - Words that do not have a specific sign.\n\n2. **Signing Words**: This involves using a single hand motion to represent a whole concept or word.\n   - **Speed**: Signing words is significantly **faster** and more efficient than fingerspelling every letter.\n   - **Flow**: It allows for natural conversation flow.\n\n## Facial Expressions & Body Motion\nMany beginners make the mistake of having a \"blank face\" while signing. However, your face and body are your grammar!\n\n- **Facial Cues**: Eyebrow movements, mouth shapes, and head tilts act as the \"tone of voice.\" They can change a statement into a question or indicate the intensity of an emotion (e.g., \"happy\" vs. \"very happy\").\n- **Body Motion**: Shifting your torso or shoulders can indicate different speakers in a story or separate different concepts.\n\n**Remember**: In GSL, a sign without a facial expression is like speaking in a robotic monotone voice.",
   "quiz": [
     {
       "id": "q1",
       "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-      "question": "What sign is being shown in this video?",
+      "question": "Why is learning Ghanaian Sign Language (GSL) primarily important?",
       "options": [
-        "Letter A",
-        "Letter B",
-        "Letter C",
-        "Letter D"
+        "It helps keep your hands active and fit",
+        "It fosters inclusion and bridges the gap with the Deaf community",
+        "It allows you to communicate secretly with friends",
+        "It is a requirement for all university students"
       ],
-      "correctAnswer": "Letter A",
-      "explanation": "The video shows the letter A in GSL - a closed fist with the thumb resting visibly on the side of your hand."
+      "correctAnswer": "It fosters inclusion and bridges the gap with the Deaf community",
+      "explanation": "GSL is crucial for creating an inclusive society where Deaf individuals have equal access to communication and services."
     },
     {
       "id": "q2",
       "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-      "question": "Which letter is being demonstrated?",
+      "question": "Are facial cues and body motions necessary when communicating in GSL?",
       "options": [
-        "Letter A",
-        "Letter B",
-        "Letter C",
-        "Letter E"
+        "Yes",
+        "No"
       ],
-      "correctAnswer": "Letter B",
-      "explanation": "This demonstrates letter B - a flat hand with all fingers extended together and the thumb tucked across the palm."
+      "correctAnswer": "Yes",
+      "explanation": "Facial expressions are essential in GSL. They provide grammar, tone, and context. Signing without them is like speaking without intonation."
     },
     {
       "id": "q3",
       "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-      "question": "Identify the sign shown in the video",
+      "question": "Which method of communication is generally faster in GSL?",
       "options": [
-        "Letter B",
-        "Letter C",
-        "Letter D",
-        "Letter E"
+        "Fingerspelling every word",
+        "Using Sign words (concepts)",
+        "Writing it down on paper",
+        "Lip reading"
       ],
-      "correctAnswer": "Letter C",
-      "explanation": "The video shows letter C - the hand curves to create a clear 'C' shape with the palm facing to the side."
-    },
-    {
-      "id": "q4",
-      "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-      "question": "What letter is being signed?",
-      "options": [
-        "Letter A",
-        "Letter C",
-        "Letter D",
-        "Letter E"
-      ],
-      "correctAnswer": "Letter D",
-      "explanation": "This is letter D - index finger pointing up while other fingers touch the thumb, palm facing forward."
-    },
-    {
-      "id": "q5",
-      "videoUrl": "https://www.youtube.com/embed/ZuETDOz12Mw",
-      "question": "Which sign is demonstrated in this video?",
-      "options": [
-        "Letter A",
-        "Letter B",
-        "Letter D",
-        "Letter E"
-      ],
-      "correctAnswer": "Letter E",
-      "explanation": "The video shows letter E - all fingertips touching the thumb, curved inward to create a claw shape."
+      "correctAnswer": "Using Sign words (concepts)",
+      "explanation": "Signing concepts is much faster than fingerspelling. Fingerspelling is reserved for names or words without signs, while sign words convey full ideas instantly."
     }
   ],
   "exercises": [
     {
       "id": "ex1",
-      "instruction": "Practice spelling these words using letters A-E: CAB, BED, ACE, BAD, DAD",
-      "type": "practice",
+      "instruction": "Research Task: Read more about the history of the Ghanaian National Association of the Deaf (GNAD) and the origins of GSL.",
+      "type": "reading",
       "content": {
-        "words": ["CAB", "BED", "ACE", "BAD", "DAD"]
-      }
-    },
-    {
-      "id": "ex2",
-      "instruction": "Watch yourself in a mirror and form each letter (A-E) 10 times, focusing on proper hand shape.",
-      "type": "practice",
-      "content": {
-        "repetitions": 10,
-        "letters": ["A", "B", "C", "D", "E"]
+        "topic": "History of GSL and GNAD",
+        "action": "Read external articles"
       }
     }
   ]
