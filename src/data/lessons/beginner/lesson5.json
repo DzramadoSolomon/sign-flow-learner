@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "id": "beginner-5",
+    "title": "Introducing Yourself",
+    "description": "Learn how to structure a self-introduction, ask for names, and exchange basic personal information in GSL.",
+    "level": "beginner",
+    "duration": 20,
+    "objectives": [
+      "Introduce yourself using 'My Name is...'",
+      "Ask 'What is your name?' correctly",
+      "Express 'Nice to meet you'",
+      "State where you live"
+    ],
+    "tags": ["introduction", "conversation", "identity", "social"],
+    "order": 5
+  },
+  "videoUrl": "https://www.youtube.com/embed/placeholder_lesson5",
+  "notes": "# Introducing Yourself\n\n## My Name Is...\nIn GSL, we don't usually sign the word \"IS\". The sentence structure is efficient.\n- **Sign**: **MY** (Palm on chest) + **NAME** (Index and middle fingers of both hands tap forming an X shape) + **[FINGERSPELL NAME]**.\n
+
+[Image of 'My Name' sign in sign language]
+\n\n## Nice to Meet You\n- **Nice**: Palms slide across each other (like washing hands, but flat).\n- **Meet**: Both hands form a fist with index fingers pointing up. Move hands together until knuckles/fingers touch.\n- **You**: Point to the person.\n\n\n## Where do you live?\n- **I Live In...**: \n  - **I**: Point to yourself.\n  - **Live**: Thumbs up (or 'A' handshape) moving up the chest/body.\n  - **In**: One hand places fingers inside the cupped palm of the other.\n\n\n## Questions: What is your name?\nIn GSL, the \"Who/What/Where\" question word often comes at the **end** of the sentence with a furrowed brow.\n- **Structure**: **YOUR** + **NAME** + **WHAT?**\n- **Expression**: Squeeze eyebrows together to show you are asking a question.\n\n## Learning GSL\n- **Phrase**: \"I am learning Sign Language.\"\n- **Learn**: Take one hand and pretend to pick something up from your open palm and put it against your forehead (absorbing knowledge).\n- **Sign Language**: Both hands roll over each other in a circular motion.",
+  "quiz": [
+    {
+      "id": "q1",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_order",
+      "question": "Rearrange the signs to form the correct sentence structure for 'My name is Kofi'.",
+      "options": [
+        "IS NAME MY KOFI",
+        "MY NAME KOFI",
+        "NAME MY IS KOFI",
+        "KOFI NAME MY"
+      ],
+      "correctAnswer": "MY NAME KOFI",
+      "explanation": "In GSL, we omit 'is'. The correct order is Possessive (MY) + Subject (NAME) + Value (KOFI)."
+    },
+    {
+      "id": "q2",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_meet",
+      "question": "Fill in the blank: To sign 'Nice to meet you', you combine 'NICE', 'YOU', and which sign?",
+      "options": [
+        "Sign for SEE (Fingers near eyes)",
+        "Sign for MEET (Index fingers coming together)",
+        "Sign for KNOW (Touching forehead)",
+        "Sign for FRIEND (Hooking fingers)"
+      ],
+      "correctAnswer": "Sign for MEET (Index fingers coming together)",
+      "explanation": "The phrase requires the sign for MEET, where two people (represented by index fingers) come together."
+    },
+    {
+      "id": "q3",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_live",
+      "question": "Which video correctly demonstrates 'I live in Accra'?",
+      "options": [
+        "Video A (Shows 'I Work Accra')",
+        "Video B (Shows 'I Live Accra')",
+        "Video C (Shows 'I Go Accra')"
+      ],
+      "correctAnswer": "Video B (Shows 'I Live Accra')",
+      "explanation": "Video B correctly shows the 'LIVE' sign (thumbs moving up the chest) followed by the specific location."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex1",
+      "instruction": "Interactive Task: Introduce yourself to the avatar. Follow this order: **Name** → **Location** → **'I am learning GSL'**.",
+      "type": "simulation",
+      "content": {
+        "sequence": ["My Name", "I Live In", "I Learn GSL"]
+      },
+      "hiddenGuide": "Structure Guide:\n1. **MY NAME [Spell it]**\n2. **I LIVE IN [Spell City or Sign it]**\n3. **I LEARN SIGN-LANGUAGE**\n\n*Remember to pause slightly between sentences.*"
+    },
+    {
+      "id": "ex2",
+      "instruction": "Drill: Repeat your introduction, but this time focus on **fingerspelling your name clearly**.",
+      "type": "practice",
+      "content": {
+        "focus": "fingerspelling_clarity"
+      },
+      "hiddenGuide": "Tip: Don't bounce your hand up and down for each letter. Keep your hand steady in one place (the 'spelling box' next to your shoulder)."
+    },
+    {
+      "id": "ex3",
+      "instruction": "Recording Challenge: Use the camera to sign: **'Nice to meet you. What is your name?'**",
+      "type": "recording",
+      "content": {
+        "phrase": "Nice to meet you. What is your name?"
+      },
+      "hiddenGuide": "Movement Guide:\n1. **Nice**: Palms slide.\n2. **Meet**: Index fingers touch.\n3. **You**: Point.\n4. **Your Name What?**: Furrow eyebrows, sign YOUR, sign NAME, extend palms for WHAT.\n\n*Make sure your facial expression changes to a question face at the end!*"
+    }
+  ]
+}
