@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "id": "beginner-4",
+    "title": "Basic Greetings & Expressions",
+    "description": "Learn essential everyday greetings used in GSL to start a polite conversation and practice common expressions.",
+    "level": "beginner",
+    "duration": 15,
+    "objectives": [
+      "Master standard greetings for different times of day",
+      "Learn polite expressions like Please and Thank You",
+      "Practice combining signs into fluid sentences"
+    ],
+    "tags": ["greetings", "social", "etiquette", "conversation"],
+    "order": 4
+  },
+  "videoUrl": "https://www.youtube.com/embed/placeholder_lesson4",
+  "notes": "# Basic Greetings & Expressions\n\n## Starting a Conversation\nPoliteness is key in Deaf culture. Here are the essentials:\n\n### 1. Hello / Hi\n- **Sign**: A simple wave with the palm facing outward, or a salute from the forehead.\n- **Context**: Used at the start of any interaction.\n\n### 2. How are you?\n- **Sign**: Place both hands with knuckles touching lightly on the chest, then rotate them outward/upward to a 'thumbs up' position.\n- **Expression**: Raise your eyebrows to show it is a question.\n\n## Time of Day Greetings\nMost greetings combine the sign for **GOOD** (Thumb up, or hand from chin to palm) with the time of day.\n\n- **Good Morning**: \n  - *Morning*: Touch your fingertips to the inside of your opposite elbow, raising the arm up (like the sun rising).\n\n- **Good Afternoon**: \n  - *Afternoon*: Keep your arm horizontal at eye level, hand flat or slightly cupped pointing down.\n\n- **Good Evening**: \n  - *Evening*: Curve your hand over your other wrist/arm (like the sun setting).\n\n## Polite Expressions\n\n### Please\n- **Sign**: Place a flat hand on your chest and move it in a circular motion (clockwise).\n- **Context**: Used when asking for help or requesting something.\n\n### Thank You\n- **Sign**: Touch your fingertips to your chin (palm flat), then move the hand forward toward the person you are thanking.\n- **Context**: Always use this to show appreciation.",
+  "quiz": [
+    {
+      "id": "q1",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_morning",
+      "question": "What greeting is being demonstrated?",
+      "options": [
+        "Good Morning",
+        "Good Afternoon",
+        "Good Evening",
+        "Hello"
+      ],
+      "correctAnswer": "Good Morning",
+      "explanation": "The signer signs 'GOOD' followed by the 'MORNING' sign (hand rising up like the sun from the elbow/arm)."
+    },
+    {
+      "id": "q2",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_thankyou",
+      "question": "Identify the sign shown in the video.",
+      "options": [
+        "Please",
+        "Thank You",
+        "Sorry",
+        "Excuse Me"
+      ],
+      "correctAnswer": "Thank You",
+      "explanation": "The hand moves from the chin outward toward the person. This is 'Thank You'. (If the hand rubbed the chest in a circle, it would be 'Please')."
+    },
+    {
+      "id": "q3",
+      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_context",
+      "question": "It is 7:00 PM. Which sign should you use?",
+      "options": [
+        "Sign for Good Morning",
+        "Sign for Good Afternoon",
+        "Sign for Good Evening",
+        "Sign for Good Night"
+      ],
+      "correctAnswer": "Sign for Good Evening",
+      "explanation": "At 7 PM, the sun has set, so we use the sign for Good Evening (hand curving over the wrist)."
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex1",
+      "instruction": "Practice Flow: Sign **Hello** → **Good Morning** → **Thank You** in one continuous flow.",
+      "type": "practice",
+      "content": {
+        "sequence": ["Hello", "Good Morning", "Thank You"]
+      },
+      "hiddenGuide": "Movement Guide:\n1. **Hello**: Wave your hand naturally.\n2. **Good Morning**: Sign 'Good' (Thumb up) + 'Morning' (Hand rising from elbow).\n3. **Thank You**: Touch chin and move hand forward.\n\n*Try to make the transition between signs smooth without dropping your hands too much!*"
+    },
+    {
+      "id": "ex2",
+      "instruction": "Interactive Task: You are meeting a Deaf friend. Sign this sequence: **Hi** → **Please** → **How are you?**",
+      "type": "simulation",
+      "content": {
+        "sequence": ["Hi", "Please", "How are you"]
+      },
+      "hiddenGuide": "Movement Guide:\n1. **Hi**: Small salute or wave.\n2. **Please**: Rub your chest in a circle with a flat hand.\n3. **How are you**: Knuckles on chest -> roll out to thumbs up.\n\n*Don't forget to raise your eyebrows for the question 'How are you?'*"
+    },
+    {
+      "id": "ex3",
+      "instruction": "Recording Challenge: Record yourself signing **'Good Afternoon, Thank You.'**",
+      "type": "recording",
+      "content": {
+        "phrase": "Good Afternoon, Thank You"
+      },
+      "hiddenGuide": "Movement Guide:\n1. **Good Afternoon**: Sign 'Good', then hold your arm/hand flat at eye level.\n2. **Thank You**: Touch chin with fingertips and move hand forward.\n\n*Ensure your facial expression is friendly!*"
+    }
+  ]
+}
