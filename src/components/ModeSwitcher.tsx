@@ -13,42 +13,51 @@ export const ModeSwitcher = ({ onModeSelect }: ModeSwitcherProps) => {
 
   const handleModeSelect = (selectedMode: LearningMode) => {
     setMode(selectedMode);
-    if (onModeSelect) {
-      onModeSelect(selectedMode);
-    }
+    onModeSelect?.(selectedMode);
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle>Choose Your Learning Mode</CardTitle>
         <CardDescription>
           Select the mode that best suits your learning needs. You can change this anytime.
         </CardDescription>
       </CardHeader>
+
       <CardContent className="grid md:grid-cols-2 gap-4">
+        {/* VISUAL MODE */}
         <Button
           variant={mode === 'deaf' ? 'default' : 'outline'}
-          className="h-auto flex-col gap-3 py-6 px-4"
+          className="h-auto flex-col gap-3 py-6 px-4 text-center"
           onClick={() => handleModeSelect('deaf')}
         >
           <Eye className="h-8 w-8 shrink-0" />
-          <div className="text-center w-full">
-            <div className="font-bold text-base md:text-lg mb-1">Visual Mode</div>
+
+          <div className="text-center w-full max-w-[260px] mx-auto break-words text-balance">
+            <div className="font-bold text-base md:text-lg mb-1">
+              Visual Mode
+            </div>
+
             <div className="text-xs opacity-80 leading-relaxed">
               For deaf/hard-of-hearing learners with visual-first content
             </div>
           </div>
         </Button>
 
+        {/* AUDIO + VISUAL MODE */}
         <Button
           variant={mode === 'hearing' ? 'default' : 'outline'}
-          className="h-auto flex-col gap-3 py-6 px-4"
+          className="h-auto flex-col gap-3 py-6 px-4 text-center"
           onClick={() => handleModeSelect('hearing')}
         >
           <Volume2 className="h-8 w-8 shrink-0" />
-          <div className="text-center w-full">
-            <div className="font-bold text-base md:text-lg mb-1">Audio + Visual Mode</div>
+
+          <div className="text-center w-full max-w-[260px] mx-auto break-words text-balance">
+            <div className="font-bold text-base md:text-lg mb-1">
+              Audio + Visual Mode
+            </div>
+
             <div className="text-xs opacity-80 leading-relaxed">
               Voice narration and audio guides with visual content
             </div>
