@@ -15,6 +15,8 @@ import { LessonContent } from "@/types/lesson";
 import lesson1 from "@/data/lessons/beginner/lesson1.json";
 import lesson2 from "@/data/lessons/beginner/lesson2.json";
 import lesson3 from "@/data/lessons/beginner/lesson3.json";
+import lesson4 from "@/data/lessons/beginner/lesson4.json"; // Imported Lesson 4
+import lesson5 from "@/data/lessons/beginner/lesson5.json"; // Imported Lesson 5
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,17 +24,22 @@ const Lesson = () => {
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState<'content' | 'quiz' | 'exercises'>('content');
   
-  // Map lessons with order
+  // Map lessons with order - Updated to include Lesson 4 and 5
   const lessonsList = [
     { id: 'beginner-1', data: lesson1 as LessonContent },
     { id: 'beginner-2', data: lesson2 as LessonContent },
     { id: 'beginner-3', data: lesson3 as LessonContent },
+    { id: 'beginner-4', data: lesson4 as LessonContent },
+    { id: 'beginner-5', data: lesson5 as LessonContent },
   ];
   
+  // Updated map to include Lesson 4 and 5
   const lessonsMap: { [key: string]: LessonContent } = {
     'beginner-1': lesson1 as LessonContent,
     'beginner-2': lesson2 as LessonContent,
     'beginner-3': lesson3 as LessonContent,
+    'beginner-4': lesson4 as LessonContent,
+    'beginner-5': lesson5 as LessonContent,
   };
 
   const lesson = id ? lessonsMap[id] : null;
