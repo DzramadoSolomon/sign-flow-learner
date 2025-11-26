@@ -1,147 +1,141 @@
 {
   "metadata": {
     "id": "beginner-1",
-    "title": "GSL Alphabet: A-E",
-    "description": "Learn the first five letters of the Ghanaian Sign Language alphabet",
+    "title": "Getting Started With GSL",
+    "description": "Learn the basics of Ghanaian Sign Language: why it's important, how to begin with fingerspelling and basic signs, and the role of facial expression and body movement.",
     "level": "beginner",
     "duration": 15,
     "objectives": [
-      "Master hand shapes for letters A through E",
-      "Understand proper hand positioning and orientation",
-      "Practice smooth transitions between letters",
-      "Build muscle memory through repetition"
+      "Understand the importance of Ghanaian Sign Language (GSL)",
+      "Learn the difference between fingerspelling and signing",
+      "Recognize the importance of facial expressions and body movement in GSL",
+      "Begin forming basic foundational signs for communication"
     ],
-    "tags": ["alphabet", "basics", "fingerspelling"],
+    "tags": ["gsl", "introduction", "basics", "communication"],
     "order": 1
   },
   "deaf": {
     "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    "notes": "# GSL Alphabet: Letters A-E (Visual Mode)\n\n## Visual Learning Focus\n\nThis lesson is designed with **visual-first learning** in mind. All instructions are provided through clear video demonstrations and detailed written descriptions with visual cues.\n\n## Letter A\n\n### Visual Description\n- **Hand Shape**: Closed fist\n- **Thumb Position**: Thumb rests along the side of the fist\n- **Palm Orientation**: Palm faces away from your body\n- **Visual Cue**: Think of making a strong fist, but keep your thumb visible on the side\n\n### Practice Tips\n- Watch the video multiple times at different speeds\n- Use a mirror to check your hand position\n- Take photos to compare with the demonstration\n\n## Letter B\n\n### Visual Description\n- **Hand Shape**: All four fingers extended straight up and held together\n- **Thumb Position**: Thumb folded across the palm\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: Like a flat board with your thumb tucked in\n\n## Letter C\n\n### Visual Description\n- **Hand Shape**: Curved fingers forming a C-shape\n- **Thumb Position**: Thumb curves to face fingers\n- **Palm Orientation**: Palm faces left (for right hand)\n- **Visual Cue**: Create a curved opening like the letter C itself\n\n## Letter D\n\n### Visual Description\n- **Hand Shape**: Index finger points up, other fingers touch thumb\n- **Thumb Position**: Touches middle, ring, and pinky fingertips\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: Make a circle with thumb and three fingers, index points up\n\n## Letter E\n\n### Visual Description\n- **Hand Shape**: All fingertips bent down to touch palm\n- **Thumb Position**: Bent and rests against bent fingers\n- **Palm Orientation**: Palm faces forward\n- **Visual Cue**: All fingers curve inward like claws\n\n## Visual Practice Sequence\n\n1. **Slow Motion Review**: Watch each letter demonstration in slow motion\n2. **Mirror Practice**: Use a mirror to check your hand positions\n3. **Photo Comparison**: Take photos of your signs and compare\n4. **Smooth Transitions**: Practice moving between letters\n\n## Important Visual Reminders\n\n✓ **Position**: Keep your hand at chest level, centered in front of you\n\n✓ **Visibility**: Ensure all finger positions are clearly visible\n\n✓ **Consistency**: Maintain the same hand orientation throughout\n\n✓ **Clarity**: Make distinct, clear shapes - avoid rushing",
+    "notes": "# Getting Started With GSL (Visual Mode)\n\n## Why Learn GSL?\nGhanaian Sign Language (GSL) is more than communication — it is **connection**, **identity**, and **access**. Learning GSL helps create inclusive interactions between Deaf and hearing individuals.\n\n### Key Reasons GSL Matters:\n- It allows clear communication with Deaf individuals.\n- It supports accessibility and inclusion.\n- It helps break social barriers.\n- It builds confidence when interacting with the Deaf community.\n\n---\n\n## Fingerspelling vs Signing\n\n### **Fingerspelling**\nUsed to spell names, places, or words without established signs.  
+- Hand produces **letters**.\n- Typically slower.\n- Used for emphasis or clarity.\n\n### **Sign Words**\nUses established gestures representing whole words or ideas.\n- Faster and more expressive.\n- More natural for everyday conversation.\n\n---\n\n## Facial Expressions in GSL\nGSL uses **non-manual signals** (NMS) such as:\n- Eyebrow movement\n- Head tilt\n- Lip movement\n- Eye direction\n\nThese add **emotion, grammar, and intent** to signs.\n\nExample:\n- Raised eyebrows = yes/no question\n- Furrowed eyebrows = WH-question (who, what, where...)\n\n---\n\n## Body Movement\nYour upper body gives **context and clarity**:\n- Lean forward to show interest\n- Lean back to show uncertainty\n- Turn slightly to indicate different subjects\n\n---\n\n## Starter Practical Signs\n\n### 1. **HELLO**  
+Simple wave near the temple.\n\n### 2. **MY NAME**  
+\"MY\" → palm on chest  
+\"NAME\" → U-shape fingers tapping twice\n\n### 3. **HOW ARE YOU?**  
+Slight forward movement, questioning facial expression.\n\n---\n\n## Visual Reminders\n✓ Keep hands at chest level  
+✓ Make clear, confident movements  
+✓ Maintain eye contact  
+✓ Use facial expressions\n\n---",
     "quiz": [
       {
         "id": "q1",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "What letter is being signed in this video?",
-        "options": ["A", "B", "C", "E"],
-        "correctAnswer": "A",
-        "explanation": "The closed fist with thumb on the side represents the letter A in GSL."
+        "question": "Why is GSL important?",
+        "options": ["It is only used for names", "It enables communication and inclusion for Deaf individuals", "It is a secret language", "It replaces all spoken languages"],
+        "correctAnswer": "B",
+        "explanation": "GSL is important because it allows clear communication and promotes inclusion for the Deaf community."
       },
       {
         "id": "q2",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Which letter is shown in this demonstration?",
-        "options": ["A", "B", "D", "E"],
-        "correctAnswer": "B",
-        "explanation": "Four fingers extended straight up with thumb folded across the palm represents letter B."
+        "question": "Are facial cues important in GSL?",
+        "options": ["No", "Yes"],
+        "correctAnswer": "Yes",
+        "explanation": "Facial expressions are essential because they add grammar and meaning to signs."
       },
       {
         "id": "q3",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Identify the letter being signed:",
-        "options": ["B", "C", "D", "E"],
-        "correctAnswer": "C",
-        "explanation": "The curved hand forming a C-shape represents the letter C."
-      },
-      {
-        "id": "q4",
-        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "What letter is demonstrated here?",
-        "options": ["A", "C", "D", "E"],
-        "correctAnswer": "D",
-        "explanation": "Index finger pointing up with other fingers touching thumb represents letter D."
-      },
-      {
-        "id": "q5",
-        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Which letter is being shown?",
-        "options": ["A", "B", "C", "E"],
-        "correctAnswer": "E",
-        "explanation": "All fingertips bent down touching the palm represents letter E."
+        "question": "Which is faster in normal communication?",
+        "options": ["Fingerspelling", "Sign words"],
+        "correctAnswer": "B",
+        "explanation": "Sign words are faster and more natural for everyday conversation."
       }
     ],
     "exercises": [
       {
         "id": "ex1",
-        "instruction": "Watch the video demonstration and practice each letter A-E slowly in front of a mirror. Repeat 5 times for each letter.",
+        "instruction": "Practice signing 'HELLO', 'MY NAME', and 'HOW ARE YOU?' in front of a mirror. Repeat each sign 5 times.",
         "type": "practice",
         "content": {
-          "focusLetters": ["A", "B", "C", "D", "E"],
-          "visualCues": "Use a mirror to verify your hand positions match the video"
+          "signs": ["HELLO", "MY NAME", "HOW ARE YOU"],
+          "visualCues": "Focus on your facial expressions and hand clarity."
         }
       },
       {
         "id": "ex2",
-        "instruction": "Practice spelling these words using A-E. Take your time to form each letter clearly: CAB, BED, ACE, BEAD",
+        "instruction": "Practice introducing yourself using signs only. Example: HELLO + MY NAME + (fingerspell your name).",
         "type": "practice",
         "content": {
-          "words": ["CAB", "BED", "ACE", "BEAD"],
-          "visualTip": "Pause between each letter to ensure clarity"
+          "task": "Record yourself and check for facial expression accuracy.",
+          "tip": "Ensure your fingerspelling is smooth and clear."
+        }
+      },
+      {
+        "id": "ex3",
+        "instruction": "Use gestures to ask a friend or mirror: 'HOW ARE YOU?' using appropriate facial cues.",
+        "type": "practice",
+        "content": {
+          "context": "Simulate a real conversation.",
+          "visualTip": "Raise your eyebrows to show a question."
         }
       }
     ]
   },
   "hearing": {
     "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    "notes": "# GSL Alphabet: Letters A-E (Audio + Visual Mode)\n\n![GSL Logo](/favicon.ico)\n\n## Welcome to Audio-Enhanced Learning\n\nThis lesson includes **voice narration** to guide you through each letter. You can listen along while watching the demonstrations and reading the instructions.\n\n**Pro Tip**: Click the \"Listen\" button in the top right of this card to have the entire lesson read aloud to you!\n\n## Letter A\n\n### Audio Description\n*Listen to the pronunciation guide as you watch*\n\n- **Hand Shape**: Make a closed fist\n- **Thumb Position**: Your thumb should rest along the side of your fist\n- **Palm Orientation**: Keep your palm facing away from your body\n- **Verbal Cue**: Say \"A\" out loud as you form the sign to build association\n\n### Voice-Guided Practice\n- Listen to the pacing in the audio guide\n- Follow along with spoken instructions\n- Use verbal repetition to reinforce learning\n\n## Letter B\n\n### Audio Description\n*The narration will guide you through the formation*\n\n- **Hand Shape**: Extend all four fingers straight up, held together\n- **Thumb Position**: Fold your thumb across your palm\n- **Palm Orientation**: Face your palm forward\n- **Verbal Cue**: Think \"Board\" - flat like a board\n\n## Letter C\n\n### Audio Description\n- **Hand Shape**: Curve your fingers to form a C-shape\n- **Thumb Position**: Curve your thumb to face your fingers\n- **Palm Orientation**: Palm faces left (for right hand)\n- **Verbal Cue**: Say \"Curve\" as you form the C\n\n## Letter D\n\n### Audio Description\n- **Hand Shape**: Point your index finger up, touch other fingers to thumb\n- **Thumb Position**: Touches middle, ring, and pinky fingertips\n- **Palm Orientation**: Palm faces forward\n- **Verbal Cue**: \"D for Dot\" - make a circle with your thumb and fingers\n\n## Letter E\n\n### Audio Description\n- **Hand Shape**: Bend all fingertips down to touch your palm\n- **Thumb Position**: Bend your thumb and rest it against your bent fingers\n- **Palm Orientation**: Palm faces forward\n- **Verbal Cue**: \"E like Eagle claws\" - fingers curve inward\n\n## Audio-Enhanced Practice Sequence\n\n1. **Listen & Watch**: Play video with audio narration\n2. **Repeat Aloud**: Say each letter as you sign it\n3. **Rhythm Practice**: Follow the spoken pace in the audio guide\n4. **Voice Check**: Record yourself and review\n\n## Spoken Practice Tips\n\n🔊 **Speak as you sign**: Saying the letter out loud helps build muscle memory\n\n🔊 **Follow audio cues**: The narration provides pacing guidance\n\n🔊 **Listen carefully**: Audio descriptions provide additional context\n\n🔊 **Verbal association**: Create spoken mnemonics for each letter",
+    "notes": "# Getting Started With GSL (Audio + Visual Mode)\n\n![GSL Logo](/favicon.ico)\n\n## Welcome!\nThis lesson includes **voice narration** to guide you through the basics of Ghanaian Sign Language.\n\nGSL is a powerful tool for connecting with Deaf individuals and building inclusive communication.\n\n---\n\n## Why GSL Is Important\nThe narration explains how GSL:\n- Enables communication\n- Breaks social barriers\n- Supports educational and social inclusion\n- Makes hearing individuals more confident when interacting with Deaf users\n\n---\n\n## Fingerspelling vs Signing\n\n### **Fingerspelling**\nNarration describes:\n- Used for names and specific words\n- Involves spelling letters\n- Slower but precise\n\n### **Sign Words**\nNarration describes:\n- Faster and expressive\n- Used in normal conversation\n- Better for fluency\n\n---\n\n## Facial Expressions & Body Language\nAudio explains how:\n- Eyebrows signal question types\n- Head movement adds emphasis\n- Eye direction adds meaning\n- Body lean shows emotional intent\n\n---\n\n## Starter Signs (With Audio Guidance)\nThe narration walks you through:\n1. **HELLO**\n2. **MY NAME**\n3. **HOW ARE YOU?**\n\nEach with clear audio pacing.\n\n---",
     "quiz": [
       {
         "id": "q1",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Listen to the audio cue and identify: What letter is being signed?",
-        "options": ["A", "B", "C", "E"],
-        "correctAnswer": "A",
-        "explanation": "Audio guide: This is the letter A - a closed fist with thumb on the side."
+        "question": "Why is GSL important?",
+        "options": ["It is used only in classrooms", "It enables communication and inclusion for Deaf individuals", "It has no practical use", "It is only for emergencies"],
+        "correctAnswer": "B",
+        "explanation": "GSL helps build communication and promotes inclusion for Deaf individuals."
       },
       {
         "id": "q2",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Which letter is shown? (Listen to the narration)",
-        "options": ["A", "B", "D", "E"],
-        "correctAnswer": "B",
-        "explanation": "Audio guide: Letter B - four fingers up like a flat board, thumb tucked in."
+        "question": "Are facial cues important in GSL?",
+        "options": ["No", "Yes"],
+        "correctAnswer": "Yes",
+        "explanation": "Facial expressions provide grammatical cues and emotional context."
       },
       {
         "id": "q3",
         "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Identify the letter (with audio guidance):",
-        "options": ["B", "C", "D", "E"],
-        "correctAnswer": "C",
-        "explanation": "Audio guide: This is C - curve your hand like the letter itself."
-      },
-      {
-        "id": "q4",
-        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "What letter is demonstrated? (Follow the audio)",
-        "options": ["A", "C", "D", "E"],
-        "correctAnswer": "D",
-        "explanation": "Audio guide: Letter D - make a circle with your fingers, point your index up."
-      },
-      {
-        "id": "q5",
-        "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "question": "Which letter is being shown? (Listen carefully)",
-        "options": ["A", "B", "C", "E"],
-        "correctAnswer": "E",
-        "explanation": "Audio guide: Letter E - bend all fingers down like eagle claws."
+        "question": "Which is faster in communication?",
+        "options": ["Fingerspelling", "Sign words"],
+        "correctAnswer": "Sign words",
+        "explanation": "Sign words are faster and more natural in everyday conversation."
       }
     ],
     "exercises": [
       {
         "id": "ex1",
-        "instruction": "Listen to the audio guide and follow along. Practice each letter A-E while saying the letter out loud. Repeat 5 times per letter.",
+        "instruction": "Listen to the audio and practice signing HELLO, MY NAME, and HOW ARE YOU while repeating the words aloud.",
         "type": "practice",
         "content": {
-          "focusLetters": ["A", "B", "C", "D", "E"],
-          "audioCue": "Follow the spoken rhythm and pace in the audio guide"
+          "signs": ["HELLO", "MY NAME", "HOW ARE YOU"],
+          "audioCue": "Follow the narrator’s pacing."
         }
       },
       {
         "id": "ex2",
-        "instruction": "Spell these words while saying each letter aloud: CAB, BED, ACE, BEAD. Use the audio guide for pacing.",
+        "instruction": "Introduce yourself using voice + signs: say your name aloud while fingerspelling it.",
         "type": "practice",
         "content": {
-          "words": ["CAB", "BED", "ACE", "BEAD"],
-          "audioTip": "Listen to the rhythm guide and match your signing pace to it"
+          "task": "Combine spoken repetition with signing.",
+          "audioTip": "Match your rhythm to the voice narration."
+        }
+      },
+      {
+        "id": "ex3",
+        "instruction": "Practice asking someone 'HOW ARE YOU?' with appropriate tone and facial expression.",
+        "type": "practice",
+        "content": {
+          "context": "Pretend you are speaking to someone for the first time.",
+          "audioTip": "Listen to the narration to understand tone."
         }
       }
     ]
