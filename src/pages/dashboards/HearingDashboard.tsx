@@ -29,9 +29,27 @@ export const HearingDashboard = () => {
   };
 
   const recentLessons = [
-    { id: 'beginner-3', title: 'Basic Greetings in GSL', level: 'beginner', progress: 100, completedAt: '2 hours ago', hasAudio: true },
-    { id: 'beginner-2', title: 'Numbers 1-20 in GSL', level: 'beginner', progress: 100, completedAt: '1 day ago', hasAudio: true },
-    { id: 'beginner-1', title: 'GSL Alphabet & Fingerspelling', level: 'beginner', progress: 100, completedAt: '2 days ago', hasAudio: true },
+    { 
+      id: 'beginner-3', 
+      title: 'Counting in GSL: Numbers 1-30', 
+      level: 'beginner', 
+      progress: 100, 
+      completedAt: '2 hours ago' 
+    },
+    { 
+      id: 'beginner-2', 
+      title: 'GSL Alphabets: A-Z', 
+      level: 'beginner', 
+      progress: 100, 
+      completedAt: '1 day ago' 
+    },
+    { 
+      id: 'beginner-1', 
+      title: 'Getting Started with GSL', 
+      level: 'beginner', 
+      progress: 100, 
+      completedAt: '2 days ago' 
+    },
   ];
 
   const achievements = [
