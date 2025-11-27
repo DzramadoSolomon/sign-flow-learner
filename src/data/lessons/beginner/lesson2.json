@@ -13,12 +13,12 @@
     "tags": ["alphabet", "fingerspelling", "vocabulary"],
     "order": 2
   },
-  "videoUrl": "https://youtu.be/6Mo8gIXkVxU",
+  "videoUrl": "https://www.youtube.com/embed/6Mo8gIXkVxU",
   "notes": "# GSL Alphabets: A-Z\n\n## Overview\nYou have learned the basics; now let's complete the alphabet! Mastering A-Z allows you to fingerspell any word, name, or place that doesn't have a specific sign.\n\n## Key Handshapes\n\n### A - G\n- **A**: Fist, thumb on side.\n- **B**: Flat hand, fingers together, thumb tucked.\n- **C**: Hand forms a 'C'.\n- **D**: Index up, others touching thumb.\n- **E**: Claw shape, fingertips touching thumb.\n- **F**: Index and thumb form circle, others up.\n- **G**: Index and thumb parallel, pointing side.\n\n### H - N\n- **H**: Index and middle finger together, pointing side.\n- **I**: Pinky finger up.\n- **J**: 'I' shape tracing a 'J' in the air.\n- **K**: Peace sign with thumb in between.\n- **L**: Index and thumb form 'L'.\n- **M**: 3 fingers draped over thumb.\n- **N**: 2 fingers draped over thumb.\n\n### O - T\n- **O**: Fingertips touch thumb making a circle.\n- **P**: Like 'K' but pointing down.\n- **Q**: Like 'G' but pointing down.\n- **R**: Crossed fingers (Index and Middle).\n- **S**: Fist, thumb crossing over fingers.\n- **T**: Fist, thumb tucked between index and middle.\n\n### U - Z\n- **U**: Index and middle together, pointing up.\n- **V**: Peace sign (Index and middle apart).\n- **W**: 3 fingers up (Index, Middle, Ring).\n- **X**: Hooked index finger.\n- **Y**: Thumb and pinky out, others curled.\n- **Z**: Index finger traces a 'Z' in the air.\n\n## Practice Tip\nDon't bounce your hand when spelling double letters (like in 'FOOD'). Just slide or tap slightly.",
   "quiz": [
     {
       "id": "q1",
-      "videoUrl": "https://youtu.be/CxHfInzoNvw",
+      "videoUrl": "https://www.youtube.com/embed/CxHfInzoNvw",
       "question": "Which letter is being shown?",
       "options": [
         "Letter A",
@@ -31,7 +31,7 @@
     },
     {
       "id": "q2",
-      "videoUrl": "https://youtu.be/Jr1wn7hms-4",
+      "videoUrl": "https://www.youtube.com/embed/Jr1wn7hms-4",
       "question": "Identify the word being fingerspelled.",
       "options": [
         "DO",
@@ -44,7 +44,7 @@
     },
     {
       "id": "q3",
-      "videoUrl": "https://youtu.be/atNT303TOwQ",
+      "videoUrl": "https://www.youtube.com/embed/atNT303TOwQ",
       "question": "Identify the word being fingerspelled.",
       "options": [
         "THE",
