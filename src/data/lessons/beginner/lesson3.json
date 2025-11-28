@@ -14,12 +14,12 @@
     "tags": ["numbers", "counting", "math", "basics"],
     "order": 3
   },
-  "videoUrl": "https://www.youtube.com/embed/placeholder_lesson3",
+  "videoUrl": "https://www.youtube.com/embed/WavySLoLho8",
   "notes": "# Counting in GSL: 1-30\n\n## Numbers 1-10\n- **1-5**: Palm facing back (towards you). \n  - 1: Index up\n  - 2: Index + Middle\n  - 3: Thumb out (or index+middle+thumb)\n  - 4: Four fingers up\n  - 5: All fingers up\n- **6-9**: Palm facing forward.\n  - 6: Pinky touches thumb\n  - 7: Ring finger touches thumb\n  - 8: Middle finger touches thumb\n  - 9: Index finger touches thumb (looks like 'F' but different context)\n  - 10: Thumb extends, hand shakes slightly side-to-side (thumbs up shake)\n\n## The Teens (11-19)\nNumbers 11-19 often involve a flicking motion or a specific movement.\n- **11-12**: Flick the finger up from the thumb.\n- **13-15**: Wave the fingers toward you.\n- **16-19**: Shake the number (e.g., form '6' and twist/shake wrist).\n\n## The Twenties (20-29)\nFor numbers 20-29, you combine the sign for **2** (L-shape) with the second digit.\n- **20**: Index and thumb tap together (like a bird beak).\n- **21**: 'L' shape wiggles thumb.\n- **22**: '2' sign taps down twice.\n- **23-29**: Sign 'L' (2) then immediately sign the second number (3-9).\n  - *Example*: 25 = Sign 'L' then Sign '5'.\n\n## Number 30\n- **30**: Sign '3' followed by the sign for '0' (O-handshape).",
   "quiz": [
     {
       "id": "q1",
-      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_9",
+      "videoUrl": "https://www.youtube.com/embed/00aAKgNphvI",
       "question": "Which number is being signed?",
       "options": [
         "Number 6",
@@ -32,7 +32,7 @@
     },
     {
       "id": "q2",
-      "videoUrl": "https://www.youtube.com/embed/placeholder_quiz_26",
+      "videoUrl": "https://www.youtube.com/embed/5-wqNgzdplc",
       "question": "What number is shown in the video?",
       "options": [
         "26",
