@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Award, 
   Clock, 
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 
 export const DeafDashboard = () => {
+  const { user } = useAuth();
   // Mock data - in real app, this would come from state management or backend
   const stats = {
     lessonsCompleted: 3,
@@ -71,7 +73,9 @@ export const DeafDashboard = () => {
 
       {/* Welcome Section - Visual First */}
       <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-3">Welcome back! 👋</h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-3">
+          Welcome back, {user?.name?.split(' ')[0] || 'Learner'}! 👋
+        </h1>
         <p className="text-lg text-muted-foreground">Continue your visual GSL learning journey</p>
       </div>
 
