@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Award, 
   Clock, 
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 
 export const HearingDashboard = () => {
+  const { user } = useAuth();
   // Mock data - in real app, this would come from state management or backend
   const stats = {
     lessonsCompleted: 3,
@@ -73,7 +75,9 @@ export const HearingDashboard = () => {
 
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back!</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">
+          Welcome back, {user?.name?.split(' ')[0] || 'Learner'}!
+        </h1>
         <p className="text-lg text-muted-foreground flex items-center gap-2">
           <Headphones className="h-5 w-5" />
           Continue your audio-enhanced GSL learning journey
@@ -165,9 +169,7 @@ export const HearingDashboard = () => {
                           <h3 className="font-medium group-hover:text-primary transition-colors">
                             {lesson.title}
                           </h3>
-                          {lesson.hasAudio && (
-                            <Volume2 className="h-4 w-4 text-primary" />
-                          )}
+                          <Volume2 className="h-4 w-4 text-primary" />
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge variant="outline" className="text-xs">
