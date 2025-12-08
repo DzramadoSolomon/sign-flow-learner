@@ -1,10 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Home, 
   LayoutDashboard, 
   GraduationCap,
   CheckCircle2,
-  Circle
+  Circle,
+  LogOut
 } from "lucide-react";
 import {
   Sidebar,
@@ -16,10 +17,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Mock lesson data with progress
 const lessonGroups = [
@@ -52,10 +56,17 @@ const mainNavigation = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -137,6 +148,31 @@ export function AppSidebar() {
           );
         })}
       </SidebarContent>
+
+      {/* User Footer with Logout */}
+      <SidebarFooter className="border-t p-4">
+        <div className={`flex ${isCollapsed ? 'justify-center' : 'items-center justify-between'}`}>
+          {!isCollapsed && (
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                <span className="text-sm font-medium text-primary">
+                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </div>
+              <span className="text-sm font-medium truncate">{user?.name || 'User'}</span>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            className="shrink-0 text-muted-foreground hover:text-destructive"
+            title="Logout"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
