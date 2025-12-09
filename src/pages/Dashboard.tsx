@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -6,13 +6,21 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLearningMode } from "@/contexts/LearningModeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { DeafDashboard } from "./dashboards/DeafDashboard";
 import { HearingDashboard } from "./dashboards/HearingDashboard";
-import { Flame, Menu } from "lucide-react";
+import { Flame, Menu, LogOut } from "lucide-react";
 
 const Dashboard = () => {
   const isMobile = useIsMobile();
   const { mode } = useLearningMode();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
   
   const stats = {
     currentStreak: 7,
@@ -40,10 +48,15 @@ const Dashboard = () => {
               <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6" />
               <span className="font-bold text-lg">GSL Learning</span>
             </Link>
-            <Badge variant="outline" className="gap-1 ml-auto">
-              <Flame className="h-3 w-3 text-orange-500" />
-              {stats.currentStreak}
-            </Badge>
+            <div className="flex items-center gap-2 ml-auto">
+              <Badge variant="outline" className="gap-1">
+                <Flame className="h-3 w-3 text-orange-500" />
+                {stats.currentStreak}
+              </Badge>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </header>
         <div className="container mx-auto px-4 py-8">
@@ -72,10 +85,16 @@ const Dashboard = () => {
                     <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6" />
                     <span className="font-bold text-lg hidden md:inline">GSL Learning</span>
                   </Link>
-                  <Badge variant="outline" className="gap-1">
-                    <Flame className="h-3 w-3 text-orange-500" />
-                    {stats.currentStreak} day streak
-                  </Badge>
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="gap-1">
+                      <Flame className="h-3 w-3 text-orange-500" />
+                      {stats.currentStreak} day streak
+                    </Badge>
+                    <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
