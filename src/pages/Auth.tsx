@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +10,11 @@ import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Globe } from "lucide-react";
 
 const Auth = () => {
-  const navigate = useNavigate();
   const { login, signup, isAuthenticated } = useAuth();
   
   // Redirect if already authenticated
   if (isAuthenticated) {
-    navigate('/');
-    return null;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
@@ -91,7 +89,7 @@ const LoginForm = () => {
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      navigate('/');
+      navigate('/dashboard');
     } else {
       toast({
         title: "Login Failed",
@@ -200,7 +198,7 @@ const SignupForm = () => {
         title: "Account Created!",
         description: "Welcome to GSL Learning. Let's start your journey!",
       });
-      navigate('/');
+      navigate('/dashboard');
     } else {
       toast({
         title: "Signup Failed",
