@@ -9,7 +9,7 @@ import { useLearningMode } from "@/contexts/LearningModeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { DeafDashboard } from "./dashboards/DeafDashboard";
 import { HearingDashboard } from "./dashboards/HearingDashboard";
-import { Flame, Menu, LogOut } from "lucide-react";
+import { Flame, Menu, LogOut, User } from "lucide-react";
 
 const Dashboard = () => {
   const isMobile = useIsMobile();
@@ -53,6 +53,11 @@ const Dashboard = () => {
                 <Flame className="h-3 w-3 text-orange-500" />
                 {stats.currentStreak}
               </Badge>
+              <Link to="/profile">
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
               <Button variant="ghost" size="icon" onClick={handleLogout}>
                 <LogOut className="h-5 w-5" />
               </Button>
@@ -90,6 +95,12 @@ const Dashboard = () => {
                       <Flame className="h-3 w-3 text-orange-500" />
                       {stats.currentStreak} day streak
                     </Badge>
+                    <Link to="/profile">
+                      <Button variant="ghost" size="sm" className="gap-2">
+                        <User className="h-4 w-4" />
+                        Profile
+                      </Button>
+                    </Link>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
                       <LogOut className="h-4 w-4" />
                       Logout
