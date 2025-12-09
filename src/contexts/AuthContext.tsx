@@ -13,6 +13,8 @@ interface AuthContextType {
   login: (email: string, password: string) => { success: boolean; error?: string };
   signup: (name: string, email: string, phone: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
+  updateProfile: (data: { name: string; email: string; phone: string }) => { success: boolean; error?: string };
+  updatePassword: (currentPassword: string, newPassword: string) => { success: boolean; error?: string };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -84,8 +86,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const updateProfile = (data: { name: string; email: string; phone: string }): { success: boolean; error?: string } => {
+    if (!user) {
+      return { success: false, error: 'No user logged in' };
+    }
+
+    const users = getStoredUsers();
+    const currentEmail = user.email.toLowerCase();
+    const newEmail = data.email.toLowerCase();
+
+    // Check if new email is already taken by another user
+    if (newEmail !== currentEmail && users[newEmail]) {
+      return { success: false, error: 'This email is already in use by another account' };
+    }
+
+    // Get current password
+    const currentRecord = users[currentEmail];
+    if (!currentRecord) {
+      return { success: false, error: 'User record not found' };
+    }
+
+    // Update user data
+    const updatedUser: User = {
+      ...user,
+      name: data.name,
+      email: newEmail,
+      phone: data.phone,
+    };
+
+    // If email changed, remove old entry
+    if (newEmail !== currentEmail) {
+      delete users[currentEmail];
+    }
+
+    // Save updated user
+    users[newEmail] = { user: updatedUser, password: currentRecord.password };
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    setUser(updatedUser);
+
+    return { success: true };
+  };
+
+  const updatePassword = (currentPassword: string, newPassword: string): { success: boolean; error?: string } => {
+    if (!user) {
+      return { success: false, error: 'No user logged in' };
+    }
+
+    const users = getStoredUsers();
+    const userRecord = users[user.email.toLowerCase()];
+
+    if (!userRecord) {
+      return { success: false, error: 'User record not found' };
+    }
+
+    if (userRecord.password !== currentPassword) {
+      return { success: false, error: 'Current password is incorrect' };
+    }
+
+    // Update password
+    userRecord.password = newPassword;
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+
+    return { success: true };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, signup, logout, updateProfile, updatePassword }}>
       {children}
     </AuthContext.Provider>
   );
