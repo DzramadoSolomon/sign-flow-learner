@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -48,6 +49,11 @@ export function MobileSidebar() {
 
   const isActive = (path: string) => currentPath === path;
 
+  // Calculate overall progress
+  const allLessons = lessonGroups.flatMap(g => g.lessons);
+  const completedLessons = allLessons.filter(l => l.completed).length;
+  const overallProgress = Math.round((completedLessons / allLessons.length) * 100);
+
   const handleLogout = () => {
     logout();
     navigate('/auth');
@@ -61,6 +67,14 @@ export function MobileSidebar() {
           <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6 shrink-0" />
           <span className="font-bold text-lg">GSL Learning</span>
         </Link>
+        <div className="mt-3 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-sidebar-foreground/70">Course Progress</span>
+            <span className="font-medium">{overallProgress}%</span>
+          </div>
+          <Progress value={overallProgress} className="h-2" />
+          <p className="text-xs text-sidebar-foreground/70">{completedLessons}/{allLessons.length} lessons completed</p>
+        </div>
       </div>
 
       {/* Content */}

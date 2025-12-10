@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -68,6 +69,11 @@ export function AppSidebar() {
     navigate('/auth');
   };
 
+  // Calculate overall progress
+  const allLessons = lessonGroups.flatMap(g => g.lessons);
+  const completedLessons = allLessons.filter(l => l.completed).length;
+  const overallProgress = Math.round((completedLessons / allLessons.length) * 100);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b px-4 py-4">
@@ -75,6 +81,16 @@ export function AppSidebar() {
           <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6 shrink-0" />
           {!isCollapsed && <span className="font-bold text-lg">GSL Learning</span>}
         </Link>
+        {!isCollapsed && (
+          <div className="mt-3 space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Course Progress</span>
+              <span className="font-medium">{overallProgress}%</span>
+            </div>
+            <Progress value={overallProgress} className="h-2" />
+            <p className="text-xs text-muted-foreground">{completedLessons}/{allLessons.length} lessons completed</p>
+          </div>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
