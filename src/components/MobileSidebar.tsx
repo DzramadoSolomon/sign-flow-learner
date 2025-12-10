@@ -1,14 +1,12 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   LayoutDashboard, 
   GraduationCap,
   CheckCircle2,
-  Circle,
-  LogOut
+  Circle
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,8 +41,7 @@ const mainNavigation = [
 
 export function MobileSidebar() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const currentPath = location.pathname;
 
   const isActive = (path: string) => currentPath === path;
@@ -53,11 +50,6 @@ export function MobileSidebar() {
   const allLessons = lessonGroups.flatMap(g => g.lessons);
   const completedLessons = allLessons.filter(l => l.completed).length;
   const overallProgress = Math.round((completedLessons / allLessons.length) * 100);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
-  };
 
   return (
     <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
@@ -155,24 +147,13 @@ export function MobileSidebar() {
 
       {/* Footer */}
       <div className="border-t border-sidebar-border p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-              <span className="text-sm font-medium text-primary">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-              </span>
-            </div>
-            <span className="text-sm font-medium truncate">{user?.name || 'User'}</span>
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+            <span className="text-sm font-medium text-primary">
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            className="shrink-0 text-sidebar-foreground/70 hover:text-destructive"
-            title="Logout"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <span className="text-sm font-medium truncate">{user?.name || 'User'}</span>
         </div>
       </div>
     </div>
