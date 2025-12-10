@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoSection } from "@/components/lesson/VideoSection";
@@ -15,8 +16,8 @@ import { LessonContent } from "@/types/lesson";
 import lesson1 from "@/data/lessons/beginner/lesson1.json";
 import lesson2 from "@/data/lessons/beginner/lesson2.json";
 import lesson3 from "@/data/lessons/beginner/lesson3.json";
-import lesson4 from "@/data/lessons/beginner/lesson4.json"; // Imported Lesson 4
-import lesson5 from "@/data/lessons/beginner/lesson5.json"; // Imported Lesson 5
+import lesson4 from "@/data/lessons/beginner/lesson4.json";
+import lesson5 from "@/data/lessons/beginner/lesson5.json";
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
@@ -184,10 +185,8 @@ const Lesson = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-72 bg-sidebar">
-                <SidebarProvider defaultOpen={true}>
-                  <AppSidebar />
-                </SidebarProvider>
+              <SheetContent side="left" className="p-0 w-72">
+                <MobileSidebar />
               </SheetContent>
             </Sheet>
             <Link to="/lessons" className="flex items-center gap-2 flex-1 min-w-0">
