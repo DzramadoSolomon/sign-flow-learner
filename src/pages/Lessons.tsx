@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LessonCard } from "@/components/LessonCard";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LessonMetadata } from "@/types/lesson";
@@ -100,29 +101,27 @@ const Lessons = () => {
 
   if (isMobile) {
     return (
-      <SidebarProvider defaultOpen={true}>
-        <div className="min-h-screen bg-background w-full">
-          <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-            <div className="flex items-center gap-4 px-4 py-3">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-72 bg-sidebar">
-                  <AppSidebar />
-                </SheetContent>
-              </Sheet>
-              <Link to="/" className="flex items-center gap-2">
-                <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6" />
-                <span className="font-bold text-lg">GSL Learning</span>
-              </Link>
-            </div>
-          </header>
-          {lessonsContent}
-        </div>
-      </SidebarProvider>
+      <div className="min-h-screen bg-background w-full">
+        <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="flex items-center gap-4 px-4 py-3">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-72">
+                <MobileSidebar />
+              </SheetContent>
+            </Sheet>
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6" />
+              <span className="font-bold text-lg">GSL Learning</span>
+            </Link>
+          </div>
+        </header>
+        {lessonsContent}
+      </div>
     );
   }
 
