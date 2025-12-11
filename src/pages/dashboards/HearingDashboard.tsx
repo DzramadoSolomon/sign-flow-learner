@@ -14,7 +14,8 @@ import {
   Flame,
   Volume2,
   Headphones,
-  Mic
+  Mic,
+  BookOpen
 } from "lucide-react";
 
 export const HearingDashboard = () => {
@@ -258,6 +259,27 @@ export const HearingDashboard = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </Card>
+
+          {/* Dictionary Quick Access */}
+          <Card className="p-6 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
+            <div className="text-center space-y-4">
+              <div className="p-3 rounded-full bg-blue-500/20 w-14 h-14 mx-auto flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-blue-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">GSL Dictionary</h3>
+                <p className="text-sm text-muted-foreground">
+                  Search vocabulary signs
+                </p>
+              </div>
+              <Link to="/dictionary" className="block">
+                <Button variant="outline" className="w-full">
+                  Browse Dictionary
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
             </div>
           </Card>
 

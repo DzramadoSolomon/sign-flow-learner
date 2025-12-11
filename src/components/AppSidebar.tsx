@@ -3,6 +3,7 @@ import {
   Home, 
   LayoutDashboard, 
   GraduationCap,
+  BookOpen,
   CheckCircle2,
   Circle
 } from "lucide-react";
@@ -50,6 +51,7 @@ const mainNavigation = [
   { title: 'Home', url: '/', icon: Home },
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'All Lessons', url: '/lessons', icon: GraduationCap },
+  { title: 'Dictionary', url: '/dictionary', icon: BookOpen },
 ];
 
 export function AppSidebar() {
