@@ -191,40 +191,47 @@ const Dictionary = () => {
         </p>
       </div>
 
-      {/* Word Grid */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+      {/* Word Grid - Single column on mobile, grid on larger screens */}
+      <div className="flex flex-col gap-2 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
         {filteredWords.map((word) => (
           <Card
             key={word.word}
-            className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group relative"
+            className="p-2.5 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
             onClick={() => handleWordClick(word)}
           >
-            {/* Favorite Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`absolute top-1 right-1 sm:top-2 sm:right-2 h-7 w-7 sm:h-8 sm:w-8 z-10 ${
-                isFavorite(word.word) 
-                  ? "text-red-500 hover:text-red-600" 
-                  : "text-muted-foreground hover:text-red-500"
-              }`}
-              onClick={(e) => toggleFavorite(word.word, e)}
-            >
-              <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isFavorite(word.word) ? "fill-current" : ""}`} />
-            </Button>
-            
-            <div className="flex items-start gap-2 mb-2 pr-8">
-              <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
-                <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+            <div className="flex items-center gap-3">
+              {/* Play Icon */}
+              <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
+                <Play className="h-4 w-4" />
               </div>
-              <h3 className="text-sm sm:text-base md:text-lg font-bold group-hover:text-primary transition-colors line-clamp-1 pt-0.5">
-                {word.word}
-              </h3>
+              
+              {/* Word Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm sm:text-base font-bold group-hover:text-primary transition-colors truncate">
+                    {word.word}
+                  </h3>
+                  <Badge variant="secondary" className="text-[10px] shrink-0 hidden sm:inline-flex">
+                    {word.category}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground truncate">{word.description}</p>
+              </div>
+              
+              {/* Favorite Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 shrink-0 ${
+                  isFavorite(word.word) 
+                    ? "text-red-500 hover:text-red-600" 
+                    : "text-muted-foreground hover:text-red-500"
+                }`}
+                onClick={(e) => toggleFavorite(word.word, e)}
+              >
+                <Heart className={`h-4 w-4 ${isFavorite(word.word) ? "fill-current" : ""}`} />
+              </Button>
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{word.description}</p>
-            <Badge variant="secondary" className="text-[10px] sm:text-xs">
-              {word.category}
-            </Badge>
           </Card>
         ))}
       </div>
@@ -253,29 +260,27 @@ const Dictionary = () => {
 
       {/* Video Dialog */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-2xl p-3 sm:p-4 md:p-6">
+        <DialogContent className="w-[92vw] max-w-lg sm:max-w-2xl p-3 sm:p-6 mx-auto">
           <DialogHeader>
-            <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 pr-8">
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl md:text-2xl">{selectedWord?.word}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`h-8 w-8 ${
-                    selectedWord && isFavorite(selectedWord.word) 
-                      ? "text-red-500 hover:text-red-600" 
-                      : "text-muted-foreground hover:text-red-500"
-                  }`}
-                  onClick={() => selectedWord && toggleFavorite(selectedWord.word)}
-                >
-                  <Heart className={`h-5 w-5 ${selectedWord && isFavorite(selectedWord.word) ? "fill-current" : ""}`} />
-                </Button>
-              </div>
-              <Badge variant="secondary" className="w-fit text-xs">{selectedWord?.category}</Badge>
+            <DialogTitle className="flex items-center gap-2 pr-6">
+              <span className="text-base sm:text-xl">{selectedWord?.word}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-7 w-7 ${
+                  selectedWord && isFavorite(selectedWord.word) 
+                    ? "text-red-500 hover:text-red-600" 
+                    : "text-muted-foreground hover:text-red-500"
+                }`}
+                onClick={() => selectedWord && toggleFavorite(selectedWord.word)}
+              >
+                <Heart className={`h-4 w-4 ${selectedWord && isFavorite(selectedWord.word) ? "fill-current" : ""}`} />
+              </Button>
+              <Badge variant="secondary" className="text-[10px] sm:text-xs">{selectedWord?.category}</Badge>
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-2 sm:mt-4">
-            <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-2 sm:mb-3 md:mb-4">{selectedWord?.description}</p>
+          <div className="mt-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{selectedWord?.description}</p>
             <div className="aspect-video rounded-lg overflow-hidden bg-muted">
               {selectedWord && (
                 <iframe
