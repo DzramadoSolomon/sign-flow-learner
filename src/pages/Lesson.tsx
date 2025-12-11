@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -12,12 +12,7 @@ import { VideoSection } from "@/components/lesson/VideoSection";
 import { NotesSection } from "@/components/lesson/NotesSection";
 import { QuizSection } from "@/components/lesson/QuizSection";
 import { ExerciseSection } from "@/components/lesson/ExerciseSection";
-import { LessonContent } from "@/types/lesson";
-import lesson1 from "@/data/lessons/beginner/lesson1.json";
-import lesson2 from "@/data/lessons/beginner/lesson2.json";
-import lesson3 from "@/data/lessons/beginner/lesson3.json";
-import lesson4 from "@/data/lessons/beginner/lesson4.json";
-import lesson5 from "@/data/lessons/beginner/lesson5.json";
+import { useLesson, useLessonMetadata } from "@/hooks/useLessons";
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,39 +20,25 @@ const Lesson = () => {
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState<'content' | 'quiz' | 'exercises'>('content');
   
-  // Map lessons with order - Updated to include Lesson 4 and 5
-  const lessonsList = [
-    { id: 'beginner-1', data: lesson1 as LessonContent },
-    { id: 'beginner-2', data: lesson2 as LessonContent },
-    { id: 'beginner-3', data: lesson3 as LessonContent },
-    { id: 'beginner-4', data: lesson4 as LessonContent },
-    { id: 'beginner-5', data: lesson5 as LessonContent },
-  ];
+  // Fetch lesson from database
+  const { data: lesson, isLoading, error } = useLesson(id || '');
+  const { data: allLessons = [] } = useLessonMetadata('beginner');
   
-  // Updated map to include Lesson 4 and 5
-  const lessonsMap: { [key: string]: LessonContent } = {
-    'beginner-1': lesson1 as LessonContent,
-    'beginner-2': lesson2 as LessonContent,
-    'beginner-3': lesson3 as LessonContent,
-    'beginner-4': lesson4 as LessonContent,
-    'beginner-5': lesson5 as LessonContent,
-  };
-
-  const lesson = id ? lessonsMap[id] : null;
-  const currentIndex = lessonsList.findIndex(l => l.id === id);
+  // Find current lesson index for navigation
+  const currentIndex = allLessons.findIndex(l => l.id === id);
   const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex < lessonsList.length - 1;
+  const hasNext = currentIndex < allLessons.length - 1;
   
   const goToPreviousLesson = () => {
     if (hasPrevious) {
-      navigate(`/lesson/${lessonsList[currentIndex - 1].id}`);
+      navigate(`/lesson/${allLessons[currentIndex - 1].id}`);
       setCurrentStep('content');
     }
   };
   
   const goToNextLesson = () => {
     if (hasNext) {
-      navigate(`/lesson/${lessonsList[currentIndex + 1].id}`);
+      navigate(`/lesson/${allLessons[currentIndex + 1].id}`);
       setCurrentStep('content');
     }
   };
@@ -78,7 +59,15 @@ const Lesson = () => {
     }
   };
 
-  if (!lesson) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !lesson) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
