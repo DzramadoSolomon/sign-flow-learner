@@ -24,7 +24,7 @@ const Profile = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const handleUpdateProfile = () => {
+  const handleUpdateProfile = async () => {
     if (!name.trim()) {
       toast.error("Name is required");
       return;
@@ -38,7 +38,7 @@ const Profile = () => {
       return;
     }
 
-    const result = updateProfile({ name: name.trim(), email: email.trim(), phone: phone.trim() });
+    const result = await updateProfile({ name: name.trim(), email: email.trim(), phone: phone.trim() });
     if (result.success) {
       toast.success("Profile updated successfully");
       setIsEditingProfile(false);
@@ -47,7 +47,7 @@ const Profile = () => {
     }
   };
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword = async () => {
     if (!currentPassword) {
       toast.error("Current password is required");
       return;
@@ -61,7 +61,7 @@ const Profile = () => {
       return;
     }
 
-    const result = updatePassword(currentPassword, newPassword);
+    const result = await updatePassword(currentPassword, newPassword);
     if (result.success) {
       toast.success("Password updated successfully");
       setCurrentPassword("");

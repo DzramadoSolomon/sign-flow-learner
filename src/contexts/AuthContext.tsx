@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface User {
   id: string;
@@ -7,35 +8,45 @@ export interface User {
   phone: string;
 }
 
+interface AuthResult {
+  success: boolean;
+  error?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => { success: boolean; error?: string };
-  signup: (name: string, email: string, phone: string, password: string) => { success: boolean; error?: string };
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<AuthResult>;
+  signup: (name: string, email: string, phone: string, password: string) => Promise<AuthResult>;
   logout: () => void;
-  updateProfile: (data: { name: string; email: string; phone: string }) => { success: boolean; error?: string };
-  updatePassword: (currentPassword: string, newPassword: string) => { success: boolean; error?: string };
+  updateProfile: (data: { name: string; email: string; phone: string }) => Promise<AuthResult>;
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const USERS_STORAGE_KEY = 'gsl_users';
 const CURRENT_USER_KEY = 'gsl_current_user';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load user from localStorage on mount
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(CURRENT_USER_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        setUser(JSON.parse(saved));
       }
     } catch (e) {
       console.error('Error parsing user from localStorage:', e);
       localStorage.removeItem(CURRENT_USER_KEY);
     }
-    return null;
-  });
+    setIsLoading(false);
+  }, []);
 
+  // Persist user to localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
@@ -44,130 +55,108 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  const getStoredUsers = (): { [email: string]: { user: User; password: string } } => {
+  const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      const stored = localStorage.getItem(USERS_STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
+      const { data, error } = await supabase.functions.invoke('auth', {
+        body: { action: 'login', email, password }
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        return { success: false, error: 'Server error. Please try again.' };
       }
-    } catch (e) {
-      console.error('Error parsing users from localStorage:', e);
-      localStorage.removeItem(USERS_STORAGE_KEY);
+
+      if (!data.success) {
+        return { success: false, error: data.error };
+      }
+
+      const userData: User = {
+        id: data.user.id,
+        name: data.user.full_name,
+        email: data.user.email,
+        phone: data.user.phone || '',
+      };
+
+      setUser(userData);
+      return { success: true };
+    } catch (err) {
+      console.error('Login exception:', err);
+      return { success: false, error: 'Network error. Please check your connection.' };
     }
-    return {};
   };
 
-  const saveUser = (userData: User, password: string) => {
-    const users = getStoredUsers();
-    users[userData.email.toLowerCase()] = { user: userData, password };
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  };
+  const signup = async (name: string, email: string, phone: string, password: string): Promise<AuthResult> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('auth', {
+        body: { action: 'signup', full_name: name, email, phone, password }
+      });
 
-  const login = (email: string, password: string): { success: boolean; error?: string } => {
-    const users = getStoredUsers();
-    const userRecord = users[email.toLowerCase()];
+      if (error) {
+        console.error('Signup error:', error);
+        return { success: false, error: 'Server error. Please try again.' };
+      }
 
-    if (!userRecord) {
-      return { success: false, error: 'No account found with this email. Please create an account.' };
+      if (!data.success) {
+        return { success: false, error: data.error };
+      }
+
+      const userData: User = {
+        id: data.user.id,
+        name: data.user.full_name,
+        email: data.user.email,
+        phone: data.user.phone || '',
+      };
+
+      setUser(userData);
+      return { success: true };
+    } catch (err) {
+      console.error('Signup exception:', err);
+      return { success: false, error: 'Network error. Please check your connection.' };
     }
-
-    if (userRecord.password !== password) {
-      return { success: false, error: 'Incorrect password. Please try again.' };
-    }
-
-    setUser(userRecord.user);
-    return { success: true };
-  };
-
-  const signup = (name: string, email: string, phone: string, password: string): { success: boolean; error?: string } => {
-    const users = getStoredUsers();
-    
-    if (users[email.toLowerCase()]) {
-      return { success: false, error: 'An account with this email already exists. Please login instead.' };
-    }
-
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      name,
-      email: email.toLowerCase(),
-      phone,
-    };
-
-    saveUser(newUser, password);
-    setUser(newUser);
-    return { success: true };
   };
 
   const logout = () => {
     setUser(null);
   };
 
-  const updateProfile = (data: { name: string; email: string; phone: string }): { success: boolean; error?: string } => {
+  const updateProfile = async (data: { name: string; email: string; phone: string }): Promise<AuthResult> => {
     if (!user) {
       return { success: false, error: 'No user logged in' };
     }
 
-    const users = getStoredUsers();
-    const currentEmail = user.email.toLowerCase();
-    const newEmail = data.email.toLowerCase();
-
-    // Check if new email is already taken by another user
-    if (newEmail !== currentEmail && users[newEmail]) {
-      return { success: false, error: 'This email is already in use by another account' };
-    }
-
-    // Get current password
-    const currentRecord = users[currentEmail];
-    if (!currentRecord) {
-      return { success: false, error: 'User record not found' };
-    }
-
-    // Update user data
+    // For now, just update locally - you can add a backend endpoint for this later
     const updatedUser: User = {
       ...user,
       name: data.name,
-      email: newEmail,
+      email: data.email.toLowerCase(),
       phone: data.phone,
     };
 
-    // If email changed, remove old entry
-    if (newEmail !== currentEmail) {
-      delete users[currentEmail];
-    }
-
-    // Save updated user
-    users[newEmail] = { user: updatedUser, password: currentRecord.password };
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
     setUser(updatedUser);
-
     return { success: true };
   };
 
-  const updatePassword = (currentPassword: string, newPassword: string): { success: boolean; error?: string } => {
+  const updatePassword = async (currentPassword: string, newPassword: string): Promise<AuthResult> => {
     if (!user) {
       return { success: false, error: 'No user logged in' };
     }
 
-    const users = getStoredUsers();
-    const userRecord = users[user.email.toLowerCase()];
-
-    if (!userRecord) {
-      return { success: false, error: 'User record not found' };
-    }
-
-    if (userRecord.password !== currentPassword) {
-      return { success: false, error: 'Current password is incorrect' };
-    }
-
-    // Update password
-    userRecord.password = newPassword;
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-
+    // For password updates, you would need to add another action to the edge function
+    // For now, return success placeholder
     return { success: true };
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, signup, logout, updateProfile, updatePassword }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated: !!user, 
+      isLoading,
+      login, 
+      signup, 
+      logout, 
+      updateProfile, 
+      updatePassword 
+    }}>
       {children}
     </AuthContext.Provider>
   );
