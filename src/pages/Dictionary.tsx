@@ -11,8 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
+import VocabularyQuiz from "@/components/dictionary/VocabularyQuiz";
 import { 
   Menu, 
   Search, 
@@ -23,7 +23,8 @@ import {
   Play,
   X,
   Heart,
-  Star
+  Star,
+  Gamepad2
 } from "lucide-react";
 import { 
   dictionaryWords, 
@@ -35,14 +36,23 @@ import {
 const FAVORITES_KEY = "gsl_dictionary_favorites";
 
 const Dictionary = () => {
-  const isMobile = useIsMobile();
   const { logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<DictionaryWord | null>(null);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "favorites" | "quiz">("all");
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  // Track window width for responsive layout
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -104,183 +114,181 @@ const Dictionary = () => {
   };
 
   const DictionaryContent = () => (
-    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+    <div className="p-3 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">GSL Dictionary</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Search and learn sign language vocabulary with video demonstrations
+      <div className="mb-4">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1">GSL Dictionary</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          Search and learn sign language vocabulary
         </p>
       </div>
 
-      {/* Tabs for All/Favorites */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites")} className="mb-4 sm:mb-6">
-        <TabsList className="grid w-full max-w-xs grid-cols-2">
-          <TabsTrigger value="all" className="gap-1.5 text-xs sm:text-sm">
-            <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            All Words
+      {/* Tabs for All/Favorites/Quiz */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites" | "quiz")} className="mb-4">
+        <TabsList className="grid w-full grid-cols-3 h-auto">
+          <TabsTrigger value="all" className="gap-1 text-xs px-2 py-2">
+            <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">All</span>
           </TabsTrigger>
-          <TabsTrigger value="favorites" className="gap-1.5 text-xs sm:text-sm">
-            <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            Favorites ({favorites.length})
+          <TabsTrigger value="favorites" className="gap-1 text-xs px-2 py-2">
+            <Star className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Favorites</span>
+            <span className="text-[10px]">({favorites.length})</span>
+          </TabsTrigger>
+          <TabsTrigger value="quiz" className="gap-1 text-xs px-2 py-2">
+            <Gamepad2 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Quiz</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
-      {/* Search Bar */}
-      <div className="relative mb-4 sm:mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search for a word..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setSelectedLetter(null);
-          }}
-          className="pl-10 h-10 sm:h-12 text-sm sm:text-base"
+      {/* Quiz Mode */}
+      {activeTab === "quiz" ? (
+        <VocabularyQuiz 
+          favorites={favorites} 
+          onBack={() => setActiveTab("all")} 
         />
-        {searchQuery && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8"
-            onClick={() => setSearchQuery("")}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-
-      {/* Alphabet Filter */}
-      <div className="mb-4 sm:mb-6">
-        <ScrollArea className="w-full">
-          <div className="flex gap-1 pb-2">
-            <Button
-              variant={selectedLetter === null && !searchQuery ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
+      ) : (
+        <>
+          {/* Search Bar */}
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
                 setSelectedLetter(null);
-                setSearchQuery("");
               }}
-              className="shrink-0 h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              All
-            </Button>
-            {alphabetLetters.map((letter) => (
-              <Button
-                key={letter}
-                variant={selectedLetter === letter ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleLetterClick(letter)}
-                className="shrink-0 h-7 sm:h-8 w-7 sm:w-9 text-xs sm:text-sm p-0"
-              >
-                {letter}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
-
-      {/* Results Count */}
-      <div className="mb-3 sm:mb-4">
-        <p className="text-xs sm:text-sm text-muted-foreground">
-          Showing {filteredWords.length} word{filteredWords.length !== 1 ? 's' : ''}
-          {activeTab === "favorites" && " in favorites"}
-          {selectedLetter && ` starting with "${selectedLetter}"`}
-          {searchQuery && ` matching "${searchQuery}"`}
-        </p>
-      </div>
-
-      {/* Word Grid - Single column on mobile, grid on larger screens */}
-      <div className="flex flex-col gap-2 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
-        {filteredWords.map((word) => (
-          <Card
-            key={word.word}
-            className="p-2.5 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
-            onClick={() => handleWordClick(word)}
-          >
-            <div className="flex items-center gap-3">
-              {/* Play Icon */}
-              <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
-                <Play className="h-4 w-4" />
-              </div>
-              
-              {/* Word Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm sm:text-base font-bold group-hover:text-primary transition-colors truncate">
-                    {word.word}
-                  </h3>
-                  <Badge variant="secondary" className="text-[10px] shrink-0 hidden sm:inline-flex">
-                    {word.category}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground truncate">{word.description}</p>
-              </div>
-              
-              {/* Favorite Button */}
+              className="pl-9 h-9 text-sm"
+            />
+            {searchQuery && (
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-8 w-8 shrink-0 ${
-                  isFavorite(word.word) 
-                    ? "text-red-500 hover:text-red-600" 
-                    : "text-muted-foreground hover:text-red-500"
-                }`}
-                onClick={(e) => toggleFavorite(word.word, e)}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                onClick={() => setSearchQuery("")}
               >
-                <Heart className={`h-4 w-4 ${isFavorite(word.word) ? "fill-current" : ""}`} />
+                <X className="h-4 w-4" />
               </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+            )}
+          </div>
 
-      {filteredWords.length === 0 && (
-        <div className="text-center py-8 sm:py-12">
-          {activeTab === "favorites" ? (
-            <>
-              <Star className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2">No favorites yet</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Tap the heart icon on any word to add it to your favorites
-              </p>
-            </>
-          ) : (
-            <>
-              <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2">No words found</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Try a different search term or browse by letter
-              </p>
-            </>
+          {/* Alphabet Filter */}
+          <div className="mb-3">
+            <ScrollArea className="w-full">
+              <div className="flex gap-1 pb-2">
+                <Button
+                  variant={selectedLetter === null && !searchQuery ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setSelectedLetter(null);
+                    setSearchQuery("");
+                  }}
+                  className="shrink-0 h-7 text-xs px-2"
+                >
+                  All
+                </Button>
+                {alphabetLetters.map((letter) => (
+                  <Button
+                    key={letter}
+                    variant={selectedLetter === letter ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleLetterClick(letter)}
+                    className="shrink-0 h-7 w-7 text-xs p-0"
+                  >
+                    {letter}
+                  </Button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Results Count */}
+          <p className="text-xs text-muted-foreground mb-3">
+            {filteredWords.length} word{filteredWords.length !== 1 ? 's' : ''}
+            {activeTab === "favorites" && " in favorites"}
+          </p>
+
+          {/* Word List - Simple vertical list for mobile */}
+          <div className="space-y-2">
+            {filteredWords.map((word) => (
+              <Card
+                key={word.word}
+                className="p-3 cursor-pointer hover:border-primary transition-all active:scale-[0.98]"
+                onClick={() => handleWordClick(word)}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-full bg-primary/10 text-primary shrink-0">
+                    <Play className="h-3 w-3" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold truncate">{word.word}</h3>
+                    <p className="text-xs text-muted-foreground truncate">{word.description}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-7 w-7 shrink-0 ${
+                      isFavorite(word.word) 
+                        ? "text-red-500" 
+                        : "text-muted-foreground"
+                    }`}
+                    onClick={(e) => toggleFavorite(word.word, e)}
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite(word.word) ? "fill-current" : ""}`} />
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {filteredWords.length === 0 && (
+            <div className="text-center py-8">
+              {activeTab === "favorites" ? (
+                <>
+                  <Star className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-sm font-semibold mb-1">No favorites yet</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Tap the heart icon to add favorites
+                  </p>
+                </>
+              ) : (
+                <>
+                  <BookOpen className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-sm font-semibold mb-1">No words found</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Try a different search
+                  </p>
+                </>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Video Dialog */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="w-[92vw] max-w-lg sm:max-w-2xl p-3 sm:p-6 mx-auto">
+        <DialogContent className="w-[95vw] max-w-md p-4">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 pr-6">
-              <span className="text-base sm:text-xl">{selectedWord?.word}</span>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              {selectedWord?.word}
               <Button
                 variant="ghost"
                 size="icon"
-                className={`h-7 w-7 ${
+                className={`h-6 w-6 ${
                   selectedWord && isFavorite(selectedWord.word) 
-                    ? "text-red-500 hover:text-red-600" 
-                    : "text-muted-foreground hover:text-red-500"
+                    ? "text-red-500" 
+                    : "text-muted-foreground"
                 }`}
                 onClick={() => selectedWord && toggleFavorite(selectedWord.word)}
               >
                 <Heart className={`h-4 w-4 ${selectedWord && isFavorite(selectedWord.word) ? "fill-current" : ""}`} />
               </Button>
-              <Badge variant="secondary" className="text-[10px] sm:text-xs">{selectedWord?.category}</Badge>
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-2">
-            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{selectedWord?.description}</p>
+          <div>
+            <p className="text-xs text-muted-foreground mb-2">{selectedWord?.description}</p>
             <div className="aspect-video rounded-lg overflow-hidden bg-muted">
               {selectedWord && (
                 <iframe
@@ -300,16 +308,16 @@ const Dictionary = () => {
     </div>
   );
 
+  // Mobile Layout
   if (isMobile) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        {/* Mobile Header */}
         <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b px-3 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
@@ -319,7 +327,7 @@ const Dictionary = () => {
               </Sheet>
               <Link to="/" className="flex items-center gap-1.5">
                 <img src="/favicon.ico" alt="GSL Logo" className="h-5 w-5" />
-                <span className="font-bold text-sm">GSL Dictionary</span>
+                <span className="font-bold text-sm">Dictionary</span>
               </Link>
             </div>
             <div className="flex items-center gap-1">
@@ -345,6 +353,7 @@ const Dictionary = () => {
     );
   }
 
+  // Desktop Layout
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
