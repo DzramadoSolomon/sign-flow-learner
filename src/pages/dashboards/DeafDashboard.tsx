@@ -13,7 +13,8 @@ import {
   Trophy,
   Flame,
   Eye,
-  PlayCircle
+  PlayCircle,
+  BookOpen
 } from "lucide-react";
 
 export const DeafDashboard = () => {
@@ -222,6 +223,27 @@ export const DeafDashboard = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </Card>
+
+          {/* Dictionary Quick Access */}
+          <Card className="p-6 border-2 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
+            <div className="text-center space-y-4">
+              <div className="p-4 rounded-full bg-blue-500/20 w-16 h-16 mx-auto flex items-center justify-center">
+                <BookOpen className="h-8 w-8 text-blue-500" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">GSL Dictionary</h3>
+                <p className="text-muted-foreground font-medium">
+                  Search and learn vocabulary signs
+                </p>
+              </div>
+              <Link to="/dictionary" className="block">
+                <Button size="lg" variant="outline" className="w-full text-base font-bold gap-2">
+                  Browse Dictionary
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </Card>
 

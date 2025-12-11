@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Lessons from "./pages/Lessons";
 import Lesson from "./pages/Lesson";
 import Profile from "./pages/Profile";
+import Dictionary from "./pages/Dictionary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,11 @@ const App = () => (
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/dictionary" element={
+                <ProtectedRoute>
+                  <Dictionary />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
