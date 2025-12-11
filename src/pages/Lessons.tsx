@@ -1,6 +1,5 @@
-import { Search, Menu, Filter } from "lucide-react";
+import { Menu, Filter, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LessonCard } from "@/components/LessonCard";
@@ -9,23 +8,13 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LessonMetadata } from "@/types/lesson";
-import lesson1Data from "@/data/lessons/beginner/lesson1.json";
-import lesson2Data from "@/data/lessons/beginner/lesson2.json";
-import lesson3Data from "@/data/lessons/beginner/lesson3.json";
-import lesson4Data from "@/data/lessons/beginner/lesson4.json";
-import lesson5Data from "@/data/lessons/beginner/lesson5.json";
+import { useLessonMetadata } from "@/hooks/useLessons";
 
 const Lessons = () => {
   const isMobile = useIsMobile();
   
-  const lessons = [
-    lesson1Data.metadata as LessonMetadata,
-    lesson2Data.metadata as LessonMetadata,
-    lesson3Data.metadata as LessonMetadata,
-    lesson4Data.metadata as LessonMetadata,
-    lesson5Data.metadata as LessonMetadata,
-  ];
+  // Fetch lessons from database
+  const { data: lessons = [], isLoading, error } = useLessonMetadata('beginner');
   
   // Mock progress data - Updated to include Lesson 4 and 5
   const progressData: { [key: string]: number } = {
@@ -35,6 +24,25 @@ const Lessons = () => {
     'beginner-4': 100,
     'beginner-5': 100,
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Error Loading Lessons</h1>
+          <p className="text-muted-foreground">Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   const lessonsContent = (
     <>
