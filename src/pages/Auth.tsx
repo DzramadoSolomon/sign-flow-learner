@@ -3,14 +3,23 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Globe } from "lucide-react";
+import { Eye, EyeOff, Globe, Loader2 } from "lucide-react";
 
 const Auth = () => {
-  const { login, signup, isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  // Show loading while checking auth state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
   
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -67,7 +76,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -82,7 +91,7 @@ const LoginForm = () => {
       return;
     }
 
-    const result = login(email.trim(), password);
+    const result = await login(email.trim(), password);
     
     if (result.success) {
       toast({
@@ -112,6 +121,7 @@ const LoginForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
       
@@ -125,6 +135,7 @@ const LoginForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
           <Button
             type="button"
@@ -132,6 +143,7 @@ const LoginForm = () => {
             size="icon"
             className="absolute right-0 top-0 h-full px-3"
             onClick={() => setShowPassword(!showPassword)}
+            disabled={isLoading}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
@@ -139,7 +151,14 @@ const LoginForm = () => {
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Login"}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Logging in...
+          </>
+        ) : (
+          "Login"
+        )}
       </Button>
     </form>
   );
@@ -156,7 +175,7 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -191,7 +210,7 @@ const SignupForm = () => {
       return;
     }
 
-    const result = signup(name.trim(), email.trim(), phone.trim(), password);
+    const result = await signup(name.trim(), email.trim(), phone.trim(), password);
     
     if (result.success) {
       toast({
@@ -221,6 +240,7 @@ const SignupForm = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
 
@@ -233,6 +253,7 @@ const SignupForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
 
@@ -245,6 +266,7 @@ const SignupForm = () => {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
       
@@ -258,6 +280,7 @@ const SignupForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
           <Button
             type="button"
@@ -265,6 +288,7 @@ const SignupForm = () => {
             size="icon"
             className="absolute right-0 top-0 h-full px-3"
             onClick={() => setShowPassword(!showPassword)}
+            disabled={isLoading}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
@@ -280,11 +304,19 @@ const SignupForm = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Creating Account..." : "Create Account"}
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Creating Account...
+          </>
+        ) : (
+          "Create Account"
+        )}
       </Button>
     </form>
   );
