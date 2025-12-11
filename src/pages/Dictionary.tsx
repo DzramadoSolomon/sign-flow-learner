@@ -133,23 +133,23 @@ const Dictionary = () => {
       </div>
 
       {/* Word Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
         {filteredWords.map((word) => (
           <Card
             key={word.word}
-            className="p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
+            className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
             onClick={() => handleWordClick(word)}
           >
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+            <div className="flex items-start justify-between mb-1 sm:mb-2">
+              <h3 className="text-sm sm:text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">
                 {word.word}
               </h3>
-              <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <Play className="h-4 w-4" />
+              <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
+                <Play className="h-3 w-3 sm:h-4 sm:w-4" />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mb-3">{word.description}</p>
-            <Badge variant="secondary" className="text-xs">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{word.description}</p>
+            <Badge variant="secondary" className="text-[10px] sm:text-xs">
               {word.category}
             </Badge>
           </Card>
@@ -168,15 +168,15 @@ const Dictionary = () => {
 
       {/* Video Dialog */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl p-4 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <span className="text-2xl">{selectedWord?.word}</span>
-              <Badge variant="secondary">{selectedWord?.category}</Badge>
+            <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <span className="text-xl sm:text-2xl">{selectedWord?.word}</span>
+              <Badge variant="secondary" className="w-fit">{selectedWord?.category}</Badge>
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-4">
-            <p className="text-muted-foreground mb-4">{selectedWord?.description}</p>
+          <div className="mt-2 sm:mt-4">
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{selectedWord?.description}</p>
             <div className="aspect-video rounded-lg overflow-hidden bg-muted">
               {selectedWord && (
                 <iframe
