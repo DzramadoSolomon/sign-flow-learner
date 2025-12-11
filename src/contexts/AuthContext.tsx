@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-// Lovable Cloud edge function URL (where the auth function is deployed)
-const EDGE_FUNCTION_URL = 'https://njukrhmykrxqvjjvnotv.supabase.co/functions/v1/auth';
+import { supabase } from '@/integrations/supabase/client';
+import bcrypt from 'bcryptjs';
 
 export interface User {
   id: string;
@@ -59,26 +58,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      const response = await fetch(EDGE_FUNCTION_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', email, password })
-      });
+      // Fetch user by email
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('id, full_name, email, phone, password_hash')
+        .eq('email', email.toLowerCase())
+        .maybeSingle();
 
-      const data = await response.json();
-
-      if (!data.success) {
-        return { success: false, error: data.error };
+      if (error) {
+        console.error('Login query error:', error);
+        return { success: false, error: 'Server error. Please try again.' };
       }
 
-      const userData: User = {
-        id: data.user.id,
-        name: data.user.full_name,
-        email: data.user.email,
-        phone: data.user.phone || '',
+      if (!userData) {
+        return { success: false, error: 'No account found with this email' };
+      }
+
+      // Verify password
+      const validPassword = await bcrypt.compare(password, userData.password_hash);
+      if (!validPassword) {
+        return { success: false, error: 'Incorrect password' };
+      }
+
+      const loggedInUser: User = {
+        id: userData.id,
+        name: userData.full_name,
+        email: userData.email,
+        phone: userData.phone || '',
       };
 
-      setUser(userData);
+      setUser(loggedInUser);
       return { success: true };
     } catch (err) {
       console.error('Login exception:', err);
@@ -88,26 +97,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (name: string, email: string, phone: string, password: string): Promise<AuthResult> => {
     try {
-      const response = await fetch(EDGE_FUNCTION_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signup', full_name: name, email, phone, password })
-      });
+      // Check if user already exists
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .maybeSingle();
 
-      const data = await response.json();
-
-      if (!data.success) {
-        return { success: false, error: data.error };
+      if (existingUser) {
+        return { success: false, error: 'An account with this email already exists' };
       }
 
-      const userData: User = {
-        id: data.user.id,
-        name: data.user.full_name,
-        email: data.user.email,
-        phone: data.user.phone || '',
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const password_hash = await bcrypt.hash(password, salt);
+
+      // Insert new user
+      const { data: newUser, error: insertError } = await supabase
+        .from('users')
+        .insert({
+          full_name: name,
+          email: email.toLowerCase(),
+          phone,
+          password_hash,
+        })
+        .select('id, full_name, email, phone')
+        .single();
+
+      if (insertError) {
+        console.error('Signup insert error:', insertError);
+        return { success: false, error: 'Failed to create account. Please try again.' };
+      }
+
+      const createdUser: User = {
+        id: newUser.id,
+        name: newUser.full_name,
+        email: newUser.email,
+        phone: newUser.phone || '',
       };
 
-      setUser(userData);
+      setUser(createdUser);
       return { success: true };
     } catch (err) {
       console.error('Signup exception:', err);
@@ -124,15 +153,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'No user logged in' };
     }
 
-    // For now, just update locally - you can add a backend endpoint for this later
-    const updatedUser: User = {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        full_name: data.name,
+        email: data.email.toLowerCase(),
+        phone: data.phone,
+      })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Update profile error:', error);
+      return { success: false, error: 'Failed to update profile' };
+    }
+
+    setUser({
       ...user,
       name: data.name,
       email: data.email.toLowerCase(),
       phone: data.phone,
-    };
+    });
 
-    setUser(updatedUser);
     return { success: true };
   };
 
@@ -141,8 +182,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'No user logged in' };
     }
 
-    // For password updates, you would need to add another action to the edge function
-    // For now, return success placeholder
+    // Fetch current password hash
+    const { data: userData, error: fetchError } = await supabase
+      .from('users')
+      .select('password_hash')
+      .eq('id', user.id)
+      .single();
+
+    if (fetchError || !userData) {
+      return { success: false, error: 'Failed to verify current password' };
+    }
+
+    // Verify current password
+    const validPassword = await bcrypt.compare(currentPassword, userData.password_hash);
+    if (!validPassword) {
+      return { success: false, error: 'Current password is incorrect' };
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ password_hash: newPasswordHash })
+      .eq('id', user.id);
+
+    if (updateError) {
+      return { success: false, error: 'Failed to update password' };
+    }
+
     return { success: true };
   };
 
