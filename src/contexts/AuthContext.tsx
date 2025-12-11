@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+
+// Lovable Cloud edge function URL (where the auth function is deployed)
+const EDGE_FUNCTION_URL = 'https://njukrhmykrxqvjjvnotv.supabase.co/functions/v1/auth';
 
 export interface User {
   id: string;
@@ -57,14 +59,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      const { data, error } = await supabase.functions.invoke('auth', {
-        body: { action: 'login', email, password }
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login', email, password })
       });
 
-      if (error) {
-        console.error('Login error:', error);
-        return { success: false, error: 'Server error. Please try again.' };
-      }
+      const data = await response.json();
 
       if (!data.success) {
         return { success: false, error: data.error };
@@ -87,14 +88,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (name: string, email: string, phone: string, password: string): Promise<AuthResult> => {
     try {
-      const { data, error } = await supabase.functions.invoke('auth', {
-        body: { action: 'signup', full_name: name, email, phone, password }
+      const response = await fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'signup', full_name: name, email, phone, password })
       });
 
-      if (error) {
-        console.error('Signup error:', error);
-        return { success: false, error: 'Server error. Please try again.' };
-      }
+      const data = await response.json();
 
       if (!data.success) {
         return { success: false, error: data.error };
