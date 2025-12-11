@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
@@ -20,7 +21,9 @@ import {
   LogOut, 
   Flame,
   Play,
-  X
+  X,
+  Heart,
+  Star
 } from "lucide-react";
 import { 
   dictionaryWords, 
@@ -29,6 +32,8 @@ import {
   type DictionaryWord 
 } from "@/data/dictionary";
 
+const FAVORITES_KEY = "gsl_dictionary_favorites";
+
 const Dictionary = () => {
   const isMobile = useIsMobile();
   const { logout } = useAuth();
@@ -36,18 +41,57 @@ const Dictionary = () => {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<DictionaryWord | null>(null);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+
+  // Load favorites from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(FAVORITES_KEY);
+    if (stored) {
+      setFavorites(JSON.parse(stored));
+    }
+  }, []);
+
+  // Save favorites to localStorage
+  const saveFavorites = (newFavorites: string[]) => {
+    setFavorites(newFavorites);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+  };
+
+  const toggleFavorite = (word: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (favorites.includes(word)) {
+      saveFavorites(favorites.filter(f => f !== word));
+    } else {
+      saveFavorites([...favorites, word]);
+    }
+  };
+
+  const isFavorite = (word: string) => favorites.includes(word);
 
   const alphabetLetters = useMemo(() => getAlphabetLetters(), []);
 
   const filteredWords = useMemo(() => {
+    let words = dictionaryWords;
+    
+    // Filter by favorites tab
+    if (activeTab === "favorites") {
+      words = words.filter(w => favorites.includes(w.word));
+    }
+    
+    // Filter by search
     if (searchQuery) {
-      return searchWords(searchQuery);
+      const searchResults = searchWords(searchQuery);
+      words = words.filter(w => searchResults.some(sr => sr.word === w.word));
     }
+    
+    // Filter by letter
     if (selectedLetter) {
-      return dictionaryWords.filter(w => w.word[0].toUpperCase() === selectedLetter);
+      words = words.filter(w => w.word[0].toUpperCase() === selectedLetter);
     }
-    return dictionaryWords;
-  }, [searchQuery, selectedLetter]);
+    
+    return words;
+  }, [searchQuery, selectedLetter, activeTab, favorites]);
 
   const handleWordClick = (word: DictionaryWord) => {
     setSelectedWord(word);
@@ -60,17 +104,31 @@ const Dictionary = () => {
   };
 
   const DictionaryContent = () => (
-    <div className="p-4 md:p-6 lg:p-8">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">GSL Dictionary</h1>
-        <p className="text-muted-foreground">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2">GSL Dictionary</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Search and learn sign language vocabulary with video demonstrations
         </p>
       </div>
 
+      {/* Tabs for All/Favorites */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "all" | "favorites")} className="mb-4 sm:mb-6">
+        <TabsList className="grid w-full max-w-xs grid-cols-2">
+          <TabsTrigger value="all" className="gap-1.5 text-xs sm:text-sm">
+            <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            All Words
+          </TabsTrigger>
+          <TabsTrigger value="favorites" className="gap-1.5 text-xs sm:text-sm">
+            <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            Favorites ({favorites.length})
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {/* Search Bar */}
-      <div className="relative mb-6">
+      <div className="relative mb-4 sm:mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search for a word..."
@@ -79,13 +137,13 @@ const Dictionary = () => {
             setSearchQuery(e.target.value);
             setSelectedLetter(null);
           }}
-          className="pl-10 h-12 text-base"
+          className="pl-10 h-10 sm:h-12 text-sm sm:text-base"
         />
         {searchQuery && (
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8"
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8"
             onClick={() => setSearchQuery("")}
           >
             <X className="h-4 w-4" />
@@ -94,7 +152,7 @@ const Dictionary = () => {
       </div>
 
       {/* Alphabet Filter */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <ScrollArea className="w-full">
           <div className="flex gap-1 pb-2">
             <Button
@@ -104,7 +162,7 @@ const Dictionary = () => {
                 setSelectedLetter(null);
                 setSearchQuery("");
               }}
-              className="shrink-0"
+              className="shrink-0 h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
             >
               All
             </Button>
@@ -114,7 +172,7 @@ const Dictionary = () => {
                 variant={selectedLetter === letter ? "default" : "outline"}
                 size="sm"
                 onClick={() => handleLetterClick(letter)}
-                className="shrink-0 w-9"
+                className="shrink-0 h-7 sm:h-8 w-7 sm:w-9 text-xs sm:text-sm p-0"
               >
                 {letter}
               </Button>
@@ -124,29 +182,44 @@ const Dictionary = () => {
       </div>
 
       {/* Results Count */}
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
+      <div className="mb-3 sm:mb-4">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Showing {filteredWords.length} word{filteredWords.length !== 1 ? 's' : ''}
+          {activeTab === "favorites" && " in favorites"}
           {selectedLetter && ` starting with "${selectedLetter}"`}
           {searchQuery && ` matching "${searchQuery}"`}
         </p>
       </div>
 
       {/* Word Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
         {filteredWords.map((word) => (
           <Card
             key={word.word}
-            className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group"
+            className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group relative"
             onClick={() => handleWordClick(word)}
           >
-            <div className="flex items-start justify-between mb-1 sm:mb-2">
-              <h3 className="text-sm sm:text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">
-                {word.word}
-              </h3>
+            {/* Favorite Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`absolute top-1 right-1 sm:top-2 sm:right-2 h-7 w-7 sm:h-8 sm:w-8 z-10 ${
+                isFavorite(word.word) 
+                  ? "text-red-500 hover:text-red-600" 
+                  : "text-muted-foreground hover:text-red-500"
+              }`}
+              onClick={(e) => toggleFavorite(word.word, e)}
+            >
+              <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isFavorite(word.word) ? "fill-current" : ""}`} />
+            </Button>
+            
+            <div className="flex items-start gap-2 mb-2 pr-8">
               <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
               </div>
+              <h3 className="text-sm sm:text-base md:text-lg font-bold group-hover:text-primary transition-colors line-clamp-1 pt-0.5">
+                {word.word}
+              </h3>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{word.description}</p>
             <Badge variant="secondary" className="text-[10px] sm:text-xs">
@@ -157,26 +230,52 @@ const Dictionary = () => {
       </div>
 
       {filteredWords.length === 0 && (
-        <div className="text-center py-12">
-          <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No words found</h3>
-          <p className="text-muted-foreground">
-            Try a different search term or browse by letter
-          </p>
+        <div className="text-center py-8 sm:py-12">
+          {activeTab === "favorites" ? (
+            <>
+              <Star className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No favorites yet</h3>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Tap the heart icon on any word to add it to your favorites
+              </p>
+            </>
+          ) : (
+            <>
+              <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No words found</h3>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Try a different search term or browse by letter
+              </p>
+            </>
+          )}
         </div>
       )}
 
       {/* Video Dialog */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-2xl p-4 sm:p-6">
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl p-3 sm:p-4 md:p-6">
           <DialogHeader>
-            <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <span className="text-xl sm:text-2xl">{selectedWord?.word}</span>
-              <Badge variant="secondary" className="w-fit">{selectedWord?.category}</Badge>
+            <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 pr-8">
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl md:text-2xl">{selectedWord?.word}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-8 w-8 ${
+                    selectedWord && isFavorite(selectedWord.word) 
+                      ? "text-red-500 hover:text-red-600" 
+                      : "text-muted-foreground hover:text-red-500"
+                  }`}
+                  onClick={() => selectedWord && toggleFavorite(selectedWord.word)}
+                >
+                  <Heart className={`h-5 w-5 ${selectedWord && isFavorite(selectedWord.word) ? "fill-current" : ""}`} />
+                </Button>
+              </div>
+              <Badge variant="secondary" className="w-fit text-xs">{selectedWord?.category}</Badge>
             </DialogTitle>
           </DialogHeader>
           <div className="mt-2 sm:mt-4">
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{selectedWord?.description}</p>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-2 sm:mb-3 md:mb-4">{selectedWord?.description}</p>
             <div className="aspect-video rounded-lg overflow-hidden bg-muted">
               {selectedWord && (
                 <iframe
@@ -200,12 +299,12 @@ const Dictionary = () => {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         {/* Mobile Header */}
-        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b px-4 py-3">
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b px-3 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
@@ -213,28 +312,28 @@ const Dictionary = () => {
                   <MobileSidebar />
                 </SheetContent>
               </Sheet>
-              <Link to="/" className="flex items-center gap-2">
-                <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6" />
-                <span className="font-bold">GSL Dictionary</span>
+              <Link to="/" className="flex items-center gap-1.5">
+                <img src="/favicon.ico" alt="GSL Logo" className="h-5 w-5" />
+                <span className="font-bold text-sm">GSL Dictionary</span>
               </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="gap-1">
+            <div className="flex items-center gap-1">
+              <Badge variant="secondary" className="gap-1 text-xs px-2 py-0.5">
                 <Flame className="h-3 w-3 text-orange-500" />
                 <span>7</span>
               </Badge>
               <Link to="/profile">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <User className="h-4 w-4" />
                 </Button>
               </Link>
-              <Button variant="ghost" size="icon" onClick={logout}>
-                <LogOut className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={logout}>
+                <LogOut className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </header>
-        <main className="flex-1">
+        <main className="flex-1 overflow-auto">
           <DictionaryContent />
         </main>
       </div>
