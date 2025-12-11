@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { userSupabase } from '@/lib/supabase';
 import bcrypt from 'bcryptjs';
 
 export interface User {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
       // Fetch user by email
-      const { data: userData, error } = await supabase
+      const { data: userData, error } = await userSupabase
         .from('users')
         .select('id, full_name, email, phone, password_hash')
         .eq('email', email.toLowerCase())
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (name: string, email: string, phone: string, password: string): Promise<AuthResult> => {
     try {
       // Check if user already exists
-      const { data: existingUser } = await supabase
+      const { data: existingUser } = await userSupabase
         .from('users')
         .select('id')
         .eq('email', email.toLowerCase())
@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const password_hash = await bcrypt.hash(password, salt);
 
       // Insert new user
-      const { data: newUser, error: insertError } = await supabase
+      const { data: newUser, error: insertError } = await userSupabase
         .from('users')
         .insert({
           full_name: name,
@@ -153,7 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'No user logged in' };
     }
 
-    const { error } = await supabase
+    const { error } = await userSupabase
       .from('users')
       .update({
         full_name: data.name,
@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Fetch current password hash
-    const { data: userData, error: fetchError } = await supabase
+    const { data: userData, error: fetchError } = await userSupabase
       .from('users')
       .select('password_hash')
       .eq('id', user.id)
@@ -204,7 +204,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newPasswordHash = await bcrypt.hash(newPassword, salt);
 
     // Update password
-    const { error: updateError } = await supabase
+    const { error: updateError } = await userSupabase
       .from('users')
       .update({ password_hash: newPasswordHash })
       .eq('id', user.id);
