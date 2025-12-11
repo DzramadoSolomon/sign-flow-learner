@@ -56,9 +56,14 @@ const Dictionary = () => {
 
   // Load favorites from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    if (stored) {
-      setFavorites(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem(FAVORITES_KEY);
+      if (stored) {
+        setFavorites(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error('Error loading favorites from localStorage:', e);
+      localStorage.removeItem(FAVORITES_KEY);
     }
   }, []);
 

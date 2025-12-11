@@ -11,8 +11,15 @@ const LearningModeContext = createContext<LearningModeContextType | undefined>(u
 
 export const LearningModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mode, setModeState] = useState<LearningMode>(() => {
-    const saved = localStorage.getItem('learningMode');
-    return (saved === 'deaf' || saved === 'hearing') ? saved : 'deaf';
+    try {
+      const saved = localStorage.getItem('learningMode');
+      if (saved === 'deaf' || saved === 'hearing') {
+        return saved;
+      }
+    } catch (e) {
+      console.error('Error reading learning mode from localStorage:', e);
+    }
+    return 'deaf';
   });
 
   useEffect(() => {
