@@ -24,8 +24,16 @@ const CURRENT_USER_KEY = 'gsl_current_user';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem(CURRENT_USER_KEY);
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem(CURRENT_USER_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('Error parsing user from localStorage:', e);
+      localStorage.removeItem(CURRENT_USER_KEY);
+    }
+    return null;
   });
 
   useEffect(() => {
@@ -37,8 +45,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   const getStoredUsers = (): { [email: string]: { user: User; password: string } } => {
-    const stored = localStorage.getItem(USERS_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : {};
+    try {
+      const stored = localStorage.getItem(USERS_STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error('Error parsing users from localStorage:', e);
+      localStorage.removeItem(USERS_STORAGE_KEY);
+    }
+    return {};
   };
 
   const saveUser = (userData: User, password: string) => {
