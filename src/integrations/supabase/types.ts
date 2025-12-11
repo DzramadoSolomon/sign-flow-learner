@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      lessons: {
+        Row: {
+          created_at: string
+          deaf_content: Json | null
+          description: string | null
+          duration: number | null
+          exercises: Json | null
+          hearing_content: Json | null
+          id: string
+          is_dual_mode: boolean | null
+          is_published: boolean | null
+          lesson_id: string
+          lesson_order: number
+          level: string
+          notes: string | null
+          objectives: Json | null
+          quiz: Json | null
+          tags: Json | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          deaf_content?: Json | null
+          description?: string | null
+          duration?: number | null
+          exercises?: Json | null
+          hearing_content?: Json | null
+          id?: string
+          is_dual_mode?: boolean | null
+          is_published?: boolean | null
+          lesson_id: string
+          lesson_order?: number
+          level: string
+          notes?: string | null
+          objectives?: Json | null
+          quiz?: Json | null
+          tags?: Json | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          deaf_content?: Json | null
+          description?: string | null
+          duration?: number | null
+          exercises?: Json | null
+          hearing_content?: Json | null
+          id?: string
+          is_dual_mode?: boolean | null
+          is_published?: boolean | null
+          lesson_id?: string
+          lesson_order?: number
+          level?: string
+          notes?: string | null
+          objectives?: Json | null
+          quiz?: Json | null
+          tags?: Json | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
