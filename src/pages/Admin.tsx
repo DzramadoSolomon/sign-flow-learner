@@ -180,37 +180,39 @@ const Admin = () => {
   };
 
   const adminContent = (
-    <div className="py-8">
-      <div className="container mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <p className="text-muted-foreground">Manage lessons and dictionary words</p>
+    <div className="py-4 md:py-8">
+      <div className="container mx-auto px-3 md:px-4">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold">Admin Panel</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Manage lessons and dictionary words</p>
         </div>
 
-        <Tabs defaultValue="lessons" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="lessons" className="gap-2">
+        <Tabs defaultValue="lessons" className="space-y-4 md:space-y-6">
+          <TabsList className="w-full md:w-auto grid grid-cols-2 md:flex">
+            <TabsTrigger value="lessons" className="gap-2 text-sm">
               <GraduationCap className="h-4 w-4" />
-              Lessons
+              <span className="hidden xs:inline">Lessons</span>
+              <span className="xs:hidden">Lessons</span>
             </TabsTrigger>
-            <TabsTrigger value="dictionary" className="gap-2">
+            <TabsTrigger value="dictionary" className="gap-2 text-sm">
               <BookOpen className="h-4 w-4" />
-              Dictionary
+              <span className="hidden xs:inline">Dictionary</span>
+              <span className="xs:hidden">Dict</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Lessons Tab */}
           <TabsContent value="lessons">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Lesson Management</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-xl font-semibold">Lesson Management</h2>
               <Dialog open={isLessonDialogOpen} onOpenChange={setIsLessonDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button size={isMobile ? "sm" : "default"} className="w-full sm:w-auto">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Lesson
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Create New Lesson</DialogTitle>
                   </DialogHeader>
@@ -237,20 +239,20 @@ const Admin = () => {
               <div className="grid gap-4">
                 {lessons.map((lesson) => (
                   <Card key={lesson.metadata.id}>
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">{lesson.metadata.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground">{lesson.metadata.description}</p>
+                    <CardHeader className="pb-2 px-3 md:px-6">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base md:text-lg truncate">{lesson.metadata.title}</CardTitle>
+                          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{lesson.metadata.description}</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 shrink-0">
                           <Dialog open={editingLesson?.metadata.id === lesson.metadata.id} onOpenChange={(open) => !open && setEditingLesson(null)}>
                             <DialogTrigger asChild>
                               <Button variant="outline" size="sm" onClick={() => setEditingLesson(lesson)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                            <DialogContent className="max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto">
                               <DialogHeader>
                                 <DialogTitle>Edit Lesson</DialogTitle>
                               </DialogHeader>
@@ -301,13 +303,13 @@ const Admin = () => {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary">{lesson.metadata.level}</Badge>
-                        <Badge variant="outline">Order: {lesson.metadata.order}</Badge>
-                        <Badge variant="outline">{lesson.metadata.duration} min</Badge>
-                        <Badge variant="outline">{lesson.quiz.length} quiz questions</Badge>
-                        <Badge variant="outline">{lesson.exercises.length} exercises</Badge>
+                    <CardContent className="px-3 md:px-6 pt-2">
+                      <div className="flex flex-wrap gap-1.5 md:gap-2">
+                        <Badge variant="secondary" className="text-xs">{lesson.metadata.level}</Badge>
+                        <Badge variant="outline" className="text-xs">Order: {lesson.metadata.order}</Badge>
+                        <Badge variant="outline" className="text-xs">{lesson.metadata.duration} min</Badge>
+                        <Badge variant="outline" className="text-xs">{lesson.quiz.length} quiz</Badge>
+                        <Badge variant="outline" className="text-xs">{lesson.exercises.length} exercises</Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -318,16 +320,16 @@ const Admin = () => {
 
           {/* Dictionary Tab */}
           <TabsContent value="dictionary">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Dictionary Management ({dictionaryWords.length} words)</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 md:mb-6">
+              <h2 className="text-lg md:text-xl font-semibold">Dictionary ({dictionaryWords.length} words)</h2>
               <Dialog open={isDictionaryDialogOpen} onOpenChange={setIsDictionaryDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button size={isMobile ? "sm" : "default"} className="w-full sm:w-auto">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Word
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[95vw] md:max-w-lg">
                   <DialogHeader>
                     <DialogTitle>Add New Word</DialogTitle>
                   </DialogHeader>
@@ -353,24 +355,24 @@ const Admin = () => {
             ) : (
               <div className="grid gap-2">
                 {dictionaryWords.map((word) => (
-                  <Card key={word.id} className="p-4">
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold">{word.word}</h3>
+                  <Card key={word.id} className="p-3 md:p-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-sm md:text-base">{word.word}</h3>
                           <Badge variant="outline" className="text-xs">{word.category}</Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{word.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Video ID: {word.video_id}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{word.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1 truncate">Video: {word.video_id}</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 shrink-0 self-end sm:self-center">
                         <Dialog open={editingWord?.id === word.id} onOpenChange={(open) => !open && setEditingWord(null)}>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm" onClick={() => setEditingWord(word)}>
                               <Edit className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent>
+                          <DialogContent className="max-w-[95vw] md:max-w-lg">
                             <DialogHeader>
                               <DialogTitle>Edit Word</DialogTitle>
                             </DialogHeader>
