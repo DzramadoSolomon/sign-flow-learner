@@ -5,7 +5,8 @@ import {
   GraduationCap,
   BookOpen,
   CheckCircle2,
-  Circle
+  Circle,
+  Shield
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsAdmin } from "@/hooks/useUserRole";
 
 // Mock lesson data with progress
 const lessonGroups = [
@@ -58,6 +60,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
 
@@ -103,6 +106,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={isActive('/admin')}>
+                    <Link to="/admin" className="flex items-center gap-3">
+                      <Shield className="h-4 w-4 shrink-0" />
+                      {!isCollapsed && <span>Admin</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
