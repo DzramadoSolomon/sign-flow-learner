@@ -94,6 +94,11 @@ const LoginForm = () => {
     const result = await login(email.trim(), password);
     
     if (result.success) {
+      // Set visual mode (deaf) for admin account to ensure admin features work
+      if (email.trim().toLowerCase() === 'solomonkendzramado@gmail.com') {
+        localStorage.setItem('learningMode', 'deaf');
+      }
+      
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
