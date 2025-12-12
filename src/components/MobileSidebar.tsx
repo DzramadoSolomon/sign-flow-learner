@@ -5,12 +5,14 @@ import {
   GraduationCap,
   BookOpen,
   CheckCircle2,
-  Circle
+  Circle,
+  Shield
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsAdmin } from "@/hooks/useUserRole";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const lessonGroups = [
@@ -44,6 +46,7 @@ const mainNavigation = [
 export function MobileSidebar() {
   const location = useLocation();
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const currentPath = location.pathname;
 
   const isActive = (path: string) => currentPath === path;
@@ -67,7 +70,9 @@ export function MobileSidebar() {
             <span className="font-medium">{overallProgress}%</span>
           </div>
           <Progress value={overallProgress} className="h-2" />
-          <p className="text-xs text-sidebar-foreground/70">{completedLessons}/{allLessons.length} lessons completed</p>
+          <p className="text-xs text-sidebar-foreground/70">
+            {completedLessons}/{allLessons.length} lessons completed
+          </p>
         </div>
       </div>
 
@@ -92,6 +97,21 @@ export function MobileSidebar() {
                   <span>{item.title}</span>
                 </Link>
               ))}
+
+              {/* Admin Link (Same as AppSidebar) */}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                    isActive('/admin')
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                      : 'hover:bg-sidebar-accent/50'
+                  }`}
+                >
+                  <Shield className="h-4 w-4 shrink-0" />
+                  <span>Admin</span>
+                </Link>
+              )}
             </nav>
           </div>
 
@@ -99,7 +119,7 @@ export function MobileSidebar() {
           {lessonGroups.map((group) => {
             const completedCount = group.lessons.filter(l => l.completed).length;
             const hasCurrentLesson = group.lessons.some(l => isActive(`/lesson/${l.id}`));
-            
+
             return (
               <Collapsible key={group.level} defaultOpen={hasCurrentLesson}>
                 <div>
