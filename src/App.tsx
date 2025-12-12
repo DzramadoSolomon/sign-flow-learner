@@ -13,6 +13,7 @@ import Lesson from "./pages/Lesson";
 import Profile from "./pages/Profile";
 import Dictionary from "./pages/Dictionary";
 import Admin from "./pages/Admin";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Navigate to="/auth" replace />} />
+              <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
