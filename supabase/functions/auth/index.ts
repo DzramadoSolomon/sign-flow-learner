@@ -14,11 +14,11 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('USER_SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('USER_SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { action, email, password, full_name, phone } = await req.json();
+    const { action, email, password, full_name, phone, user_id, current_password, new_password, profile_data } = await req.json();
 
     if (action === 'signup') {
       // Check if user already exists
@@ -96,6 +96,89 @@ serve(async (req) => {
       console.log('User logged in successfully:', safeUser.id);
       return new Response(
         JSON.stringify({ success: true, user: safeUser }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
+    } else if (action === 'update_profile') {
+      if (!user_id || !profile_data) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Missing user_id or profile_data' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        );
+      }
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          full_name: profile_data.name,
+          email: profile_data.email.toLowerCase(),
+          phone: profile_data.phone,
+        })
+        .eq('id', user_id);
+
+      if (updateError) {
+        console.error('Update profile error:', updateError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Failed to update profile' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
+    } else if (action === 'update_password') {
+      if (!user_id || !current_password || !new_password) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Missing required fields' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        );
+      }
+
+      // Fetch current password hash
+      const { data: userData, error: fetchError } = await supabase
+        .from('users')
+        .select('password_hash')
+        .eq('id', user_id)
+        .single();
+
+      if (fetchError || !userData) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'User not found' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+        );
+      }
+
+      // Verify current password
+      const validPassword = await bcrypt.compare(current_password, userData.password_hash);
+      if (!validPassword) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Current password is incorrect' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+        );
+      }
+
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      const newPasswordHash = await bcrypt.hash(new_password, salt);
+
+      // Update password
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ password_hash: newPasswordHash })
+        .eq('id', user_id);
+
+      if (updateError) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Failed to update password' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
 
