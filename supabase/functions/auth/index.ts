@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { hashSync, compareSync } from "https://esm.sh/bcryptjs@2.4.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,9 +35,8 @@ serve(async (req) => {
         );
       }
 
-      // Hash password
-      const salt = await bcrypt.genSalt(10);
-      const password_hash = await bcrypt.hash(password, salt);
+      // Hash password using bcryptjs (synchronous, works in Edge Runtime)
+      const password_hash = hashSync(password, 10);
 
       // Insert new user
       const { data: newUser, error: insertError } = await supabase
@@ -81,8 +80,8 @@ serve(async (req) => {
         );
       }
 
-      // Verify password
-      const validPassword = await bcrypt.compare(password, user.password_hash);
+      // Verify password using bcryptjs
+      const validPassword = compareSync(password, user.password_hash);
       if (!validPassword) {
         console.log('Invalid password for user:', email);
         return new Response(
@@ -152,7 +151,7 @@ serve(async (req) => {
       }
 
       // Verify current password
-      const validPassword = await bcrypt.compare(current_password, userData.password_hash);
+      const validPassword = compareSync(current_password, userData.password_hash);
       if (!validPassword) {
         return new Response(
           JSON.stringify({ success: false, error: 'Current password is incorrect' }),
@@ -161,8 +160,7 @@ serve(async (req) => {
       }
 
       // Hash new password
-      const salt = await bcrypt.genSalt(10);
-      const newPasswordHash = await bcrypt.hash(new_password, salt);
+      const newPasswordHash = hashSync(new_password, 10);
 
       // Update password
       const { error: updateError } = await supabase
