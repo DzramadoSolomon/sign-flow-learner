@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      dictionary: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          updated_at: string
+          video_id: string
+          word: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          updated_at?: string
+          video_id: string
+          word: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          updated_at?: string
+          video_id?: string
+          word?: string
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           created_at: string

@@ -24,19 +24,21 @@ import {
   X,
   Heart,
   Star,
-  Gamepad2
+  Gamepad2,
+  Loader2
 } from "lucide-react";
 import { 
-  dictionaryWords, 
+  useDictionary, 
   getAlphabetLetters, 
   searchWords,
   type DictionaryWord 
-} from "@/data/dictionary";
+} from "@/hooks/useDictionary";
 
 const FAVORITES_KEY = "gsl_dictionary_favorites";
 
 const Dictionary = () => {
   const { logout } = useAuth();
+  const { data: dictionaryWords = [], isLoading } = useDictionary();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<DictionaryWord | null>(null);
@@ -84,7 +86,7 @@ const Dictionary = () => {
 
   const isFavorite = (word: string) => favorites.includes(word);
 
-  const alphabetLetters = useMemo(() => getAlphabetLetters(), []);
+  const alphabetLetters = useMemo(() => getAlphabetLetters(dictionaryWords), [dictionaryWords]);
 
   const filteredWords = useMemo(() => {
     let words = dictionaryWords;
@@ -96,8 +98,7 @@ const Dictionary = () => {
     
     // Filter by search
     if (searchQuery) {
-      const searchResults = searchWords(searchQuery);
-      words = words.filter(w => searchResults.some(sr => sr.word === w.word));
+      words = searchWords(words, searchQuery);
     }
     
     // Filter by letter
@@ -106,7 +107,7 @@ const Dictionary = () => {
     }
     
     return words;
-  }, [searchQuery, selectedLetter, activeTab, favorites]);
+  }, [dictionaryWords, searchQuery, selectedLetter, activeTab, favorites]);
 
   const handleWordClick = (word: DictionaryWord) => {
     setSelectedWord(word);
@@ -147,8 +148,12 @@ const Dictionary = () => {
         </TabsList>
       </Tabs>
 
-      {/* Quiz Mode */}
-      {activeTab === "quiz" ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : activeTab === "quiz" ? (
         <VocabularyQuiz 
           favorites={favorites} 
           onBack={() => setActiveTab("all")} 
@@ -219,7 +224,7 @@ const Dictionary = () => {
           <div className="space-y-2">
             {filteredWords.map((word) => (
               <Card
-                key={word.word}
+                key={word.id}
                 className="p-3 cursor-pointer hover:border-primary transition-all active:scale-[0.98]"
                 onClick={() => handleWordClick(word)}
               >
@@ -299,7 +304,7 @@ const Dictionary = () => {
                 <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${selectedWord.videoId}?autoplay=1`}
+                  src={`https://www.youtube.com/embed/${selectedWord.video_id}?autoplay=1`}
                   title={`GSL sign for ${selectedWord.word}`}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
