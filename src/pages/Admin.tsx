@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { Menu, Plus, Edit, Trash2, Loader2, Shield, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, Plus, Edit, Trash2, Loader2, Shield, ArrowLeft, BookOpen, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,10 +10,13 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { MobileSidebar } from '@/components/MobileSidebar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { useLessons } from '@/hooks/useLessons';
+import { useDictionary, useCreateDictionaryWord, useUpdateDictionaryWord, useDeleteDictionaryWord, type DictionaryWord } from '@/hooks/useDictionary';
 import { LessonForm } from '@/components/admin/LessonForm';
+import { DictionaryForm } from '@/components/admin/DictionaryForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,10 +25,16 @@ const Admin = () => {
   const isMobile = useIsMobile();
   const { isAdmin, isLoading: roleLoading } = useIsAdmin();
   const { data: lessons = [], isLoading: lessonsLoading } = useLessons();
+  const { data: dictionaryWords = [], isLoading: dictionaryLoading } = useDictionary();
+  const createWord = useCreateDictionaryWord();
+  const updateWord = useUpdateDictionaryWord();
+  const deleteWord = useDeleteDictionaryWord();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLessonDialogOpen, setIsLessonDialogOpen] = useState(false);
+  const [isDictionaryDialogOpen, setIsDictionaryDialogOpen] = useState(false);
   const [editingLesson, setEditingLesson] = useState<any>(null);
+  const [editingWord, setEditingWord] = useState<DictionaryWord | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (roleLoading) {
@@ -58,6 +67,7 @@ const Admin = () => {
     );
   }
 
+  // Lesson handlers
   const handleCreateLesson = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -82,7 +92,7 @@ const Admin = () => {
       toast({ title: 'Success', description: 'Lesson created successfully!' });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
       queryClient.invalidateQueries({ queryKey: ['lesson-metadata'] });
-      setIsDialogOpen(false);
+      setIsLessonDialogOpen(false);
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } finally {
@@ -138,125 +148,275 @@ const Admin = () => {
     }
   };
 
+  // Dictionary handlers
+  const handleCreateWord = async (data: { word: string; description: string; video_id: string; category: string }) => {
+    try {
+      await createWord.mutateAsync(data);
+      toast({ title: 'Success', description: 'Word added successfully!' });
+      setIsDictionaryDialogOpen(false);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const handleUpdateWord = async (data: { word: string; description: string; video_id: string; category: string }) => {
+    if (!editingWord) return;
+    try {
+      await updateWord.mutateAsync({ id: editingWord.id, ...data });
+      toast({ title: 'Success', description: 'Word updated successfully!' });
+      setEditingWord(null);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteWord = async (id: string) => {
+    try {
+      await deleteWord.mutateAsync(id);
+      toast({ title: 'Success', description: 'Word deleted successfully!' });
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
   const adminContent = (
     <div className="py-8">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Lesson Management</h1>
-            <p className="text-muted-foreground">Create, edit, and manage lessons</p>
-          </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Lesson
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create New Lesson</DialogTitle>
-              </DialogHeader>
-              <LessonForm onSubmit={handleCreateLesson} isLoading={isSubmitting} />
-            </DialogContent>
-          </Dialog>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">Admin Panel</h1>
+          <p className="text-muted-foreground">Manage lessons and dictionary words</p>
         </div>
 
-        {lessonsLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : lessons.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">No lessons found. Create your first lesson!</p>
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Lesson
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {lessons.map((lesson) => (
-              <Card key={lesson.metadata.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{lesson.metadata.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{lesson.metadata.description}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Dialog open={editingLesson?.metadata.id === lesson.metadata.id} onOpenChange={(open) => !open && setEditingLesson(null)}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" onClick={() => setEditingLesson(lesson)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Edit Lesson</DialogTitle>
-                          </DialogHeader>
-                          {editingLesson && (
-                            <LessonForm
-                              initialData={{
-                                lesson_id: editingLesson.metadata.id,
-                                title: editingLesson.metadata.title,
-                                description: editingLesson.metadata.description,
-                                level: editingLesson.metadata.level,
-                                duration: editingLesson.metadata.duration,
-                                lesson_order: editingLesson.metadata.order,
-                                objectives: editingLesson.metadata.objectives,
-                                tags: editingLesson.metadata.tags,
-                                video_url: editingLesson.videoUrl || '',
-                                notes: editingLesson.notes,
-                                quiz: editingLesson.quiz,
-                                exercises: editingLesson.exercises,
-                                is_published: true,
-                              }}
-                              onSubmit={handleUpdateLesson}
-                              isLoading={isSubmitting}
-                            />
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Lesson?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete "{lesson.metadata.title}". This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteLesson(lesson.metadata.id)} className="bg-destructive text-destructive-foreground">
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">{lesson.metadata.level}</Badge>
-                    <Badge variant="outline">Order: {lesson.metadata.order}</Badge>
-                    <Badge variant="outline">{lesson.metadata.duration} min</Badge>
-                    <Badge variant="outline">{lesson.quiz.length} quiz questions</Badge>
-                    <Badge variant="outline">{lesson.exercises.length} exercises</Badge>
-                  </div>
+        <Tabs defaultValue="lessons" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="lessons" className="gap-2">
+              <GraduationCap className="h-4 w-4" />
+              Lessons
+            </TabsTrigger>
+            <TabsTrigger value="dictionary" className="gap-2">
+              <BookOpen className="h-4 w-4" />
+              Dictionary
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Lessons Tab */}
+          <TabsContent value="lessons">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Lesson Management</h2>
+              <Dialog open={isLessonDialogOpen} onOpenChange={setIsLessonDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lesson
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Create New Lesson</DialogTitle>
+                  </DialogHeader>
+                  <LessonForm onSubmit={handleCreateLesson} isLoading={isSubmitting} />
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {lessonsLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : lessons.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground mb-4">No lessons found. Create your first lesson!</p>
+                  <Button onClick={() => setIsLessonDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lesson
+                  </Button>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        )}
+            ) : (
+              <div className="grid gap-4">
+                {lessons.map((lesson) => (
+                  <Card key={lesson.metadata.id}>
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">{lesson.metadata.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{lesson.metadata.description}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Dialog open={editingLesson?.metadata.id === lesson.metadata.id} onOpenChange={(open) => !open && setEditingLesson(null)}>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm" onClick={() => setEditingLesson(lesson)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Edit Lesson</DialogTitle>
+                              </DialogHeader>
+                              {editingLesson && (
+                                <LessonForm
+                                  initialData={{
+                                    lesson_id: editingLesson.metadata.id,
+                                    title: editingLesson.metadata.title,
+                                    description: editingLesson.metadata.description,
+                                    level: editingLesson.metadata.level,
+                                    duration: editingLesson.metadata.duration,
+                                    lesson_order: editingLesson.metadata.order,
+                                    objectives: editingLesson.metadata.objectives,
+                                    tags: editingLesson.metadata.tags,
+                                    video_url: editingLesson.videoUrl || '',
+                                    notes: editingLesson.notes,
+                                    quiz: editingLesson.quiz,
+                                    exercises: editingLesson.exercises,
+                                    is_published: true,
+                                  }}
+                                  onSubmit={handleUpdateLesson}
+                                  isLoading={isSubmitting}
+                                />
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Lesson?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete "{lesson.metadata.title}". This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteLesson(lesson.metadata.id)} className="bg-destructive text-destructive-foreground">
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="secondary">{lesson.metadata.level}</Badge>
+                        <Badge variant="outline">Order: {lesson.metadata.order}</Badge>
+                        <Badge variant="outline">{lesson.metadata.duration} min</Badge>
+                        <Badge variant="outline">{lesson.quiz.length} quiz questions</Badge>
+                        <Badge variant="outline">{lesson.exercises.length} exercises</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Dictionary Tab */}
+          <TabsContent value="dictionary">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Dictionary Management ({dictionaryWords.length} words)</h2>
+              <Dialog open={isDictionaryDialogOpen} onOpenChange={setIsDictionaryDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Word
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Word</DialogTitle>
+                  </DialogHeader>
+                  <DictionaryForm onSubmit={handleCreateWord} isLoading={createWord.isPending} />
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {dictionaryLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : dictionaryWords.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground mb-4">No words found. Add your first word!</p>
+                  <Button onClick={() => setIsDictionaryDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Word
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-2">
+                {dictionaryWords.map((word) => (
+                  <Card key={word.id} className="p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{word.word}</h3>
+                          <Badge variant="outline" className="text-xs">{word.category}</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{word.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Video ID: {word.video_id}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Dialog open={editingWord?.id === word.id} onOpenChange={(open) => !open && setEditingWord(null)}>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm" onClick={() => setEditingWord(word)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Word</DialogTitle>
+                            </DialogHeader>
+                            {editingWord && (
+                              <DictionaryForm
+                                initialData={{
+                                  word: editingWord.word,
+                                  description: editingWord.description,
+                                  video_id: editingWord.video_id,
+                                  category: editingWord.category,
+                                }}
+                                onSubmit={handleUpdateWord}
+                                isLoading={updateWord.isPending}
+                              />
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm" className="text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Word?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete "{word.word}". This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteWord(word.id)} className="bg-destructive text-destructive-foreground">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
