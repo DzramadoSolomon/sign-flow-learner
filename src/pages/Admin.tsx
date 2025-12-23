@@ -20,6 +20,9 @@ import { DictionaryForm } from '@/components/admin/DictionaryForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { lessonSchema, dictionaryWordSchema } from '@/lib/validation';
+import { ZodError } from 'zod';
+import type { Json } from '@/integrations/supabase/types';
 
 const Admin = () => {
   const isMobile = useIsMobile();
@@ -71,20 +74,23 @@ const Admin = () => {
   const handleCreateLesson = async (data: any) => {
     setIsSubmitting(true);
     try {
+      // Validate input data
+      const validated = lessonSchema.parse(data);
+      
       const { error } = await supabase.from('lessons').insert({
-        lesson_id: data.lesson_id,
-        title: data.title,
-        description: data.description,
-        level: data.level,
-        duration: data.duration,
-        lesson_order: data.lesson_order,
-        objectives: data.objectives,
-        tags: data.tags,
-        video_url: data.video_url,
-        notes: data.notes,
-        quiz: data.quiz,
-        exercises: data.exercises,
-        is_published: data.is_published,
+        lesson_id: validated.lesson_id,
+        title: validated.title,
+        description: validated.description,
+        level: validated.level,
+        duration: validated.duration,
+        lesson_order: validated.lesson_order,
+        objectives: validated.objectives as Json,
+        tags: validated.tags as Json,
+        video_url: validated.video_url || null,
+        notes: validated.notes,
+        quiz: validated.quiz as Json,
+        exercises: validated.exercises as Json,
+        is_published: validated.is_published,
       });
 
       if (error) throw error;
@@ -94,7 +100,12 @@ const Admin = () => {
       queryClient.invalidateQueries({ queryKey: ['lesson-metadata'] });
       setIsLessonDialogOpen(false);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      if (error instanceof ZodError) {
+        const messages = error.errors.map(e => e.message).join(', ');
+        toast({ title: 'Validation Error', description: messages, variant: 'destructive' });
+      } else {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -103,21 +114,24 @@ const Admin = () => {
   const handleUpdateLesson = async (data: any) => {
     setIsSubmitting(true);
     try {
+      // Validate input data
+      const validated = lessonSchema.parse(data);
+      
       const { error } = await supabase
         .from('lessons')
         .update({
-          title: data.title,
-          description: data.description,
-          level: data.level,
-          duration: data.duration,
-          lesson_order: data.lesson_order,
-          objectives: data.objectives,
-          tags: data.tags,
-          video_url: data.video_url,
-          notes: data.notes,
-          quiz: data.quiz,
-          exercises: data.exercises,
-          is_published: data.is_published,
+          title: validated.title,
+          description: validated.description,
+          level: validated.level,
+          duration: validated.duration,
+          lesson_order: validated.lesson_order,
+          objectives: validated.objectives as Json,
+          tags: validated.tags as Json,
+          video_url: validated.video_url || null,
+          notes: validated.notes,
+          quiz: validated.quiz as Json,
+          exercises: validated.exercises as Json,
+          is_published: validated.is_published,
         })
         .eq('lesson_id', editingLesson.metadata.id);
 
@@ -129,7 +143,12 @@ const Admin = () => {
       queryClient.invalidateQueries({ queryKey: ['lesson', editingLesson.metadata.id] });
       setEditingLesson(null);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      if (error instanceof ZodError) {
+        const messages = error.errors.map(e => e.message).join(', ');
+        toast({ title: 'Validation Error', description: messages, variant: 'destructive' });
+      } else {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -151,22 +170,47 @@ const Admin = () => {
   // Dictionary handlers
   const handleCreateWord = async (data: { word: string; description: string; video_id: string; category: string }) => {
     try {
-      await createWord.mutateAsync(data);
+      // Validate input data
+      const validated = dictionaryWordSchema.parse(data);
+      await createWord.mutateAsync({
+        word: validated.word,
+        description: validated.description,
+        video_id: validated.video_id,
+        category: validated.category
+      });
       toast({ title: 'Success', description: 'Word added successfully!' });
       setIsDictionaryDialogOpen(false);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      if (error instanceof ZodError) {
+        const messages = error.errors.map(e => e.message).join(', ');
+        toast({ title: 'Validation Error', description: messages, variant: 'destructive' });
+      } else {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      }
     }
   };
 
   const handleUpdateWord = async (data: { word: string; description: string; video_id: string; category: string }) => {
     if (!editingWord) return;
     try {
-      await updateWord.mutateAsync({ id: editingWord.id, ...data });
+      // Validate input data
+      const validated = dictionaryWordSchema.parse(data);
+      await updateWord.mutateAsync({
+        id: editingWord.id,
+        word: validated.word,
+        description: validated.description,
+        video_id: validated.video_id,
+        category: validated.category
+      });
       toast({ title: 'Success', description: 'Word updated successfully!' });
       setEditingWord(null);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      if (error instanceof ZodError) {
+        const messages = error.errors.map(e => e.message).join(', ');
+        toast({ title: 'Validation Error', description: messages, variant: 'destructive' });
+      } else {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      }
     }
   };
 

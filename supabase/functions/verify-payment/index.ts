@@ -1,37 +1,67 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.22.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+// Define allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://njukrhmykrxqvjjvnotv.lovable.app',
+  'https://gsl-learning.lovable.app',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'http://localhost:8080',
+];
 
-interface PaymentVerificationRequest {
-  reference: string;
-  lessonId: string;
-  email: string;
-  amount: number; // in pesewas
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, ''))) ? origin : '';
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  };
 }
 
+// Validation schema for payment verification request
+const paymentRequestSchema = z.object({
+  reference: z.string().min(1, 'Reference is required').max(200),
+  lessonId: z.string().min(1, 'Lesson ID is required').max(100),
+  email: z.string().email('Invalid email').max(255),
+  amount: z.number().int().positive('Amount must be a positive integer'),
+});
+
 serve(async (req: Request) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // Check if origin is allowed for non-OPTIONS requests
+  if (!corsHeaders['Access-Control-Allow-Origin']) {
+    console.warn('Blocked request from unauthorized origin:', origin);
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized origin' }),
+      { status: 403, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
-    const body: PaymentVerificationRequest = await req.json();
-    const { reference, lessonId, email, amount } = body;
+    const body = await req.json();
 
-    console.log('verify-payment request', { reference, lessonId, email, amount });
-
-    if (!reference || !lessonId || !email || typeof amount !== 'number') {
+    // Validate request body
+    const validationResult = paymentRequestSchema.safeParse(body);
+    if (!validationResult.success) {
+      const messages = validationResult.error.errors.map(e => e.message).join(', ');
       return new Response(
-        JSON.stringify({ error: "Missing or invalid required fields", details: { reference: !!reference, lessonId: !!lessonId, email: !!email, amountType: typeof amount } }),
+        JSON.stringify({ error: "Validation failed", details: messages }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const { reference, lessonId, email, amount } = validationResult.data;
+
+    console.log('verify-payment request', { reference, lessonId, email, amount });
 
     // Verify with Paystack
     const paystackSecretKey = Deno.env.get("PAYSTACK_SECRET_KEY");
@@ -47,7 +77,7 @@ serve(async (req: Request) => {
     let paystackData: any = null;
     try {
       const paystackResponse = await fetch(
-        `https://api.paystack.co/transaction/verify/${reference}`,
+        `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
         {
           method: "GET",
           headers: {
@@ -67,7 +97,7 @@ serve(async (req: Request) => {
       if (!paystackResponse.ok) {
         console.error("Paystack verification failed:", paystackResponse.status, text);
         return new Response(
-          JSON.stringify({ error: "Paystack verification failed", status: paystackResponse.status, paystack_raw: text }),
+          JSON.stringify({ error: "Paystack verification failed", status: paystackResponse.status }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -75,7 +105,7 @@ serve(async (req: Request) => {
       const errMessage = err instanceof Error ? err.message : String(err);
       console.error('Network error contacting Paystack:', errMessage);
       return new Response(
-        JSON.stringify({ error: 'Network error contacting Paystack', message: errMessage }),
+        JSON.stringify({ error: 'Network error contacting Paystack' }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -83,7 +113,7 @@ serve(async (req: Request) => {
     // Check if payment was successful
     if (paystackData.data.status !== "success") {
       return new Response(
-        JSON.stringify({ error: "Payment was not successful", status: paystackData.data.status, paystack: paystackData.data }),
+        JSON.stringify({ error: "Payment was not successful", status: paystackData.data.status }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -95,7 +125,7 @@ serve(async (req: Request) => {
         received: paystackData.data.amount,
       });
       return new Response(
-        JSON.stringify({ error: "Amount mismatch", paystack: paystackData.data }),
+        JSON.stringify({ error: "Amount mismatch" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -139,7 +169,7 @@ serve(async (req: Request) => {
     if (psCustomerEmail && psCustomerEmail.toLowerCase() !== email.toLowerCase()) {
       console.error('Email mismatch between client and Paystack:', { client: email, paystack: psCustomerEmail });
       return new Response(
-        JSON.stringify({ error: 'Email mismatch with Paystack customer', paystack: paystackData.data }),
+        JSON.stringify({ error: 'Email mismatch with Paystack customer' }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -147,7 +177,7 @@ serve(async (req: Request) => {
     if (psLessonMeta && psLessonMeta !== lessonId) {
       console.error('Lesson metadata mismatch:', { expected: lessonId, received: psLessonMeta });
       return new Response(
-        JSON.stringify({ error: 'Lesson metadata mismatch', paystack: paystackData.data }),
+        JSON.stringify({ error: 'Lesson metadata mismatch' }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -168,7 +198,6 @@ serve(async (req: Request) => {
           lessonId,
           email,
           reference,
-          paystack: paystackData.data,
         }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -197,7 +226,7 @@ serve(async (req: Request) => {
     if (insertError) {
       console.error("Failed to insert purchase record:", insertError);
       return new Response(
-        JSON.stringify({ error: "Failed to record purchase", detail: insertError, paystack: paystackData.data }),
+        JSON.stringify({ error: "Failed to record purchase" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -209,7 +238,6 @@ serve(async (req: Request) => {
         lessonId,
         email,
         reference,
-        paystack: paystackData.data,
         purchase: inserted,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -218,8 +246,8 @@ serve(async (req: Request) => {
     const errMessage = error instanceof Error ? error.message : String(error);
     console.error("Error:", errMessage);
     return new Response(
-      JSON.stringify({ error: errMessage }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 });
