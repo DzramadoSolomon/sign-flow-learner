@@ -72,8 +72,18 @@ export const usePurchasedLevels = () => {
   };
 };
 
+/**
+ * Get the display price for a lesson level.
+ * 
+ * These are the PRODUCTION prices shown to users.
+ * For testing, the actual charge can be overridden via VITE_PAYSTACK_TEST_AMOUNT_GHS
+ * in the .env file (see PaymentDialog.tsx for override logic).
+ * 
+ * @param level - The lesson level (beginner, intermediate, advanced)
+ * @returns Price in Ghana Cedis (GH₵)
+ */
 export const getLevelPrice = (level: string): number => {
-  if (level.toLowerCase() === 'intermediate') return 10;
-  if (level.toLowerCase() === 'advanced') return 15;
-  return 0;
+  if (level.toLowerCase() === 'intermediate') return 10;  // GH₵10
+  if (level.toLowerCase() === 'advanced') return 15;      // GH₵15
+  return 0;  // Beginner is free
 };
