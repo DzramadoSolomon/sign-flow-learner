@@ -117,19 +117,45 @@ Lesson unlocked for user
 
 ## Amount Configuration
 
-To change the payment amount:
+### Display Prices (what users see)
+Prices are defined in `src/hooks/usePurchasedLevels.ts`:
+```typescript
+export const getLevelPrice = (level: string): number => {
+  if (level.toLowerCase() === 'intermediate') return 10;  // GH₵10
+  if (level.toLowerCase() === 'advanced') return 15;      // GH₵15
+  return 0;  // Beginner is free
+};
+```
 
-1. **In PaymentDialog.tsx**:
-   ```tsx
-   amountGhs={10}  // Change to desired amount
-   ```
+### Testing vs. Production Amounts
 
-2. **In AppSidebar.tsx**:
-   ```tsx
-   amountGhs={10}  // Change to same amount
-   ```
+**For Testing** (current setup):
+- Add `VITE_PAYSTACK_TEST_AMOUNT_GHS=0.5` to your `.env` file
+- Users see "GH₵10" or "GH₵15" in the UI
+- Actual charge is only GH₵0.50 (50 pesewas)
+- A blue notice appears in the payment dialog: "Test mode: Charging GH₵0.50 instead of GH₵X"
 
-Remember to update everywhere it's used!
+**For Production**:
+- Remove or comment out `VITE_PAYSTACK_TEST_AMOUNT_GHS` from `.env`
+- Users will be charged the actual displayed amount (GH₵10 or GH₵15)
+
+### Price Summary Table
+
+| Level        | Display Price | Test Charge (with override) | Production Charge |
+|--------------|---------------|-----------------------------|--------------------|
+| Beginner     | Free          | Free                        | Free               |
+| Intermediate | GH₵10         | GH₵0.50                     | GH₵10              |
+| Advanced     | GH₵15         | GH₵0.50                     | GH₵15              |
+
+### Environment Variables
+
+```env
+# Required
+VITE_PAYSTACK_PK=pk_test_your_key_here
+
+# Optional - for testing with small amounts
+VITE_PAYSTACK_TEST_AMOUNT_GHS=0.5
+```
 
 ## Support
 
