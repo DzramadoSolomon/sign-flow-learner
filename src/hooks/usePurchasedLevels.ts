@@ -1,0 +1,79 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+
+export const usePurchasedLevels = () => {
+  const { user } = useAuth();
+  const [purchasedLevels, setPurchasedLevels] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchPurchasedLevels = useCallback(async () => {
+    try {
+      let userEmail = user?.email;
+      
+      if (!userEmail) {
+        userEmail = sessionStorage.getItem('lastPaymentEmail') || undefined;
+      }
+
+      if (!userEmail) {
+        setPurchasedLevels([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('lesson_purchases')
+        .select('lesson_id')
+        .eq('user_email', userEmail)
+        .eq('payment_status', 'success');
+
+      if (error) {
+        console.error('Error fetching purchases:', error);
+        setPurchasedLevels([]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Extract levels from purchased lesson IDs (e.g., 'intermediate-1' -> 'intermediate')
+      const levels = new Set<string>();
+      if (data) {
+        data.forEach((p) => {
+          const lessonId = (p as { lesson_id: string }).lesson_id;
+          const level = lessonId.split('-')[0];
+          if (level) levels.add(level);
+        });
+      }
+
+      setPurchasedLevels(Array.from(levels));
+    } catch (err) {
+      console.error('Error fetching purchases:', err);
+      setPurchasedLevels([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.email]);
+
+  useEffect(() => {
+    fetchPurchasedLevels();
+  }, [fetchPurchasedLevels]);
+
+  const hasLevelAccess = useCallback((level: string) => {
+    if (level.toLowerCase() === 'beginner') return true;
+    return purchasedLevels.includes(level.toLowerCase());
+  }, [purchasedLevels]);
+
+  const refetch = fetchPurchasedLevels;
+
+  return {
+    purchasedLevels,
+    isLoading,
+    hasLevelAccess,
+    refetch,
+  };
+};
+
+export const getLevelPrice = (level: string): number => {
+  if (level.toLowerCase() === 'intermediate') return 10;
+  if (level.toLowerCase() === 'advanced') return 15;
+  return 0;
+};

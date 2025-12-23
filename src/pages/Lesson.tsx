@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -13,18 +13,34 @@ import { NotesSection } from "@/components/lesson/NotesSection";
 import { QuizSection } from "@/components/lesson/QuizSection";
 import { ExerciseSection } from "@/components/lesson/ExerciseSection";
 import { useLesson, useLessonMetadata } from "@/hooks/useLessons";
+import { usePurchasedLevels, getLevelPrice } from "@/hooks/usePurchasedLevels";
+import { PaymentDialog } from "@/components/PaymentDialog";
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState<'content' | 'quiz' | 'exercises'>('content');
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   
   // Fetch lesson from database
   const { data: lesson, isLoading, error } = useLesson(id || '');
-  const { data: allLessons = [] } = useLessonMetadata('beginner');
+  const { data: allLessons = [] } = useLessonMetadata();
+  const { hasLevelAccess, refetch: refetchPurchases, isLoading: loadingPurchases } = usePurchasedLevels();
   
-  // Find current lesson index for navigation
+  // Check if this is a premium lesson and if user has access
+  const isPremium = lesson?.metadata?.level !== 'beginner';
+  const hasAccess = lesson?.metadata?.level ? hasLevelAccess(lesson.metadata.level) : true;
+  const price = lesson?.metadata?.level ? getLevelPrice(lesson.metadata.level) : 0;
+
+  // Show payment dialog if premium and no access
+  useEffect(() => {
+    if (!isLoading && !loadingPurchases && lesson && isPremium && !hasAccess) {
+      setPaymentDialogOpen(true);
+    }
+  }, [isLoading, loadingPurchases, lesson, isPremium, hasAccess]);
+  
+  // Find current lesson index for navigation (across all levels)
   const currentIndex = allLessons.findIndex(l => l.id === id);
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex < allLessons.length - 1;
@@ -59,7 +75,20 @@ const Lesson = () => {
     }
   };
 
-  if (isLoading) {
+  const handlePaymentSuccess = () => {
+    refetchPurchases();
+    setPaymentDialogOpen(false);
+  };
+
+  const handlePaymentDialogClose = (open: boolean) => {
+    setPaymentDialogOpen(open);
+    if (!open && isPremium && !hasAccess) {
+      // User closed dialog without paying, redirect to lessons
+      navigate('/lessons');
+    }
+  };
+
+  if (isLoading || loadingPurchases) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -75,6 +104,38 @@ const Lesson = () => {
           <Link to="/lessons">
             <Button variant="outline">Back to Lessons</Button>
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // If premium and no access, show locked state with payment dialog
+  if (isPremium && !hasAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center max-w-md p-8">
+          <Lock className="h-16 w-16 text-amber-600 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Premium Lesson</h1>
+          <p className="text-muted-foreground mb-6">
+            This lesson requires payment to access. Complete the payment to unlock all {lesson.metadata.level} lessons.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link to="/lessons">
+              <Button variant="outline">Back to Lessons</Button>
+            </Link>
+            <Button onClick={() => setPaymentDialogOpen(true)}>
+              Unlock for GH₵{price}
+            </Button>
+          </div>
+          
+          <PaymentDialog
+            open={paymentDialogOpen}
+            onOpenChange={handlePaymentDialogClose}
+            lessonId={lesson.metadata.id}
+            lessonTitle={lesson.metadata.title}
+            amountGhs={price}
+            onSuccess={handlePaymentSuccess}
+          />
         </div>
       </div>
     );
