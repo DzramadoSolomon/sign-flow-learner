@@ -14,7 +14,8 @@ const Lessons = () => {
   const isMobile = useIsMobile();
   
   // Fetch lessons from database
-  const { data: lessons = [], isLoading, error } = useLessonMetadata('beginner');
+  const { data: lessons = [], isLoading: isLoadingBeginner, error: beginnerError } = useLessonMetadata('beginner');
+  const { data: intermediateLessons = [], isLoading: isLoadingIntermediate, error: intermediateError } = useLessonMetadata('intermediate');
   
   // Mock progress data - Updated to include Lesson 4 and 5
   const progressData: { [key: string]: number } = {
@@ -24,6 +25,9 @@ const Lessons = () => {
     'beginner-4': 100,
     'beginner-5': 100,
   };
+
+  const isLoading = isLoadingBeginner || isLoadingIntermediate;
+  const error = beginnerError || intermediateError;
 
   if (isLoading) {
     return (
@@ -94,6 +98,24 @@ const Lessons = () => {
               />
             ))}
           </div>
+
+          {/* Intermediate Section */}
+          {intermediateLessons.length > 0 && (
+            <div className="mt-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-semibold mb-2">Intermediate Level</h2>
+                  <p className="text-muted-foreground">Unlock intermediate lessons by purchasing access.</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {intermediateLessons.map((lesson) => (
+                  <LessonCard key={lesson.id} lesson={lesson} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Coming Soon Section */}
           <div className="mt-16 p-8 rounded-xl bg-muted/30 border-2 border-dashed border-border text-center">
