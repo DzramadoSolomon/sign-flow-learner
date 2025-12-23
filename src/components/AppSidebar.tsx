@@ -27,7 +27,7 @@ import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserRole } from "@/hooks/useUserRole";
+import { useIsAdmin } from "@/hooks/useUserRole";
 import { useLessonMetadata } from "@/hooks/useLessons";
 import { PaymentDialog } from "@/components/PaymentDialog";
 
@@ -45,7 +45,7 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   const { user } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin } = useIsAdmin();
   const { data: lessons = [] } = useLessonMetadata();
 
   const [purchasedLevels, setPurchasedLevels] = useState<string[]>([]);
@@ -97,10 +97,13 @@ export function AppSidebar() {
 
       // Extract levels from purchased lesson IDs (e.g., 'intermediate-1' -> 'intermediate')
       const levels = new Set<string>();
-      data?.forEach((p: { lesson_id: string }) => {
-        const level = p.lesson_id.split('-')[0];
-        if (level) levels.add(level);
-      });
+      if (data) {
+        data.forEach((p) => {
+          const lessonId = (p as { lesson_id: string }).lesson_id;
+          const level = lessonId.split('-')[0];
+          if (level) levels.add(level);
+        });
+      }
 
       setPurchasedLevels(Array.from(levels));
     } catch (err) {
