@@ -39,12 +39,11 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
-  // Normalize Paystack public key from env and detect test-mode keys
+  // Normalize Paystack public key from env - no hardcoded fallback
   const envKeyRaw = import.meta.env.VITE_PAYSTACK_PK as string | undefined;
-  const envKey = envKeyRaw?.trim().replace(/^\"|\"$/g, "");
-  const DEFAULT_LIVE_PK = 'pk_live_c4cb8389ecb67e39646aea1b7a37aa1182c63ddd';
-  const key = envKey ?? DEFAULT_LIVE_PK;
-  const isTestKey = Boolean(envKey && envKey.startsWith("pk_test_"));
+  const key = envKeyRaw?.trim().replace(/^\"|\"$/g, "") || '';
+  const isTestKey = key.startsWith("pk_test_");
+  const isKeyConfigured = Boolean(key);
 
   // Optional: override the amount temporarily for quick live verification using an env var.
   // Set VITE_PAYSTACK_TEST_AMOUNT_GHS=0.5 to charge GH₵0.50 locally without changing code.
@@ -140,20 +139,18 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
       return;
     }
 
-    // Use the top-level `key`/`envKey` values defined at component scope
-    // (Avoid re-declaring env vars here so `isTestKey` is available to the JSX)
-    if (!envKey) {
-      // Environment variable not set — using fallback public key (production)
-      // Replace the fallback with your own public key in `.env` if needed.
-      console.warn('VITE_PAYSTACK_PK not set; using provided live public key fallback.');
+    // Require Paystack public key to be configured via environment variable
+    if (!isKeyConfigured) {
+      setError("Payment system not configured. Please set VITE_PAYSTACK_PK environment variable with your Paystack public key.");
+      setLoading(false);
+      return;
     }
-
 
     setLoading(true);
     setError(null);
 
     // Prevent starting a payment if a TEST public key is configured (user said they are NOT testing)
-    if (envKey && envKey.startsWith("pk_test_")) {
+    if (isTestKey) {
       setError("Paystack is configured with a TEST public key (pk_test_...). Replace VITE_PAYSTACK_PK with your LIVE public key (pk_live_...) in your .env and restart the app to process real payments.");
       setLoading(false);
       return;
@@ -262,7 +259,13 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
             </div>
           ) : (
             <>
-              {isTestKey && (
+              {!isKeyConfigured && (
+                <div className="p-2 bg-red-50 dark:bg-red-950 rounded border border-red-200 dark:border-red-800 text-xs text-red-900 dark:text-red-100">
+                  <strong>Error:</strong> Paystack public key not configured. Set <code>VITE_PAYSTACK_PK</code> in your <code>.env</code> file to enable payments.
+                </div>
+              )}
+
+              {isKeyConfigured && isTestKey && (
                 <div className="p-2 bg-amber-50 dark:bg-amber-950 rounded border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-100">
                   <strong>Warning:</strong> Paystack is configured with a TEST public key (<code>pk_test_...</code>). To accept real payments, set <code>VITE_PAYSTACK_PK</code> to your LIVE public key (<code>pk_live_...</code>) in your <code>.env</code>, set the live <code>PAYSTACK_SECRET_KEY</code> in your Supabase Edge Function, and restart the app.
                 </div>
@@ -368,7 +371,7 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
             {!paid && (
               <Button
                 onClick={payWithPaystack}
-                disabled={loading || verifying || !email || !isValidEmail(email)}
+                disabled={loading || verifying || !email || !isValidEmail(email) || !isKeyConfigured}
                 className="min-w-48"
               >
                 {loading ? "Opening payment..." : verifying ? "Verifying..." : `Pay GH₵${effectiveAmountGhs.toFixed(2)}`}
