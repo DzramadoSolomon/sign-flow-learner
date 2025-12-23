@@ -44,6 +44,54 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_purchases: {
+        Row: {
+          amount_ghs: number
+          amount_pesewas: number
+          created_at: string
+          currency: string
+          id: string
+          lesson_id: string
+          metadata: Json | null
+          payment_status: string
+          paystack_reference: string
+          transaction_date: string
+          updated_at: string
+          user_email: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_ghs: number
+          amount_pesewas: number
+          created_at?: string
+          currency?: string
+          id?: string
+          lesson_id: string
+          metadata?: Json | null
+          payment_status?: string
+          paystack_reference: string
+          transaction_date?: string
+          updated_at?: string
+          user_email: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_ghs?: number
+          amount_pesewas?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          lesson_id?: string
+          metadata?: Json | null
+          payment_status?: string
+          paystack_reference?: string
+          transaction_date?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           created_at: string
