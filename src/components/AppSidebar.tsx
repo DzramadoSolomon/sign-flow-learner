@@ -1,12 +1,12 @@
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Home, 
   LayoutDashboard, 
   GraduationCap,
   BookOpen,
   CheckCircle2,
-  Circle,
-  Shield
+  Circle
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,8 +24,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useAuth } from "@/contexts/AuthContext";
-import { useIsAdmin } from "@/hooks/useUserRole";
 
 // Mock lesson data with progress
 const lessonGroups = [
@@ -57,22 +55,57 @@ const mainNavigation = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpen, isMobile } = useSidebar();
   const location = useLocation();
-  const { user } = useAuth();
-  const { isAdmin } = useIsAdmin();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
 
+  const [purchasedLessons, setPurchasedLessons] = useState<string[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [selectedLessonTitle, setSelectedLessonTitle] = useState<string | null>(null);
+  const [hoverExpanded, setHoverExpanded] = useState(false);
+
+  // Fetch purchased lessons from database
+  const fetchPurchasedLessons = async () => {
+    try {
+      // Get current user's email - try from auth or session storage
+      let userEmail = user?.email;
+      
+      if (!userEmail) {
+        // Fallback to checking if we have stored email in sessionStorage
+        userEmail = sessionStorage.getItem('lastPaymentEmail') || undefined;
+      }
+
+      if (!userEmail) {
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('lesson_purchases')
+        .select('lesson_id')
+        .eq('user_email', userEmail)
+        .eq('payment_status', 'completed');
+
+      if (error) {
+        console.error('Error fetching purchases:', error);
+        return;
+      }
+
+      setPurchasedLessons(data?.map((p: any) => p.lesson_id) || []);
+    } catch (err) {
+      console.error('Error fetching purchases:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPurchasedLessons();
+  }, [user?.email]);
+
   const isActive = (path: string) => currentPath === path;
 
-  // Calculate overall progress
-  const allLessons = lessonGroups.flatMap(g => g.lessons);
-  const completedLessons = allLessons.filter(l => l.completed).length;
-  const overallProgress = Math.round((completedLessons / allLessons.length) * 100);
-
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <SidebarHeader className="border-b px-4 py-4">
         <Link to="/" className="flex items-center gap-2">
           <img src="/favicon.ico" alt="GSL Logo" className="h-6 w-6 shrink-0" />
@@ -141,23 +174,26 @@ export function AppSidebar() {
                     <SidebarMenu>
                       {group.lessons.map((lesson) => {
                         const lessonActive = isActive(`/lesson/${lesson.id}`);
+                        const premium = group.level.toLowerCase() !== 'beginner';
+
                         return (
                           <SidebarMenuItem key={lesson.id}>
                             <SidebarMenuButton asChild isActive={lessonActive}>
                               <Link 
                                 to={`/lesson/${lesson.id}`}
                                 className="flex items-center gap-3"
+                                onClick={(e) => handleLessonClick(e, lesson, group.level)}
                               >
-                                <div className="shrink-0">
-                                  {lesson.completed ? (
-                                    <CheckCircle2 className="h-4 w-4 text-accent" />
-                                  ) : lesson.current ? (
-                                    <Circle className="h-4 w-4 text-primary fill-primary/20" />
-                                  ) : (
-                                    <Circle className="h-4 w-4 text-muted-foreground" />
-                                  )}
+                                <div className="shrink-0 w-4">
+                                  {lessonIcon(lesson.title)}
                                 </div>
                                 <span className="text-sm truncate">{lesson.title}</span>
+                                {premium && !isPurchased(lesson.id) && (
+                                  <Badge variant="outline" className="ml-auto text-xs flex items-center gap-1">
+                                    <Lock className="h-3 w-3 text-amber-600" />
+                                    <span className="text-amber-600">GH₵10</span>
+                                  </Badge>
+                                )}
                               </Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
@@ -171,20 +207,6 @@ export function AppSidebar() {
           );
         })}
       </SidebarContent>
-
-      {/* User Footer */}
-      <SidebarFooter className="border-t p-4">
-        {!isCollapsed && (
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-              <span className="text-sm font-medium text-primary">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-              </span>
-            </div>
-            <span className="text-sm font-medium truncate">{user?.name || 'User'}</span>
-          </div>
-        )}
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -11,10 +11,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useLessonMetadata } from "@/hooks/useLessons";
 
 const Lessons = () => {
-  const isMobile = useIsMobile();
-  
-  // Fetch lessons from database
-  const { data: lessons = [], isLoading, error } = useLessonMetadata('beginner');
+  const lessons = [
+    lesson1Data.metadata as LessonMetadata,
+    lesson2Data.metadata as LessonMetadata,
+    lesson3Data.metadata as LessonMetadata,
+  ];
   
   // Mock progress data - Updated to include Lesson 4 and 5
   const progressData: { [key: string]: number } = {
@@ -25,24 +26,38 @@ const Lessons = () => {
     'beginner-5': 100,
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Error Loading Lessons</h1>
-          <p className="text-muted-foreground">Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <SidebarProvider defaultOpen={false}>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        
+        <div className="flex-1">
+          {/* Header */}
+          <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger>
+                  <Button variant="ghost" size="sm">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SidebarTrigger>
+                <div className="flex items-center gap-4 flex-1">
+                  <Link to="/" className="flex items-center gap-2">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                    <span className="font-bold text-lg">GSL Learning</span>
+                  </Link>
+                  <nav className="hidden md:flex gap-4 ml-8">
+                    <Link to="/dashboard">
+                      <Button variant="ghost">Dashboard</Button>
+                    </Link>
+                    <Link to="/lessons">
+                      <Button variant="ghost" className="font-medium">Lessons</Button>
+                    </Link>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </header>
 
   const lessonsContent = (
     <>
@@ -85,15 +100,15 @@ const Lessons = () => {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {lessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                progress={progressData[lesson.id]}
-              />
-            ))}
-          </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {lessons.map((lesson) => (
+                  <LessonCard
+                    key={lesson.id}
+                    lesson={lesson}
+                    progress={progressData[lesson.id]}
+                  />
+                ))}
+              </div>
 
           {/* Coming Soon Section */}
           <div className="mt-16 p-8 rounded-xl bg-muted/30 border-2 border-dashed border-border text-center">
