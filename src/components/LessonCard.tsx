@@ -1,48 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Clock, Target, Tag, Lock, CreditCard, Calendar, MessageSquare } from "lucide-react";
+import { Clock, Target, Tag, Lock, Calendar, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LessonMetadata } from "@/types/lesson";
 import PaymentDialog from "@/components/PaymentDialog";
+import { usePurchasedLevels, getLevelPrice } from "@/hooks/usePurchasedLevels";
 
 interface LessonCardProps {
   lesson: LessonMetadata;
   progress?: number;
 }
 
-const PURCHASE_KEY = "purchasedLessons";
-
-function getPurchasedLessons(): string[] {
-  try {
-    const raw = localStorage.getItem(PURCHASE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function addPurchasedLesson(id: string) {
-  const arr = getPurchasedLessons();
-  if (!arr.includes(id)) {
-    arr.push(id);
-    localStorage.setItem(PURCHASE_KEY, JSON.stringify(arr));
-  }
-}
-
 export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [purchased, setPurchased] = useState<boolean>(false);
-
-  useEffect(() => {
-    setPurchased(getPurchasedLessons().includes(lesson.id));
-  }, [lesson.id]);
+  const { hasLevelAccess, refetch } = usePurchasedLevels();
 
   const isPremium = lesson.level !== "beginner";
+  const hasAccess = hasLevelAccess(lesson.level);
+  const price = getLevelPrice(lesson.level);
 
   const handleClick = (e?: React.MouseEvent) => {
-    if (!isPremium || purchased) {
+    if (!isPremium || hasAccess) {
       navigate(`/lesson/${lesson.id}`);
       return;
     }
@@ -52,8 +32,7 @@ export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
   };
 
   const onPaymentSuccess = (reference: string) => {
-    addPurchasedLesson(lesson.id);
-    setPurchased(true);
+    refetch();
     setDialogOpen(false);
     // navigate to lesson after short delay
     setTimeout(() => navigate(`/lesson/${lesson.id}`), 300);
@@ -82,10 +61,10 @@ export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
             </div>
 
             {/* Premium indicator */}
-            {isPremium && (
+            {isPremium && !hasAccess && (
               <Badge variant="outline" className="text-xs flex items-center gap-1">
                 <Lock className="h-3 w-3 text-amber-600" />
-                <span className="text-amber-600">GH₵10</span>
+                <span className="text-amber-600">GH₵{price}</span>
               </Badge>
             )}
           </div>
@@ -137,13 +116,13 @@ export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
 
   return (
     <>
-      {(!isPremium || purchased) ? (
+      {(!isPremium || hasAccess) ? (
         <Link to={`/lesson/${lesson.id}`} className="block" onClick={handleClick}>
           {CardInner}
         </Link>
       ) : (
         // Non-purchased premium - intercept click and open dialog
-        <div role="button" tabIndex={0} onClick={handleClick} onKeyDown={(e) => e.key === 'Enter' && handleClick()} className="block">
+        <div role="button" tabIndex={0} onClick={handleClick} onKeyDown={(e) => e.key === 'Enter' && handleClick()} className="block cursor-pointer">
           {CardInner}
         </div>
       )}
@@ -153,10 +132,9 @@ export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
         onOpenChange={(o) => setDialogOpen(o)}
         lessonId={lesson.id}
         lessonTitle={lesson.title}
-        amountGhs={10}
+        amountGhs={price}
         onSuccess={onPaymentSuccess}
       />
     </>
   );
 };
-
