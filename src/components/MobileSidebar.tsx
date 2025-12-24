@@ -203,18 +203,18 @@ export function MobileSidebar() {
                 <Collapsible key={group.level} defaultOpen={hasCurrentLesson || group.level === 'Beginner'}>
                   <div>
                     <CollapsibleTrigger className="w-full">
-                      <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-sidebar-accent/50 rounded-md transition-colors gap-2">
-                        <span className="text-xs font-medium text-sidebar-foreground/70 flex items-center gap-1.5 min-w-0">
+                      <div className="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-sidebar-accent/50 rounded-md transition-colors gap-1">
+                        <span className="text-xs font-medium text-sidebar-foreground/70 flex items-center gap-1 min-w-0 flex-1">
                           <span className="truncate">{group.level}</span>
                           {premium && !hasAccess && <Lock className="h-3 w-3 text-amber-600 shrink-0" />}
                         </span>
-                        <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="flex items-center gap-1 shrink-0 max-w-[50%]">
                           {premium && !hasAccess && (
-                            <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 border-amber-200 px-1.5 py-0.5">
-                              GH₵{getLevelPrice(group.level)} for all
+                            <Badge variant="secondary" className="text-[10px] bg-amber-100 text-amber-700 border-amber-200 px-1 py-0 whitespace-nowrap">
+                              GH₵{getLevelPrice(group.level)}
                             </Badge>
                           )}
-                          <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+                          <Badge variant="outline" className="text-[10px] px-1 py-0">
                             {completedCount}/{group.lessons.length}
                           </Badge>
                         </div>
