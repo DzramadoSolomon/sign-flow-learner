@@ -214,14 +214,21 @@ export function AppSidebar() {
               <Collapsible key={group.level} defaultOpen={hasCurrentLesson || group.level === 'Beginner'}>
                 <SidebarGroup>
                   <CollapsibleTrigger className="w-full">
-                    <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-sidebar-accent/50 rounded-md transition-colors">
-                      <span className="flex items-center gap-2">
-                        {group.level}
-                        {premium && !hasAccess && <Lock className="h-3 w-3 text-amber-600" />}
+                    <SidebarGroupLabel className="flex items-center justify-between cursor-pointer hover:bg-sidebar-accent/50 rounded-md transition-colors gap-2">
+                      <span className="flex items-center gap-1.5 min-w-0">
+                        <span className="truncate">{group.level}</span>
+                        {premium && !hasAccess && <Lock className="h-3 w-3 text-amber-600 shrink-0" />}
                       </span>
-                      <Badge variant="outline" className="text-xs">
-                        {completedCount}/{group.lessons.length}
-                      </Badge>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {premium && !hasAccess && (
+                          <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 border-amber-200 px-1.5 py-0.5">
+                            GH₵{getLevelPrice(group.level)} for all
+                          </Badge>
+                        )}
+                        <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+                          {completedCount}/{group.lessons.length}
+                        </Badge>
+                      </div>
                     </SidebarGroupLabel>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
@@ -235,19 +242,17 @@ export function AppSidebar() {
                               <SidebarMenuButton asChild isActive={lessonActive}>
                                 <Link 
                                   to={`/lesson/${lesson.id}`}
-                                  className="flex items-center gap-3"
+                                  className="flex items-center gap-2"
                                   onClick={(e) => handleLessonClick(e, lesson, group.level)}
                                 >
                                   <div className="shrink-0 w-4">
-                                    {lessonIcon()}
+                                    {premium && !hasAccess ? (
+                                      <Lock className="h-4 w-4 text-amber-600" />
+                                    ) : (
+                                      lessonIcon()
+                                    )}
                                   </div>
                                   <span className="text-sm truncate">{lesson.title}</span>
-                                  {premium && !hasAccess && (
-                                    <Badge variant="outline" className="ml-auto text-xs flex items-center gap-1">
-                                      <Lock className="h-3 w-3 text-amber-600" />
-                                      <span className="text-amber-600">GH₵{getLevelPrice(group.level)}</span>
-                                    </Badge>
-                                  )}
                                 </Link>
                               </SidebarMenuButton>
                             </SidebarMenuItem>
