@@ -1,21 +1,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { hashSync, compareSync } from "https://esm.sh/bcryptjs@2.4.3";
+import bcrypt from "https://esm.sh/bcryptjs@2.4.3";
 import { z } from "https://esm.sh/zod@3.22.4";
 
 // Define allowed origins for CORS
 const ALLOWED_ORIGINS = [
   'https://njukrhmykrxqvjjvnotv.lovable.app',
   'https://gsl-learning.lovable.app',
+  'https://sign-flow-learner.vercel.app',
   'http://localhost:5173',
   'http://localhost:4173',
   'http://localhost:8080',
 ];
 
 function getCorsHeaders(origin: string | null): Record<string, string> {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, ''))) ? origin : '';
+  // Allow any .vercel.app or .lovable.app subdomain
+  const isAllowed = origin && (
+    ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, ''))) ||
+    origin.endsWith('.vercel.app') ||
+    origin.endsWith('.lovable.app')
+  );
   return {
-    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Origin': isAllowed ? origin : '',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   };
 }
@@ -95,8 +101,8 @@ serve(async (req) => {
         );
       }
 
-      // Hash password using bcryptjs (synchronous, works in Edge Runtime)
-      const password_hash = hashSync(validated.password, 10);
+      // Hash password using bcryptjs
+      const password_hash = bcrypt.hashSync(validated.password, 10);
 
       // Insert new user
       const { data: newUser, error: insertError } = await supabase
@@ -152,7 +158,7 @@ serve(async (req) => {
       }
 
       // Verify password using bcryptjs
-      const validPassword = compareSync(validated.password, user.password_hash);
+      const validPassword = bcrypt.compareSync(validated.password, user.password_hash);
       if (!validPassword) {
         console.log('Invalid password for user:', validated.email);
         return new Response(
@@ -244,7 +250,7 @@ serve(async (req) => {
       }
 
       // Verify current password
-      const validCurrentPassword = compareSync(validated.current_password, userData.password_hash);
+      const validCurrentPassword = bcrypt.compareSync(validated.current_password, userData.password_hash);
       if (!validCurrentPassword) {
         return new Response(
           JSON.stringify({ success: false, error: 'Current password is incorrect' }),
@@ -253,7 +259,7 @@ serve(async (req) => {
       }
 
       // Hash new password
-      const newPasswordHash = hashSync(validated.new_password, 10);
+      const newPasswordHash = bcrypt.hashSync(validated.new_password, 10);
 
       // Update password
       const { error: updateError } = await supabase
