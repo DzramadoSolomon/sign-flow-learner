@@ -2,10 +2,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Admin emails that bypass payment requirements
+const ADMIN_EMAILS = ['solomonkendzramado@gmail.com'];
+
 export const usePurchasedLevels = () => {
   const { user } = useAuth();
   const [purchasedLevels, setPurchasedLevels] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Check if current user is an admin (bypasses payment)
+  const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
   const fetchPurchasedLevels = useCallback(async () => {
     try {
@@ -58,9 +64,12 @@ export const usePurchasedLevels = () => {
   }, [fetchPurchasedLevels]);
 
   const hasLevelAccess = useCallback((level: string) => {
+    // Admins have access to all levels
+    if (isAdmin) return true;
+    // Beginner is always free
     if (level.toLowerCase() === 'beginner') return true;
     return purchasedLevels.includes(level.toLowerCase());
-  }, [purchasedLevels]);
+  }, [purchasedLevels, isAdmin]);
 
   const refetch = fetchPurchasedLevels;
 
@@ -69,6 +78,7 @@ export const usePurchasedLevels = () => {
     isLoading,
     hasLevelAccess,
     refetch,
+    isAdmin,
   };
 };
 
