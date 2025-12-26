@@ -1,4 +1,4 @@
-import { Menu, Filter, Loader2 } from "lucide-react";
+import { Menu, Filter, Loader2, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,14 @@ import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLessonMetadata } from "@/hooks/useLessons";
-
+import { usePurchasedLevels } from "@/hooks/usePurchasedLevels";
 const Lessons = () => {
   const isMobile = useIsMobile();
   const { data: lessons = [], isLoading } = useLessonMetadata();
+  const { hasLevelAccess } = usePurchasedLevels();
+
+  const hasIntermediateAccess = hasLevelAccess('intermediate');
+  const hasAdvancedAccess = hasLevelAccess('advanced');
   
   // Group lessons by level
   const beginnerLessons = lessons.filter(l => l.level === 'beginner');
@@ -98,9 +102,16 @@ const Lessons = () => {
                       Build on your foundation with more complex signs and conversations
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-amber-600 border-amber-600">
-                    Premium - GH₵10
-                  </Badge>
+                  {hasIntermediateAccess ? (
+                    <Badge variant="outline" className="text-green-600 border-green-500 flex items-center gap-1">
+                      <CheckCircle className="h-3.5 w-3.5" />
+                      Purchased
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-amber-600 border-amber-600">
+                      Premium - GH₵10
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -127,9 +138,16 @@ const Lessons = () => {
                       Master complex expressions and professional signing
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-purple-600 border-purple-600">
-                    Premium - GH₵15
-                  </Badge>
+                  {hasAdvancedAccess ? (
+                    <Badge variant="outline" className="text-green-600 border-green-500 flex items-center gap-1">
+                      <CheckCircle className="h-3.5 w-3.5" />
+                      Purchased
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-purple-600 border-purple-600">
+                      Premium - GH₵15
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
