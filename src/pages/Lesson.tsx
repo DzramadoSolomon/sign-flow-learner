@@ -14,7 +14,9 @@ import { QuizSection } from "@/components/lesson/QuizSection";
 import { ExerciseSection } from "@/components/lesson/ExerciseSection";
 import { useLesson, useLessonMetadata } from "@/hooks/useLessons";
 import { usePurchasedLevels, getLevelPrice } from "@/hooks/usePurchasedLevels";
+import { useLessonCompletions } from "@/hooks/useLessonCompletions";
 import { PaymentDialog } from "@/components/PaymentDialog";
+import { toast } from "sonner";
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +29,7 @@ const Lesson = () => {
   const { data: lesson, isLoading, error } = useLesson(id || '');
   const { data: allLessons = [] } = useLessonMetadata();
   const { hasLevelAccess, refetch: refetchPurchases, isLoading: loadingPurchases } = usePurchasedLevels();
+  const { markLessonComplete, isLessonCompleted } = useLessonCompletions();
   
   // Check if this is a premium lesson and if user has access
   const isPremium = lesson?.metadata?.level !== 'beginner';
@@ -52,18 +55,33 @@ const Lesson = () => {
     }
   };
   
-  const goToNextLesson = () => {
+  const goToNextLesson = async () => {
+    // Mark current lesson as complete when moving to next lesson
+    if (id && !isLessonCompleted(id)) {
+      const success = await markLessonComplete(id);
+      if (success) {
+        toast.success("Lesson completed!");
+      }
+    }
     if (hasNext) {
       navigate(`/lesson/${allLessons[currentIndex + 1].id}`);
       setCurrentStep('content');
     }
   };
   
-  const goToNextStep = () => {
+  const goToNextStep = async () => {
     if (currentStep === 'content') {
       setCurrentStep('quiz');
     } else if (currentStep === 'quiz') {
       setCurrentStep('exercises');
+    } else if (currentStep === 'exercises') {
+      // Mark lesson as complete when finishing exercises
+      if (id && !isLessonCompleted(id)) {
+        const success = await markLessonComplete(id);
+        if (success) {
+          toast.success("Lesson completed!");
+        }
+      }
     }
   };
   

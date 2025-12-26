@@ -5,12 +5,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
-  Award, 
   Clock, 
   CheckCircle2, 
   Target,
   ArrowRight,
-  Trophy,
   Flame,
   Eye,
   PlayCircle,
@@ -25,7 +23,6 @@ export const DeafDashboard = () => {
     totalLessons: 30,
     currentStreak: 7,
     totalTime: 245, // minutes
-    achievements: 5,
     averageQuizScore: 87
   };
 
@@ -51,13 +48,6 @@ export const DeafDashboard = () => {
       progress: 100, 
       completedAt: '2 days ago' 
     },
-  ];
-
-  const achievements = [
-    { title: 'First Steps', description: 'Complete your first lesson', icon: <CheckCircle2 className="h-6 w-6" />, unlocked: true },
-    { title: 'Week Warrior', description: '7-day learning streak', icon: <Flame className="h-6 w-6" />, unlocked: true },
-    { title: 'Quiz Master', description: 'Score 90% or higher on 5 quizzes', icon: <Trophy className="h-6 w-6" />, unlocked: false },
-    { title: 'Dedicated Learner', description: 'Complete 10 lessons', icon: <Award className="h-6 w-6" />, unlocked: false },
   ];
 
   const progressPercentage = Math.round((stats.lessonsCompleted / stats.totalLessons) * 100);
@@ -188,44 +178,6 @@ export const DeafDashboard = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* Achievements - Visual Icons */}
-          <Card className="p-6 border-2">
-            <h2 className="text-xl font-bold mb-5">Achievements 🏆</h2>
-            <div className="space-y-3">
-              {achievements.map((achievement, index) => (
-                <div
-                  key={index}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    achievement.unlocked
-                      ? 'bg-accent/10 border-accent shadow-sm'
-                      : 'bg-muted/20 border-muted/50 opacity-60'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`p-3 rounded-lg ${
-                        achievement.unlocked
-                          ? 'bg-accent/30 text-accent'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {achievement.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold mb-1">{achievement.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {achievement.description}
-                      </p>
-                    </div>
-                    {achievement.unlocked && (
-                      <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
           {/* Dictionary Quick Access */}
           <Card className="p-6 border-2 bg-gradient-to-br from-blue-500/10 to-blue-500/5">
             <div className="text-center space-y-4">

@@ -5,12 +5,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
-  Award, 
   Clock, 
   CheckCircle2, 
   Target,
   ArrowRight,
-  Trophy,
   Flame,
   Volume2,
   Headphones,
@@ -26,7 +24,6 @@ export const HearingDashboard = () => {
     totalLessons: 30,
     currentStreak: 7,
     totalTime: 245, // minutes
-    achievements: 5,
     averageQuizScore: 87,
     listeningHours: 4.2
   };
@@ -53,13 +50,6 @@ export const HearingDashboard = () => {
       progress: 100, 
       completedAt: '2 days ago' 
     },
-  ];
-
-  const achievements = [
-    { title: 'First Steps', description: 'Complete your first lesson', icon: <CheckCircle2 className="h-6 w-6" />, unlocked: true },
-    { title: 'Week Warrior', description: '7-day learning streak', icon: <Flame className="h-6 w-6" />, unlocked: true },
-    { title: 'Audio Learner', description: 'Complete 5 audio lessons', icon: <Headphones className="h-6 w-6" />, unlocked: true },
-    { title: 'Quiz Master', description: 'Score 90% or higher on 5 quizzes', icon: <Trophy className="h-6 w-6" />, unlocked: false },
   ];
 
   const progressPercentage = Math.round((stats.lessonsCompleted / stats.totalLessons) * 100);
@@ -120,11 +110,11 @@ export const HearingDashboard = () => {
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
-              <Award className="h-5 w-5" />
+              <Clock className="h-5 w-5" />
             </div>
-            <p className="text-sm text-muted-foreground">Achievements</p>
+            <p className="text-sm text-muted-foreground">Learning Time</p>
           </div>
-          <p className="text-2xl font-bold">{stats.achievements}/10</p>
+          <p className="text-2xl font-bold">{Math.floor(stats.totalTime / 60)}h {stats.totalTime % 60}m</p>
         </Card>
       </div>
 
@@ -222,44 +212,6 @@ export const HearingDashboard = () => {
             <p className="text-sm text-muted-foreground">
               Keep it up! Learn every day to maintain your streak.
             </p>
-          </Card>
-
-          {/* Achievements */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Achievements</h2>
-            <div className="space-y-3">
-              {achievements.map((achievement, index) => (
-                <div
-                  key={index}
-                  className={`p-3 rounded-lg border ${
-                    achievement.unlocked
-                      ? 'bg-accent/5 border-accent/20'
-                      : 'bg-muted/20 border-muted opacity-60'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`p-2 rounded-lg ${
-                        achievement.unlocked
-                          ? 'bg-accent/20 text-accent'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {achievement.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-sm">{achievement.title}</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {achievement.description}
-                      </p>
-                    </div>
-                    {achievement.unlocked && (
-                      <CheckCircle2 className="h-4 w-4 text-accent shrink-0" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
           </Card>
 
           {/* Dictionary Quick Access */}
