@@ -35,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Listen for Supabase auth state changes (for Google OAuth)
   useEffect(() => {
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
@@ -48,16 +49,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(oauthUser);
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
+          setIsLoading(false);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           localStorage.removeItem(CURRENT_USER_KEY);
+          setIsLoading(false);
         }
-        setIsLoading(false);
       }
     );
 
-    // Check for existing Supabase session first
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Handle OAuth callback - check for code in URL
+    const handleOAuthCallback = async () => {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+      
+      if (code) {
+        console.log('OAuth code detected, exchanging for session...');
+        try {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            console.error('Error exchanging code for session:', error);
+          } else {
+            console.log('Session established:', data.user?.email);
+          }
+          // Clean the URL after processing
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (err) {
+          console.error('OAuth callback error:', err);
+        }
+        return; // Let onAuthStateChange handle the user update
+      }
+      
+      // No OAuth code - check for existing session
+      const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         const oauthUser: User = {
           id: session.user.id,
@@ -67,7 +91,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(oauthUser);
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
-        setIsLoading(false);
       } else {
         // Fall back to localStorage for custom auth
         try {
@@ -79,9 +102,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Error parsing user from localStorage:', e);
           localStorage.removeItem(CURRENT_USER_KEY);
         }
-        setIsLoading(false);
       }
-    });
+      setIsLoading(false);
+    };
+
+    handleOAuthCallback();
 
     return () => subscription.unsubscribe();
   }, []);
