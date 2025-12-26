@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLessonMetadata } from "@/hooks/useLessons";
+import { useLessonCompletions } from "@/hooks/useLessonCompletions";
 import { supabase } from "@/integrations/supabase/client";
 import { PaymentDialog } from "@/components/PaymentDialog";
 
@@ -32,6 +33,7 @@ export function MobileSidebar() {
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
   const { data: lessons = [] } = useLessonMetadata();
+  const { completedLessonIds, isLessonCompleted } = useLessonCompletions();
   const currentPath = location.pathname;
 
   const [purchasedLevels, setPurchasedLevels] = useState<string[]>([]);
@@ -108,11 +110,16 @@ export function MobileSidebar() {
   };
 
   const hasLevelAccess = (level: string) => {
+    // Admins have access to all levels
+    if (isAdmin) return true;
     if (!isPremiumLevel(level)) return true;
     return purchasedLevels.includes(level.toLowerCase());
   };
 
   const handleLessonClick = (e: React.MouseEvent, lesson: typeof lessons[0], level: string) => {
+    // Admins can access all lessons
+    if (isAdmin) return;
+    
     if (isPremiumLevel(level) && !hasLevelAccess(level)) {
       e.preventDefault();
       setSelectedLessonId(lesson.id);
@@ -127,10 +134,25 @@ export function MobileSidebar() {
     return 0;
   };
 
+  const lessonIcon = (lessonId: string, premium: boolean, hasAccess: boolean) => {
+    if (premium && !hasAccess) {
+      return <Lock className="h-4 w-4 text-amber-600" />;
+    }
+    if (isLessonCompleted(lessonId)) {
+      return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+    }
+    return <Circle className="h-4 w-4 text-muted-foreground" />;
+  };
+
   // Calculate overall progress
   const allLessons = lessons;
-  const completedLessons = 0;
-  const overallProgress = allLessons.length > 0 ? Math.round((completedLessons / allLessons.length) * 100) : 0;
+  const completedCount = completedLessonIds.length;
+  const overallProgress = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
+
+  // Get completed count per level
+  const getCompletedCountForLevel = (levelLessons: typeof lessons) => {
+    return levelLessons.filter(l => isLessonCompleted(l.id)).length;
+  };
 
   return (
     <>
@@ -148,7 +170,7 @@ export function MobileSidebar() {
             </div>
             <Progress value={overallProgress} className="h-2" />
             <p className="text-xs text-sidebar-foreground/70">
-              {completedLessons}/{allLessons.length} lessons completed
+              {completedCount}/{allLessons.length} lessons completed
             </p>
           </div>
         </div>
@@ -194,7 +216,7 @@ export function MobileSidebar() {
 
             {/* Lessons by Level */}
             {lessonGroups.map((group) => {
-              const completedCount = 0;
+              const levelCompletedCount = getCompletedCountForLevel(group.lessons);
               const hasCurrentLesson = group.lessons.some(l => isActive(`/lesson/${l.id}`));
               const premium = isPremiumLevel(group.level);
               const hasAccess = hasLevelAccess(group.level);
@@ -215,7 +237,7 @@ export function MobileSidebar() {
                             </Badge>
                           )}
                           <Badge variant="outline" className="text-[10px] px-1 py-0">
-                            {completedCount}/{group.lessons.length}
+                            {levelCompletedCount}/{group.lessons.length}
                           </Badge>
                         </div>
                       </div>
@@ -236,11 +258,7 @@ export function MobileSidebar() {
                               onClick={(e) => handleLessonClick(e, lesson, group.level)}
                             >
                               <div className="shrink-0">
-                                {premium && !hasAccess ? (
-                                  <Lock className="h-4 w-4 text-amber-600" />
-                                ) : (
-                                  <Circle className="h-4 w-4 text-muted-foreground" />
-                                )}
+                                {lessonIcon(lesson.id, premium, hasAccess)}
                               </div>
                               <span className="truncate">{lesson.title}</span>
                             </Link>

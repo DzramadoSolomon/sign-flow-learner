@@ -44,6 +44,33 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          lesson_id: string
+          user_email: string
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id: string
+          user_email: string
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          user_email?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       lesson_purchases: {
         Row: {
           amount_ghs: number
