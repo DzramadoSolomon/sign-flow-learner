@@ -20,10 +20,10 @@ export function useLessonCompletions() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('lesson_completions')
-        .select('lesson_id')
-        .eq('user_email', userEmail);
+      // Use edge function for secure access to completion data
+      const { data: response, error } = await supabase.functions.invoke('get-completions', {
+        body: { userEmail: userEmail.toLowerCase() }
+      });
 
       if (error) {
         console.error('Error fetching completions:', error);
@@ -31,7 +31,8 @@ export function useLessonCompletions() {
         return;
       }
 
-      const lessonIds = data?.map((c: { lesson_id: string }) => c.lesson_id) || [];
+      const completionData = response?.data || [];
+      const lessonIds = completionData.map((c: { lesson_id: string }) => c.lesson_id);
       setCompletedLessonIds(lessonIds);
       setIsLoading(false);
     } catch (err) {
@@ -62,19 +63,23 @@ export function useLessonCompletions() {
     }
 
     try {
-      const { error } = await supabase
-        .from('lesson_completions')
-        .insert({
-          user_email: userEmail,
-          lesson_id: lessonId,
-        });
+      // Use edge function for secure completion marking
+      const { data: response, error } = await supabase.functions.invoke('get-completions', {
+        body: {
+          userEmail: userEmail.toLowerCase(),
+          action: 'mark_complete',
+          lessonId,
+          userId: user?.id || null,
+        }
+      });
 
       if (error) {
-        // If it's a duplicate error, it's already completed
-        if (error.code === '23505') {
-          return true;
-        }
         console.error('Error marking lesson complete:', error);
+        return false;
+      }
+
+      if (response?.error) {
+        console.error('Error marking lesson complete:', response.error);
         return false;
       }
 
@@ -85,7 +90,7 @@ export function useLessonCompletions() {
       console.error('Error marking lesson complete:', err);
       return false;
     }
-  }, [user?.email, completedLessonIds]);
+  }, [user?.email, user?.id, completedLessonIds]);
 
   const getCompletedCount = useCallback(() => {
     return completedLessonIds.length;
