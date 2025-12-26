@@ -26,18 +26,21 @@ export function useStreak() {
         return;
       }
 
-      // Fetch all completions with dates
-      const { data, error } = await supabase
-        .from('lesson_completions')
-        .select('completed_at')
-        .eq('user_email', userEmail)
-        .order('completed_at', { ascending: false });
+      // Use edge function for secure access to completion data
+      const { data: response, error } = await supabase.functions.invoke('get-completions', {
+        body: { 
+          userEmail: userEmail.toLowerCase(),
+          action: 'get_streak'
+        }
+      });
 
       if (error) {
         console.error('Error fetching completions for streak:', error);
         setIsLoading(false);
         return;
       }
+
+      const data = response?.data || [];
 
       if (!data || data.length === 0) {
         setStreakData({ currentStreak: 0, longestStreak: 0, lastActivityDate: null });
@@ -46,12 +49,12 @@ export function useStreak() {
       }
 
       // Get unique dates (in local timezone)
-      const uniqueDates = [...new Set(
-        data.map((c: { completed_at: string }) => {
-          const date = new Date(c.completed_at);
-          return date.toISOString().split('T')[0];
-        })
-      )].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+      const dateStrings: string[] = data.map((c: { completed_at: string }) => {
+        const date = new Date(c.completed_at);
+        return date.toISOString().split('T')[0];
+      });
+      const uniqueDatesSet = new Set<string>(dateStrings);
+      const uniqueDates: string[] = Array.from(uniqueDatesSet).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
       if (uniqueDates.length === 0) {
         setStreakData({ currentStreak: 0, longestStreak: 0, lastActivityDate: null });
