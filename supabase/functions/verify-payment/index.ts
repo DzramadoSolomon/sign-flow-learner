@@ -12,12 +12,13 @@ const ALLOWED_ORIGINS = [
   'http://localhost:8080',
 ];
 
-// Also allow any lovable.app or vercel.app subdomains
+// Also allow any lovable.app, lovableproject.com, or vercel.app subdomains
 function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return false;
   if (ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) return true;
-  // Allow any *.lovable.app or *.vercel.app subdomain
+  // Allow any *.lovable.app, *.lovableproject.com or *.vercel.app subdomain
   if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/i.test(origin)) return true;
   if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
   return false;
 }
