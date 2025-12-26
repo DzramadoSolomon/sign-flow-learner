@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2, Lock } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2, Lock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -216,7 +216,7 @@ const Lesson = () => {
           {currentStep === 'exercises' && exercises.length > 0 && <ExerciseSection exercises={exercises} />}
 
           {/* Navigation */}
-          <div className="flex justify-between pt-8 border-t">
+          <div className="flex justify-between items-center pt-8 border-t">
             <Button 
               variant="outline" 
               disabled={currentStep === 'content' && !hasPrevious}
@@ -225,6 +225,27 @@ const Lesson = () => {
               <ChevronLeft className="h-4 w-4 mr-2" />
               {currentStep === 'content' ? 'Previous Lesson' : 'Previous'}
             </Button>
+            
+            {/* Mark as Complete Button */}
+            {id && (
+              <Button
+                variant={isLessonCompleted(id) ? "secondary" : "outline"}
+                onClick={async () => {
+                  if (id && !isLessonCompleted(id)) {
+                    const success = await markLessonComplete(id);
+                    if (success) {
+                      toast.success("Lesson marked as complete!");
+                    }
+                  }
+                }}
+                disabled={isLessonCompleted(id)}
+                className={isLessonCompleted(id) ? "text-green-600" : ""}
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                {isLessonCompleted(id) ? 'Completed' : 'Mark as Complete'}
+              </Button>
+            )}
+            
             <Button 
               className="bg-primary hover:bg-primary/90"
               disabled={currentStep === 'exercises' && !hasNext}
