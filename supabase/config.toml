@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.get-purchases]
 verify_jwt = false
+
+[functions.get-completions]
+verify_jwt = false
