@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLessonMetadata } from "@/hooks/useLessons";
 import { useLessonCompletions } from "@/hooks/useLessonCompletions";
+import { useStreak } from "@/hooks/useStreak";
 import { 
   Clock, 
   CheckCircle2, 
@@ -20,6 +21,7 @@ export const DeafDashboard = () => {
   const { user } = useAuth();
   const { data: lessons = [] } = useLessonMetadata();
   const { completedLessonIds, isLessonCompleted } = useLessonCompletions();
+  const { currentStreak } = useStreak();
 
   // Calculate real stats
   const completedCount = completedLessonIds.length;
@@ -38,9 +40,6 @@ export const DeafDashboard = () => {
 
   // Estimate learning time based on completed lessons (avg 15 min per lesson)
   const estimatedMinutes = completedCount * 15;
-
-  // For day streak, we'll show a placeholder since we don't track daily activity yet
-  const currentStreak = completedCount > 0 ? 1 : 0;
 
   const progressPercentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 

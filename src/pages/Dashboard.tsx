@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLearningMode } from "@/contexts/LearningModeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useStreak } from "@/hooks/useStreak";
 import { DeafDashboard } from "./dashboards/DeafDashboard";
 import { HearingDashboard } from "./dashboards/HearingDashboard";
 import { Flame, Menu, LogOut, User } from "lucide-react";
@@ -16,15 +17,12 @@ const Dashboard = () => {
   const isMobile = useIsMobile();
   const { mode } = useLearningMode();
   const { logout } = useAuth();
+  const { currentStreak } = useStreak();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/auth');
-  };
-  
-  const stats = {
-    currentStreak: 7,
   };
 
   // Render appropriate dashboard based on learning mode
@@ -52,7 +50,7 @@ const Dashboard = () => {
               <div className="flex items-center gap-2 ml-auto">
                 <Badge variant="outline" className="gap-1">
                   <Flame className="h-3 w-3 text-orange-500" />
-                  {stats.currentStreak}
+                  {currentStreak}
                 </Badge>
                 <Link to="/profile">
                   <Button variant="ghost" size="icon">
@@ -94,7 +92,7 @@ const Dashboard = () => {
                   <div className="flex items-center gap-3">
                     <Badge variant="outline" className="gap-1">
                       <Flame className="h-3 w-3 text-orange-500" />
-                      {stats.currentStreak} day streak
+                      {currentStreak} day streak
                     </Badge>
                     <Link to="/profile">
                       <Button variant="ghost" size="sm" className="gap-2">
