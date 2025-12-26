@@ -41,15 +41,21 @@ const Lessons = () => {
             Explore our structured curriculum designed to take you from beginner to advanced signer.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Badge variant="secondary" className="text-sm py-1.5 px-3">
-              Beginner ({beginnerLessons.length})
-            </Badge>
-            <Badge variant="outline" className="text-sm py-1.5 px-3">
-              Intermediate ({intermediateLessons.length})
-            </Badge>
-            <Badge variant="outline" className="text-sm py-1.5 px-3">
-              Advanced ({advancedLessons.length})
-            </Badge>
+            <a href="#beginner">
+              <Badge variant="secondary" className="text-sm py-1.5 px-3 cursor-pointer hover:bg-secondary/80 transition-colors">
+                Beginner ({beginnerLessons.length})
+              </Badge>
+            </a>
+            <a href="#intermediate">
+              <Badge variant="outline" className="text-sm py-1.5 px-3 cursor-pointer hover:bg-muted transition-colors">
+                Intermediate ({intermediateLessons.length})
+              </Badge>
+            </a>
+            <a href="#advanced">
+              <Badge variant="outline" className="text-sm py-1.5 px-3 cursor-pointer hover:bg-muted transition-colors">
+                Advanced ({advancedLessons.length})
+              </Badge>
+            </a>
           </div>
         </div>
       </section>
@@ -66,7 +72,7 @@ const Lessons = () => {
         <>
           {/* Beginner Lessons */}
           {beginnerLessons.length > 0 && (
-            <section className="py-12">
+            <section id="beginner" className="py-12 scroll-mt-20">
               <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-8">
                   <div>
@@ -93,7 +99,7 @@ const Lessons = () => {
 
           {/* Intermediate Lessons */}
           {intermediateLessons.length > 0 && (
-            <section className="py-12 bg-muted/30">
+            <section id="intermediate" className="py-12 bg-muted/30 scroll-mt-20">
               <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-8">
                   <div>
@@ -129,7 +135,7 @@ const Lessons = () => {
 
           {/* Advanced Lessons */}
           {advancedLessons.length > 0 && (
-            <section className="py-12">
+            <section id="advanced" className="py-12 scroll-mt-20">
               <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-8">
                   <div>
