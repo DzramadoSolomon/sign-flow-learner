@@ -71,16 +71,22 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
   };
 
   const verifyPayment = async (reference: string) => {
+    setVerifying(true);
+    setError(null);
+
+    // Re-open dialog to show verification progress (after Paystack iframe closes)
+    handleOpenChange(true);
+
+    // Store email for purchase verification
+    sessionStorage.setItem('lastPaymentEmail', email);
+
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     try {
-      setVerifying(true);
-      setError(null);
-
-      // Re-open dialog to show verification progress (after Paystack iframe closes)
-      handleOpenChange(true);
-
-      // Store email for purchase verification
-      sessionStorage.setItem('lastPaymentEmail', email);
-
+      console.log('Starting payment verification for reference:', reference);
+      
       // Call Supabase Edge Function to verify payment with Paystack
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment`,
@@ -96,10 +102,25 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
             email,
             amount: Math.round(effectiveAmountGhs * 100),
           }),
+          signal: controller.signal,
         }
       );
 
-      const result = await response.json();
+      clearTimeout(timeoutId);
+      console.log('Verification response status:', response.status);
+
+      // Parse JSON response safely
+      let result;
+      try {
+        result = await response.json();
+        console.log('Verification result:', result);
+      } catch (jsonErr) {
+        console.error('Failed to parse verification response:', jsonErr);
+        setError(`Invalid response from verification server. Reference: ${reference}`);
+        setGatewayDetails(`JSON parse error: ${(jsonErr as Error).message}`);
+        setVerifying(false);
+        return false;
+      }
 
       // Save gateway/paystack details for debugging if present
       setGatewayDetails(JSON.stringify(result?.paystack || result?.data || result, null, 2));
@@ -108,6 +129,7 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
         const errMsg = result.error || result.message || "Payment verification failed";
         setError(`${errMsg}. Reference: ${reference}`);
         console.error('Payment verification failed:', result);
+        setVerifying(false);
         return false;
       }
 
@@ -123,13 +145,22 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
       return true;
     } catch (err) {
-      setVerifying(false);
-      const message = err instanceof Error ? err.message : "Payment verification failed";
+      clearTimeout(timeoutId);
+      
+      let message: string;
+      if (err instanceof Error && err.name === 'AbortError') {
+        message = "Verification timed out after 30 seconds";
+      } else {
+        message = err instanceof Error ? err.message : "Payment verification failed";
+      }
+      
       // Provide actionable guidance when network errors occur
       const hint = `Failed to reach verification endpoint. Ensure your Supabase Edge Function 'verify-payment' is deployed and that 'PAYSTACK_SECRET_KEY' is set in its environment. Endpoint: ${verifyUrl}`;
       setError(`${message}. Reference: ${reference} — ${hint}`);
-      setGatewayDetails(`Network error: ${(err as Error).message}`);
+      setGatewayDetails(`Network error: ${message}`);
       console.error('Verification network error:', err);
+      setVerifying(false);
+      return false;
     }
   };
 
