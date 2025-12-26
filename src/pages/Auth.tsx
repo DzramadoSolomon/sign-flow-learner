@@ -6,9 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Globe, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Globe, Loader2, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Email validation regex
@@ -146,6 +154,130 @@ const GoogleSignInButton = () => {
   );
 };
 
+const ForgotPasswordDialog = () => {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!EMAIL_REGEX.test(email.trim())) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/auth?reset=true`,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setEmailSent(true);
+        toast({
+          title: "Email Sent",
+          description: "Check your inbox for password reset instructions.",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to send reset email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setEmail("");
+      setEmailSent(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button variant="link" className="px-0 text-sm text-muted-foreground">
+          Forgot password?
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Reset Password</DialogTitle>
+          <DialogDescription>
+            {emailSent
+              ? "We've sent you an email with instructions to reset your password."
+              : "Enter your email address and we'll send you a link to reset your password."}
+          </DialogDescription>
+        </DialogHeader>
+        {emailSent ? (
+          <div className="flex flex-col items-center py-4 space-y-4">
+            <div className="rounded-full bg-primary/10 p-3">
+              <Mail className="h-6 w-6 text-primary" />
+            </div>
+            <p className="text-sm text-center text-muted-foreground">
+              Didn't receive the email? Check your spam folder or try again.
+            </p>
+            <Button variant="outline" onClick={() => setEmailSent(false)}>
+              Try Again
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                "Send Reset Link"
+              )}
+            </Button>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const LoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -231,6 +363,9 @@ const LoginForm = () => {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
+        <div className="flex justify-end">
+          <ForgotPasswordDialog />
+        </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
@@ -303,10 +438,10 @@ const SignupForm = () => {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       toast({
         title: "Error",
-        description: "Password must be at least 6 characters long.",
+        description: "Password must be at least 8 characters long.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -379,7 +514,7 @@ const SignupForm = () => {
           <Input
             id="signup-password"
             type={showPassword ? "text" : "password"}
-            placeholder="Create a password (min 6 characters)"
+            placeholder="Create a password (min 8 characters)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
