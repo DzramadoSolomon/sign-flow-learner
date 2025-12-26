@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Clock, Target, Tag, Lock, Calendar, MessageSquare } from "lucide-react";
+import { Clock, Target, Tag, Lock, Calendar, MessageSquare, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LessonMetadata } from "@/types/lesson";
@@ -15,10 +15,11 @@ interface LessonCardProps {
 export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { hasLevelAccess, refetch } = usePurchasedLevels();
+  const { hasLevelAccess, isLessonPurchased, refetch } = usePurchasedLevels();
 
   const isPremium = lesson.level !== "beginner";
   const hasAccess = hasLevelAccess(lesson.level);
+  const purchased = isLessonPurchased(lesson.id);
   const price = getLevelPrice(lesson.level);
 
   const handleClick = (e?: React.MouseEvent) => {
@@ -60,8 +61,16 @@ export const LessonCard = ({ lesson, progress = 0 }: LessonCardProps) => {
               <span>{lesson.duration} min</span>
             </div>
 
-            {/* Premium indicator */}
-            {isPremium && !hasAccess && (
+            {/* Purchased indicator */}
+            {isPremium && purchased && (
+              <Badge variant="outline" className="text-xs flex items-center gap-1 border-green-500 text-green-600">
+                <CheckCircle className="h-3 w-3" />
+                <span>Purchased</span>
+              </Badge>
+            )}
+
+            {/* Premium indicator (not yet purchased) */}
+            {isPremium && !hasAccess && !purchased && (
               <Badge variant="outline" className="text-xs flex items-center gap-1">
                 <Lock className="h-3 w-3 text-amber-600" />
                 <span className="text-amber-600">GH₵{price}</span>

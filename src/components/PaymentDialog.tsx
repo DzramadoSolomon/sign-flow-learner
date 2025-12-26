@@ -111,9 +111,19 @@ export const PaymentDialog: React.FC<PaymentDialogProps> = ({
         timeoutPromise,
       ]);
 
+      console.log("Verification response:", { data, error });
+
       if (error) {
         setGatewayDetails(JSON.stringify(error, null, 2));
         setError(`${error.message || "Payment verification failed"}. Reference: ${reference}`);
+        setVerifying(false);
+        return false;
+      }
+
+      // Check for error in the response data (edge function returns { error: "..." } on failure)
+      if (data?.error) {
+        setGatewayDetails(JSON.stringify(data, null, 2));
+        setError(`${data.error}. Reference: ${reference}`);
         setVerifying(false);
         return false;
       }
