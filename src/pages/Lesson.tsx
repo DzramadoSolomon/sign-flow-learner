@@ -1,12 +1,22 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2, Lock, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Menu, Loader2, Lock, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { VideoSection } from "@/components/lesson/VideoSection";
 import { NotesSection } from "@/components/lesson/NotesSection";
@@ -15,6 +25,7 @@ import { ExerciseSection } from "@/components/lesson/ExerciseSection";
 import { useLesson, useLessonMetadata } from "@/hooks/useLessons";
 import { usePurchasedLevels, getLevelPrice } from "@/hooks/usePurchasedLevels";
 import { useLessonCompletions } from "@/hooks/useLessonCompletions";
+import { useAuth } from "@/contexts/AuthContext";
 import { PaymentDialog } from "@/components/PaymentDialog";
 import { toast } from "sonner";
 
@@ -22,8 +33,12 @@ const Lesson = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<'content' | 'quiz' | 'exercises'>('content');
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [levelUpDialogOpen, setLevelUpDialogOpen] = useState(false);
+  const [pendingNextLesson, setPendingNextLesson] = useState<string | null>(null);
+  const [nextLevelName, setNextLevelName] = useState<string>('');
   
   // Fetch lesson from database
   const { data: lesson, isLoading, error } = useLesson(id || '');
@@ -63,10 +78,36 @@ const Lesson = () => {
         toast.success("Lesson completed!");
       }
     }
+    
     if (hasNext) {
-      navigate(`/lesson/${allLessons[currentIndex + 1].id}`);
+      const currentLesson = allLessons[currentIndex];
+      const nextLesson = allLessons[currentIndex + 1];
+      
+      // Check if transitioning to a new level
+      if (currentLesson && nextLesson && currentLesson.level !== nextLesson.level) {
+        setPendingNextLesson(nextLesson.id);
+        setNextLevelName(nextLesson.level.charAt(0).toUpperCase() + nextLesson.level.slice(1));
+        setLevelUpDialogOpen(true);
+        return;
+      }
+      
+      navigate(`/lesson/${nextLesson.id}`);
       setCurrentStep('content');
     }
+  };
+
+  const confirmLevelUp = () => {
+    if (pendingNextLesson) {
+      navigate(`/lesson/${pendingNextLesson}`);
+      setCurrentStep('content');
+      setPendingNextLesson(null);
+      setLevelUpDialogOpen(false);
+    }
+  };
+
+  const cancelLevelUp = () => {
+    setPendingNextLesson(null);
+    setLevelUpDialogOpen(false);
   };
   
   const goToNextStep = async () => {
@@ -158,6 +199,8 @@ const Lesson = () => {
       </div>
     );
   }
+
+  const userName = user?.name?.split(' ')[0] || 'Learner';
 
   const { metadata, videoUrl, notes, quiz, exercises } = lesson;
 
@@ -257,6 +300,33 @@ const Lesson = () => {
           </div>
         </div>
       </section>
+
+      {/* Level Up Confirmation Dialog */}
+      <AlertDialog open={levelUpDialogOpen} onOpenChange={setLevelUpDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex justify-center mb-4">
+              <div className="p-4 rounded-full bg-primary/20">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <AlertDialogTitle className="text-center text-xl">
+              Ready for {nextLevelName} Level?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Congratulations {userName}! 🎉 You've completed all lessons in the current level. 
+              Are you ready to advance to the <span className="font-semibold text-foreground">{nextLevelName}</span> level?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <AlertDialogCancel onClick={cancelLevelUp}>Not Yet</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLevelUp} className="gap-2">
+              <Sparkles className="h-4 w-4" />
+              Let's Go!
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 
