@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 
 export interface User {
   id: string;
@@ -32,18 +33,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // Listen for Supabase auth state changes (for Google OAuth)
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(CURRENT_USER_KEY);
-      if (saved) {
-        setUser(JSON.parse(saved));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session?.user) {
+          // Google OAuth user - set user from Supabase session
+          const oauthUser: User = {
+            id: session.user.id,
+            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            phone: session.user.phone || '',
+          };
+          setUser(oauthUser);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
+        }
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error('Error parsing user from localStorage:', e);
-      localStorage.removeItem(CURRENT_USER_KEY);
-    }
-    setIsLoading(false);
+    );
+
+    // Check for existing Supabase session first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const oauthUser: User = {
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          phone: session.user.phone || '',
+        };
+        setUser(oauthUser);
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
+        setIsLoading(false);
+      } else {
+        // Fall back to localStorage for custom auth
+        try {
+          const saved = localStorage.getItem(CURRENT_USER_KEY);
+          if (saved) {
+            setUser(JSON.parse(saved));
+          }
+        } catch (e) {
+          console.error('Error parsing user from localStorage:', e);
+          localStorage.removeItem(CURRENT_USER_KEY);
+        }
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Persist user to localStorage
@@ -115,8 +151,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Sign out from Supabase (for Google OAuth users)
+    await supabase.auth.signOut();
     setUser(null);
+    localStorage.removeItem(CURRENT_USER_KEY);
   };
 
   const updateProfile = async (data: { name: string; email: string; phone: string }): Promise<AuthResult> => {
