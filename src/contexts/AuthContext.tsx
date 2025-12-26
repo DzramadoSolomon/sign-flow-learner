@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import type { Session } from '@supabase/supabase-js';
 
 export interface User {
@@ -32,6 +33,7 @@ const CURRENT_USER_KEY = 'gsl_current_user';
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const hasShownWelcomeToast = useRef(false);
 
   // Listen for Supabase auth state changes (for Google OAuth)
   useEffect(() => {
@@ -50,10 +52,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(oauthUser);
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
           setIsLoading(false);
+          
+          // Show welcome toast for OAuth sign-in (only once per session)
+          if (event === 'SIGNED_IN' && !hasShownWelcomeToast.current) {
+            hasShownWelcomeToast.current = true;
+            const firstName = oauthUser.name.split(' ')[0];
+            setTimeout(() => {
+              toast.success(`Welcome${firstName ? `, ${firstName}` : ''}!`, {
+                description: 'You have successfully signed in with Google.',
+              });
+            }, 100);
+          }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           localStorage.removeItem(CURRENT_USER_KEY);
           setIsLoading(false);
+          hasShownWelcomeToast.current = false;
         }
       }
     );
