@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { useLessons } from '@/hooks/useLessons';
-import { useDictionary, useCreateDictionaryWord, useUpdateDictionaryWord, useDeleteDictionaryWord, type DictionaryWord } from '@/hooks/useDictionary';
+import { useDictionary, type DictionaryWord } from '@/hooks/useDictionary';
 import { LessonForm } from '@/components/admin/LessonForm';
 import { DictionaryForm } from '@/components/admin/DictionaryForm';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,15 +23,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { lessonSchema, dictionaryWordSchema } from '@/lib/validation';
 import { ZodError } from 'zod';
 import type { Json } from '@/integrations/supabase/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Admin = () => {
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   const { isAdmin, isLoading: roleLoading } = useIsAdmin();
   const { data: lessons = [], isLoading: lessonsLoading } = useLessons();
   const { data: dictionaryWords = [], isLoading: dictionaryLoading } = useDictionary();
-  const createWord = useCreateDictionaryWord();
-  const updateWord = useUpdateDictionaryWord();
-  const deleteWord = useDeleteDictionaryWord();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isLessonDialogOpen, setIsLessonDialogOpen] = useState(false);
@@ -70,30 +69,37 @@ const Admin = () => {
     );
   }
 
-  // Lesson handlers
+  // Lesson handlers - using edge functions for secure server-side authorization
   const handleCreateLesson = async (data: any) => {
     setIsSubmitting(true);
     try {
       // Validate input data
       const validated = lessonSchema.parse(data);
       
-      const { error } = await supabase.from('lessons').insert({
-        lesson_id: validated.lesson_id,
-        title: validated.title,
-        description: validated.description,
-        level: validated.level,
-        duration: validated.duration,
-        lesson_order: validated.lesson_order,
-        objectives: validated.objectives as Json,
-        tags: validated.tags as Json,
-        video_url: validated.video_url || null,
-        notes: validated.notes,
-        quiz: validated.quiz as Json,
-        exercises: validated.exercises as Json,
-        is_published: validated.is_published,
+      const { data: response, error } = await supabase.functions.invoke('admin-lessons', {
+        body: {
+          action: 'create',
+          userId: user?.id,
+          lessonData: {
+            lesson_id: validated.lesson_id,
+            title: validated.title,
+            description: validated.description,
+            level: validated.level,
+            duration: validated.duration,
+            lesson_order: validated.lesson_order,
+            objectives: validated.objectives as Json,
+            tags: validated.tags as Json,
+            video_url: validated.video_url || null,
+            notes: validated.notes,
+            quiz: validated.quiz as Json,
+            exercises: validated.exercises as Json,
+            is_published: validated.is_published,
+          },
+        },
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
 
       toast({ title: 'Success', description: 'Lesson created successfully!' });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
@@ -117,25 +123,30 @@ const Admin = () => {
       // Validate input data
       const validated = lessonSchema.parse(data);
       
-      const { error } = await supabase
-        .from('lessons')
-        .update({
-          title: validated.title,
-          description: validated.description,
-          level: validated.level,
-          duration: validated.duration,
-          lesson_order: validated.lesson_order,
-          objectives: validated.objectives as Json,
-          tags: validated.tags as Json,
-          video_url: validated.video_url || null,
-          notes: validated.notes,
-          quiz: validated.quiz as Json,
-          exercises: validated.exercises as Json,
-          is_published: validated.is_published,
-        })
-        .eq('lesson_id', editingLesson.metadata.id);
+      const { data: response, error } = await supabase.functions.invoke('admin-lessons', {
+        body: {
+          action: 'update',
+          userId: user?.id,
+          lessonId: editingLesson.metadata.id,
+          lessonData: {
+            title: validated.title,
+            description: validated.description,
+            level: validated.level,
+            duration: validated.duration,
+            lesson_order: validated.lesson_order,
+            objectives: validated.objectives as Json,
+            tags: validated.tags as Json,
+            video_url: validated.video_url || null,
+            notes: validated.notes,
+            quiz: validated.quiz as Json,
+            exercises: validated.exercises as Json,
+            is_published: validated.is_published,
+          },
+        },
+      });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
 
       toast({ title: 'Success', description: 'Lesson updated successfully!' });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
@@ -156,8 +167,16 @@ const Admin = () => {
 
   const handleDeleteLesson = async (lessonId: string) => {
     try {
-      const { error } = await supabase.from('lessons').delete().eq('lesson_id', lessonId);
-      if (error) throw error;
+      const { data: response, error } = await supabase.functions.invoke('admin-lessons', {
+        body: {
+          action: 'delete',
+          userId: user?.id,
+          lessonId,
+        },
+      });
+
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
 
       toast({ title: 'Success', description: 'Lesson deleted successfully!' });
       queryClient.invalidateQueries({ queryKey: ['lessons'] });
@@ -167,18 +186,30 @@ const Admin = () => {
     }
   };
 
-  // Dictionary handlers
+  // Dictionary handlers - using edge functions for secure server-side authorization
   const handleCreateWord = async (data: { word: string; description: string; video_id: string; category: string }) => {
     try {
       // Validate input data
       const validated = dictionaryWordSchema.parse(data);
-      await createWord.mutateAsync({
-        word: validated.word,
-        description: validated.description,
-        video_id: validated.video_id,
-        category: validated.category
+      
+      const { data: response, error } = await supabase.functions.invoke('admin-dictionary', {
+        body: {
+          action: 'create',
+          userId: user?.id,
+          wordData: {
+            word: validated.word,
+            description: validated.description,
+            video_id: validated.video_id,
+            category: validated.category,
+          },
+        },
       });
+
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
+
       toast({ title: 'Success', description: 'Word added successfully!' });
+      queryClient.invalidateQueries({ queryKey: ['dictionary'] });
       setIsDictionaryDialogOpen(false);
     } catch (error: any) {
       if (error instanceof ZodError) {
@@ -195,14 +226,26 @@ const Admin = () => {
     try {
       // Validate input data
       const validated = dictionaryWordSchema.parse(data);
-      await updateWord.mutateAsync({
-        id: editingWord.id,
-        word: validated.word,
-        description: validated.description,
-        video_id: validated.video_id,
-        category: validated.category
+      
+      const { data: response, error } = await supabase.functions.invoke('admin-dictionary', {
+        body: {
+          action: 'update',
+          userId: user?.id,
+          wordId: editingWord.id,
+          wordData: {
+            word: validated.word,
+            description: validated.description,
+            video_id: validated.video_id,
+            category: validated.category,
+          },
+        },
       });
+
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
+
       toast({ title: 'Success', description: 'Word updated successfully!' });
+      queryClient.invalidateQueries({ queryKey: ['dictionary'] });
       setEditingWord(null);
     } catch (error: any) {
       if (error instanceof ZodError) {
@@ -216,8 +259,19 @@ const Admin = () => {
 
   const handleDeleteWord = async (id: string) => {
     try {
-      await deleteWord.mutateAsync(id);
+      const { data: response, error } = await supabase.functions.invoke('admin-dictionary', {
+        body: {
+          action: 'delete',
+          userId: user?.id,
+          wordId: id,
+        },
+      });
+
+      if (error) throw new Error(error.message);
+      if (response?.error) throw new Error(response.error);
+
       toast({ title: 'Success', description: 'Word deleted successfully!' });
+      queryClient.invalidateQueries({ queryKey: ['dictionary'] });
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     }
@@ -377,7 +431,7 @@ const Admin = () => {
                   <DialogHeader>
                     <DialogTitle>Add New Word</DialogTitle>
                   </DialogHeader>
-                  <DictionaryForm onSubmit={handleCreateWord} isLoading={createWord.isPending} />
+                  <DictionaryForm onSubmit={handleCreateWord} isLoading={isSubmitting} />
                 </DialogContent>
               </Dialog>
             </div>
@@ -429,7 +483,7 @@ const Admin = () => {
                                   category: editingWord.category,
                                 }}
                                 onSubmit={handleUpdateWord}
-                                isLoading={updateWord.isPending}
+                                isLoading={isSubmitting}
                               />
                             )}
                           </DialogContent>

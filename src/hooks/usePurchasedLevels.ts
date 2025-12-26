@@ -29,11 +29,10 @@ export const usePurchasedLevels = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('lesson_purchases')
-        .select('lesson_id')
-        .eq('user_email', userEmail.toLowerCase())
-        .eq('payment_status', 'success');
+      // Use edge function for secure access to purchase data
+      const { data: response, error } = await supabase.functions.invoke('get-purchases', {
+        body: { userEmail: userEmail.toLowerCase() }
+      });
 
       if (error) {
         console.error('Error fetching purchases:', error);
@@ -43,19 +42,19 @@ export const usePurchasedLevels = () => {
         return;
       }
 
+      const purchaseData = response?.data || [];
+
       // Track individual lesson IDs
       const lessonIds: string[] = [];
       // Extract levels from purchased lesson IDs (e.g., 'intermediate-1' -> 'intermediate')
       const levels = new Set<string>();
       
-      if (data) {
-        data.forEach((p) => {
-          const lessonId = (p as { lesson_id: string }).lesson_id;
-          lessonIds.push(lessonId);
-          const level = lessonId.split('-')[0];
-          if (level) levels.add(level);
-        });
-      }
+      purchaseData.forEach((p: { lesson_id: string }) => {
+        const lessonId = p.lesson_id;
+        lessonIds.push(lessonId);
+        const level = lessonId.split('-')[0];
+        if (level) levels.add(level);
+      });
 
       setPurchasedLessonIds(lessonIds);
       setPurchasedLevels(Array.from(levels));
