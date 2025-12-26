@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLessonMetadata } from "@/hooks/useLessons";
+import { useLessonCompletions } from "@/hooks/useLessonCompletions";
 import { 
   Clock, 
   CheckCircle2, 
-  Target,
   ArrowRight,
   Flame,
   Volume2,
@@ -18,41 +19,31 @@ import {
 
 export const HearingDashboard = () => {
   const { user } = useAuth();
-  // Mock data - in real app, this would come from state management or backend
-  const stats = {
-    lessonsCompleted: 3,
-    totalLessons: 30,
-    currentStreak: 7,
-    totalTime: 245, // minutes
-    averageQuizScore: 87,
-    listeningHours: 4.2
-  };
+  const { data: lessons = [] } = useLessonMetadata();
+  const { completedLessonIds, isLessonCompleted } = useLessonCompletions();
 
-  const recentLessons = [
-    { 
-      id: 'beginner-3', 
-      title: 'Counting in GSL: Numbers 1-30', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '2 hours ago' 
-    },
-    { 
-      id: 'beginner-2', 
-      title: 'GSL Alphabets: A-Z', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '1 day ago' 
-    },
-    { 
-      id: 'beginner-1', 
-      title: 'Getting Started with GSL', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '2 days ago' 
-    },
-  ];
+  // Calculate real stats
+  const completedCount = completedLessonIds.length;
+  const totalLessons = lessons.length;
+  
+  // Get recent completed lessons (last 3)
+  const recentLessons = lessons
+    .filter(lesson => isLessonCompleted(lesson.id))
+    .slice(0, 3)
+    .map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      level: lesson.level,
+      progress: 100
+    }));
 
-  const progressPercentage = Math.round((stats.lessonsCompleted / stats.totalLessons) * 100);
+  // Estimate learning time based on completed lessons (avg 15 min per lesson)
+  const estimatedMinutes = completedCount * 15;
+
+  // For day streak, we'll show a placeholder since we don't track daily activity yet
+  const currentStreak = completedCount > 0 ? 1 : 0;
+
+  const progressPercentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   return (
     <>
@@ -75,8 +66,8 @@ export const HearingDashboard = () => {
         </p>
       </div>
 
-      {/* Stats Grid with Audio Stats */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Grid */}
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -84,37 +75,27 @@ export const HearingDashboard = () => {
             </div>
             <p className="text-sm text-muted-foreground">Lessons Completed</p>
           </div>
-          <p className="text-2xl font-bold">{stats.lessonsCompleted}/{stats.totalLessons}</p>
-        </Card>
-        
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-accent/10 text-accent">
-              <Target className="h-5 w-5" />
-            </div>
-            <p className="text-sm text-muted-foreground">Average Quiz Score</p>
-          </div>
-          <p className="text-2xl font-bold">{stats.averageQuizScore}%</p>
+          <p className="text-2xl font-bold">{completedCount}/{totalLessons}</p>
         </Card>
         
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-              <Headphones className="h-5 w-5" />
-            </div>
-            <p className="text-sm text-muted-foreground">Listening Hours</p>
-          </div>
-          <p className="text-2xl font-bold">{stats.listeningHours}h</p>
-        </Card>
-        
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <Clock className="h-5 w-5" />
             </div>
             <p className="text-sm text-muted-foreground">Learning Time</p>
           </div>
-          <p className="text-2xl font-bold">{Math.floor(stats.totalTime / 60)}h {stats.totalTime % 60}m</p>
+          <p className="text-2xl font-bold">{Math.floor(estimatedMinutes / 60)}h {estimatedMinutes % 60}m</p>
+        </Card>
+        
+        <Card className="p-6 bg-gradient-to-br from-orange-500/10 to-orange-500/5">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg bg-orange-500/20">
+              <Flame className="h-5 w-5 text-orange-500" />
+            </div>
+            <p className="text-sm text-muted-foreground">Day Streak</p>
+          </div>
+          <p className="text-2xl font-bold">{currentStreak} 🔥</p>
         </Card>
       </div>
 
@@ -135,7 +116,7 @@ export const HearingDashboard = () => {
             </div>
             <Progress value={progressPercentage} className="h-3 mb-2" />
             <p className="text-sm text-muted-foreground">
-              {stats.lessonsCompleted} of {stats.totalLessons} lessons completed
+              {completedCount} of {totalLessons} lessons completed
             </p>
           </Card>
 
@@ -150,34 +131,43 @@ export const HearingDashboard = () => {
                 </Button>
               </Link>
             </div>
-            <div className="space-y-3">
-              {recentLessons.map((lesson) => (
-                <Link key={lesson.id} to={`/lesson/${lesson.id}`}>
-                  <div className="p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors group cursor-pointer">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium group-hover:text-primary transition-colors">
-                            {lesson.title}
-                          </h3>
-                          <Volume2 className="h-4 w-4 text-primary" />
+            {recentLessons.length > 0 ? (
+              <div className="space-y-3">
+                {recentLessons.map((lesson) => (
+                  <Link key={lesson.id} to={`/lesson/${lesson.id}`}>
+                    <div className="p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors group cursor-pointer">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-medium group-hover:text-primary transition-colors">
+                              {lesson.title}
+                            </h3>
+                            <Volume2 className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs capitalize">
+                              {lesson.level}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              ✓ Completed
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">
-                            {lesson.level}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {lesson.completedAt}
-                          </span>
-                        </div>
+                        <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
                       </div>
-                      <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
+                      <Progress value={lesson.progress} className="h-1.5" />
                     </div>
-                    <Progress value={lesson.progress} className="h-1.5" />
-                  </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-muted-foreground">
+                <p>No lessons completed yet. Start learning to see your progress!</p>
+                <Link to="/lessons" className="mt-3 inline-block">
+                  <Button size="sm">Browse Lessons</Button>
                 </Link>
-              ))}
-            </div>
+              </div>
+            )}
           </Card>
 
           {/* Audio Learning Tip */}
@@ -205,7 +195,7 @@ export const HearingDashboard = () => {
                 <Flame className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <div className="text-3xl font-bold">{stats.currentStreak}</div>
+                <div className="text-3xl font-bold">{currentStreak}</div>
                 <div className="text-sm text-muted-foreground">Day Streak</div>
               </div>
             </div>

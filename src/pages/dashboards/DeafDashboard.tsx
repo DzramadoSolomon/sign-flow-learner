@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLessonMetadata } from "@/hooks/useLessons";
+import { useLessonCompletions } from "@/hooks/useLessonCompletions";
 import { 
   Clock, 
   CheckCircle2, 
-  Target,
   ArrowRight,
   Flame,
   Eye,
@@ -17,40 +18,31 @@ import {
 
 export const DeafDashboard = () => {
   const { user } = useAuth();
-  // Mock data - in real app, this would come from state management or backend
-  const stats = {
-    lessonsCompleted: 3,
-    totalLessons: 30,
-    currentStreak: 7,
-    totalTime: 245, // minutes
-    averageQuizScore: 87
-  };
+  const { data: lessons = [] } = useLessonMetadata();
+  const { completedLessonIds, isLessonCompleted } = useLessonCompletions();
 
- const recentLessons = [
-    { 
-      id: 'beginner-3', 
-      title: 'Counting in GSL: Numbers 1-30', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '2 hours ago' 
-    },
-    { 
-      id: 'beginner-2', 
-      title: 'GSL Alphabets: A-Z', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '1 day ago' 
-    },
-    { 
-      id: 'beginner-1', 
-      title: 'Getting Started with GSL', 
-      level: 'beginner', 
-      progress: 100, 
-      completedAt: '2 days ago' 
-    },
-  ];
+  // Calculate real stats
+  const completedCount = completedLessonIds.length;
+  const totalLessons = lessons.length;
+  
+  // Get recent completed lessons (last 3)
+  const recentLessons = lessons
+    .filter(lesson => isLessonCompleted(lesson.id))
+    .slice(0, 3)
+    .map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      level: lesson.level,
+      progress: 100
+    }));
 
-  const progressPercentage = Math.round((stats.lessonsCompleted / stats.totalLessons) * 100);
+  // Estimate learning time based on completed lessons (avg 15 min per lesson)
+  const estimatedMinutes = completedCount * 15;
+
+  // For day streak, we'll show a placeholder since we don't track daily activity yet
+  const currentStreak = completedCount > 0 ? 1 : 0;
+
+  const progressPercentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   return (
     <>
@@ -71,7 +63,7 @@ export const DeafDashboard = () => {
       </div>
 
       {/* Large Stats Grid - High Contrast */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-6 border-2 hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 rounded-lg bg-primary/20 text-primary">
@@ -79,17 +71,7 @@ export const DeafDashboard = () => {
             </div>
             <p className="text-sm font-medium text-muted-foreground">Lessons Completed</p>
           </div>
-          <p className="text-3xl font-bold">{stats.lessonsCompleted}/{stats.totalLessons}</p>
-        </Card>
-        
-        <Card className="p-6 border-2 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 rounded-lg bg-accent/20 text-accent">
-              <Target className="h-6 w-6" />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">Quiz Score</p>
-          </div>
-          <p className="text-3xl font-bold">{stats.averageQuizScore}%</p>
+          <p className="text-3xl font-bold">{completedCount}/{totalLessons}</p>
         </Card>
         
         <Card className="p-6 border-2 hover:shadow-lg transition-shadow">
@@ -99,7 +81,7 @@ export const DeafDashboard = () => {
             </div>
             <p className="text-sm font-medium text-muted-foreground">Learning Time</p>
           </div>
-          <p className="text-3xl font-bold">{Math.floor(stats.totalTime / 60)}h {stats.totalTime % 60}m</p>
+          <p className="text-3xl font-bold">{Math.floor(estimatedMinutes / 60)}h {estimatedMinutes % 60}m</p>
         </Card>
         
         <Card className="p-6 border-2 hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-500/10 to-orange-500/5">
@@ -109,7 +91,7 @@ export const DeafDashboard = () => {
             </div>
             <p className="text-sm font-medium text-muted-foreground">Day Streak</p>
           </div>
-          <p className="text-3xl font-bold">{stats.currentStreak} 🔥</p>
+          <p className="text-3xl font-bold">{currentStreak} 🔥</p>
         </Card>
       </div>
 
@@ -130,7 +112,7 @@ export const DeafDashboard = () => {
             </div>
             <Progress value={progressPercentage} className="h-4 mb-3" />
             <p className="text-lg font-medium text-muted-foreground">
-              {stats.lessonsCompleted} of {stats.totalLessons} lessons completed
+              {completedCount} of {totalLessons} lessons completed
             </p>
           </Card>
 
@@ -145,34 +127,43 @@ export const DeafDashboard = () => {
                 </Button>
               </Link>
             </div>
-            <div className="space-y-4">
-              {recentLessons.map((lesson) => (
-                <Link key={lesson.id} to={`/lesson/${lesson.id}`}>
-                  <div className="p-5 rounded-lg border-2 bg-card hover:bg-accent/10 hover:border-primary transition-all group cursor-pointer">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <PlayCircle className="h-5 w-5 text-primary" />
-                          <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                            {lesson.title}
-                          </h3>
+            {recentLessons.length > 0 ? (
+              <div className="space-y-4">
+                {recentLessons.map((lesson) => (
+                  <Link key={lesson.id} to={`/lesson/${lesson.id}`}>
+                    <div className="p-5 rounded-lg border-2 bg-card hover:bg-accent/10 hover:border-primary transition-all group cursor-pointer">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <PlayCircle className="h-5 w-5 text-primary" />
+                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+                              {lesson.title}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-semibold capitalize">
+                              {lesson.level}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground font-medium">
+                              ✓ Completed
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-semibold">
-                            {lesson.level}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground font-medium">
-                            ✓ Completed {lesson.completedAt}
-                          </span>
-                        </div>
+                        <CheckCircle2 className="h-6 w-6 text-accent shrink-0" />
                       </div>
-                      <CheckCircle2 className="h-6 w-6 text-accent shrink-0" />
+                      <Progress value={lesson.progress} className="h-2" />
                     </div>
-                    <Progress value={lesson.progress} className="h-2" />
-                  </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No lessons completed yet. Start learning to see your progress!</p>
+                <Link to="/lessons" className="mt-4 inline-block">
+                  <Button>Browse Lessons</Button>
                 </Link>
-              ))}
-            </div>
+              </div>
+            )}
           </Card>
         </div>
 
