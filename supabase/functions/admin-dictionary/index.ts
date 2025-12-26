@@ -1,15 +1,59 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.22.4";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Define allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://njukrhmykrxqvjjvnotv.lovable.app',
+  'https://gsl-learning.lovable.app',
+  'https://sign-flow-learner.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'http://localhost:8080',
+];
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  return false;
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const allowedOrigin = isAllowedOrigin(origin) ? origin! : '';
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  };
+}
+
+// Validation schema for dictionary word data
+const dictionaryWordSchema = z.object({
+  word: z.string().min(1).max(100).trim(),
+  description: z.string().min(1).max(500).trim(),
+  video_id: z.string().min(1).max(100).regex(/^[a-zA-Z0-9_-]+$/).trim(),
+  category: z.string().min(1).max(50).trim(),
+});
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Block unauthorized origins
+  if (!corsHeaders['Access-Control-Allow-Origin']) {
+    console.error('Unauthorized origin:', origin);
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized origin' }),
+      { status: 403, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
   try {
@@ -51,11 +95,22 @@ serve(async (req) => {
     let result;
 
     switch (action) {
-      case 'create':
-        console.log('Creating word:', wordData?.word);
+      case 'create': {
+        // Validate input data
+        const validationResult = dictionaryWordSchema.safeParse(wordData);
+        if (!validationResult.success) {
+          const messages = validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+          console.error('Validation failed:', messages);
+          return new Response(
+            JSON.stringify({ error: `Validation failed: ${messages}` }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log('Creating word:', validationResult.data.word);
         const { data: createData, error: createError } = await supabaseAdmin
           .from('dictionary')
-          .insert(wordData)
+          .insert(validationResult.data)
           .select()
           .single();
 
@@ -65,12 +120,32 @@ serve(async (req) => {
         }
         result = createData;
         break;
+      }
 
-      case 'update':
+      case 'update': {
+        // Validate input data
+        const validationResult = dictionaryWordSchema.safeParse(wordData);
+        if (!validationResult.success) {
+          const messages = validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+          console.error('Validation failed:', messages);
+          return new Response(
+            JSON.stringify({ error: `Validation failed: ${messages}` }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Validate wordId (UUID format)
+        if (!wordId || typeof wordId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(wordId)) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid word ID' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
         console.log('Updating word:', wordId);
         const { data: updateData, error: updateError } = await supabaseAdmin
           .from('dictionary')
-          .update(wordData)
+          .update(validationResult.data)
           .eq('id', wordId)
           .select()
           .single();
@@ -81,8 +156,17 @@ serve(async (req) => {
         }
         result = updateData;
         break;
+      }
 
-      case 'delete':
+      case 'delete': {
+        // Validate wordId (UUID format)
+        if (!wordId || typeof wordId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(wordId)) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid word ID' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
         console.log('Deleting word:', wordId);
         const { error: deleteError } = await supabaseAdmin
           .from('dictionary')
@@ -95,6 +179,7 @@ serve(async (req) => {
         }
         result = { success: true };
         break;
+      }
 
       default:
         return new Response(
@@ -114,7 +199,7 @@ serve(async (req) => {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     );
   }
 });
