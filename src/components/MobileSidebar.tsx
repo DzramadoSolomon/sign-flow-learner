@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Home, 
   LayoutDashboard, 
   GraduationCap,
   BookOpen,
@@ -22,7 +21,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { PaymentDialog } from "@/components/PaymentDialog";
 
 const mainNavigation = [
-  { title: 'Home', url: '/', icon: Home },
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'All Lessons', url: '/lessons', icon: GraduationCap },
   { title: 'Dictionary', url: '/dictionary', icon: BookOpen },
