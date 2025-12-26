@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -5,6 +6,16 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileSidebar } from "@/components/MobileSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLearningMode } from "@/contexts/LearningModeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +30,7 @@ const Dashboard = () => {
   const { logout } = useAuth();
   const { currentStreak } = useStreak();
   const navigate = useNavigate();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -57,7 +69,7 @@ const Dashboard = () => {
                     <User className="h-5 w-5" />
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <Button variant="ghost" size="icon" onClick={() => setShowLogoutDialog(true)}>
                   <LogOut className="h-5 w-5" />
                 </Button>
               </div>
@@ -66,6 +78,21 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-8">
           {dashboardContent}
         </div>
+
+        <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to log out? You'll need to sign in again to access your account.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
@@ -100,7 +127,7 @@ const Dashboard = () => {
                         Profile
                       </Button>
                     </Link>
-                    <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => setShowLogoutDialog(true)} className="gap-2">
                       <LogOut className="h-4 w-4" />
                       Logout
                     </Button>
@@ -115,6 +142,21 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to log out? You'll need to sign in again to access your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 };
