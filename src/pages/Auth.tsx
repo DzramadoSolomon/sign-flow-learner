@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +19,15 @@ const validateEmail = (email: string): boolean => {
 };
 
 const Auth = () => {
+  const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
+  
+  // Redirect when authenticated (handles both initial load and OAuth callback)
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
   
   // Show loading while checking auth state
   if (isLoading) {
@@ -28,11 +36,6 @@ const Auth = () => {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
-  }
-  
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return (
