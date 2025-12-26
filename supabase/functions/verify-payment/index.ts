@@ -6,13 +6,24 @@ import { z } from "https://esm.sh/zod@3.22.4";
 const ALLOWED_ORIGINS = [
   'https://njukrhmykrxqvjjvnotv.lovable.app',
   'https://gsl-learning.lovable.app',
+  'https://sign-flow-learner.vercel.app',
   'http://localhost:5173',
   'http://localhost:4173',
   'http://localhost:8080',
 ];
 
+// Also allow any lovable.app or vercel.app subdomains
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) return true;
+  // Allow any *.lovable.app or *.vercel.app subdomain
+  if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  return false;
+}
+
 function getCorsHeaders(origin: string | null): Record<string, string> {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed.replace(/\/$/, ''))) ? origin : '';
+  const allowedOrigin = isAllowedOrigin(origin) ? origin! : '';
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
