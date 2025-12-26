@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         if (session?.user) {
           // Google OAuth user - set user from Supabase session
           const oauthUser: User = {
@@ -47,6 +48,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(oauthUser);
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          localStorage.removeItem(CURRENT_USER_KEY);
         }
         setIsLoading(false);
       }
