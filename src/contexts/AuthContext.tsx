@@ -105,19 +105,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(oauthUser);
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(oauthUser));
+        setIsLoading(false);
       } else {
-        // Fall back to localStorage for custom auth
+        // Fall back to localStorage for custom auth (email/password users)
         try {
           const saved = localStorage.getItem(CURRENT_USER_KEY);
           if (saved) {
-            setUser(JSON.parse(saved));
+            const parsedUser = JSON.parse(saved);
+            // Validate the parsed user has required fields
+            if (parsedUser && parsedUser.id && parsedUser.email) {
+              setUser(parsedUser);
+            } else {
+              localStorage.removeItem(CURRENT_USER_KEY);
+            }
           }
         } catch (e) {
           console.error('Error parsing user from localStorage:', e);
           localStorage.removeItem(CURRENT_USER_KEY);
         }
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     handleOAuthCallback();

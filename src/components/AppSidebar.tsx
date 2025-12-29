@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -24,11 +24,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { useLessonMetadata } from "@/hooks/useLessons";
 import { useLessonCompletions } from "@/hooks/useLessonCompletions";
+import { usePurchasedLevels, getLevelPrice } from "@/hooks/usePurchasedLevels";
 import { PaymentDialog } from "@/components/PaymentDialog";
 
 const mainNavigation = [
@@ -47,8 +47,8 @@ export function AppSidebar() {
   const { isAdmin } = useIsAdmin();
   const { data: lessons = [] } = useLessonMetadata();
   const { completedLessonIds, isLessonCompleted } = useLessonCompletions();
+  const { hasLevelAccess, refetch: refetchPurchases } = usePurchasedLevels();
 
-  const [purchasedLevels, setPurchasedLevels] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [selectedLessonTitle, setSelectedLessonTitle] = useState<string | null>(null);
@@ -70,62 +70,11 @@ export function AppSidebar() {
     
     return groups;
   }, [lessons]);
-
-  // Fetch purchased levels from database
-  const fetchPurchasedLevels = async () => {
-    try {
-      let userEmail = user?.email;
-      
-      if (!userEmail) {
-        userEmail = sessionStorage.getItem('lastPaymentEmail') || undefined;
-      }
-
-      if (!userEmail) {
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('lesson_purchases')
-        .select('lesson_id')
-        .eq('user_email', userEmail)
-        .eq('payment_status', 'success');
-
-      if (error) {
-        console.error('Error fetching purchases:', error);
-        return;
-      }
-
-      // Extract levels from purchased lesson IDs (e.g., 'intermediate-1' -> 'intermediate')
-      const levels = new Set<string>();
-      if (data) {
-        data.forEach((p) => {
-          const lessonId = (p as { lesson_id: string }).lesson_id;
-          const level = lessonId.split('-')[0];
-          if (level) levels.add(level);
-        });
-      }
-
-      setPurchasedLevels(Array.from(levels));
-    } catch (err) {
-      console.error('Error fetching purchases:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchPurchasedLevels();
-  }, [user?.email]);
-
+  
   const isActive = (path: string) => currentPath === path;
 
   const isPremiumLevel = (level: string) => {
     return level.toLowerCase() !== 'beginner';
-  };
-
-  const hasLevelAccess = (level: string) => {
-    // Admins have access to all levels
-    if (isAdmin) return true;
-    if (!isPremiumLevel(level)) return true;
-    return purchasedLevels.includes(level.toLowerCase());
   };
 
   const handleLessonClick = (e: React.MouseEvent, lesson: typeof lessons[0], level: string) => {
@@ -138,12 +87,6 @@ export function AppSidebar() {
       setSelectedLessonTitle(lesson.title);
       setDialogOpen(true);
     }
-  };
-
-  const getLevelPrice = (level: string) => {
-    if (level.toLowerCase() === 'intermediate') return 10;
-    if (level.toLowerCase() === 'advanced') return 15;
-    return 0;
   };
 
   const lessonIcon = (lessonId: string, premium: boolean, hasAccess: boolean) => {
@@ -285,7 +228,7 @@ export function AppSidebar() {
         lessonTitle={selectedLessonTitle || ''}
         amountGhs={selectedLessonId ? getLevelPrice(selectedLessonId.split('-')[0]) : 10}
         onSuccess={() => {
-          fetchPurchasedLevels();
+          refetchPurchases();
           setDialogOpen(false);
         }}
       />
